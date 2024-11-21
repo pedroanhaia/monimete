@@ -102,6 +102,8 @@
         <a href="#stakeholders">Stakeholders</a>
         <a href="#requisitos">Requisitos do Sistema</a>
         <a href="#user-stories">Histórias de Usuário</a>
+        <a href="#infraestrutura">Infraestrutura</a>
+        <a href="#modelo-er">Modelo ER</a>
         <a href="#mysql">Comandos MySQL</a>
     </nav>
 
@@ -273,7 +275,15 @@
             <p><strong>Descrição:</strong> Criação e configuração de um ambiente colaborativo utilizando GitHub para gerenciar o código e progresso do projeto.</p>
             <p><strong>Critérios de Aceitação:</strong> O ambiente está funcionando corretamente se todos os desenvolvedores têm acesso ao repositório.</p>
         </section>
+        <section id="infraestrutura">
+            <h2>Esquema de Infraestrutura</h2>
+            <img src="webroot/img/InfraestruturaMonimete.png" alt="Esquema de Infraestrutura do Sistema MoniMete">
+        </section>
 
+        <section id="modelo-er">
+            <h2>Modelo ER do Sistema MoniMete</h2>
+            <img src="webroot/img/ModeloERMonimete.png" alt="Modelo ER do Sistema MoniMete">
+        </section>
         <section id="mysql">
             <h2>Comandos MySQL</h2>
             <div class="code-block">
