@@ -55,6 +55,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            background-color: #fff;
         }
         table, th, td {
             border: 1px solid #cccccc;
@@ -62,6 +63,10 @@
         th, td {
             padding: 10px;
             text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #e6f0ff;
         }
         footer {
             background-color: #004080;
@@ -112,6 +117,7 @@
         <a href="#cronograma">Cronograma</a>
         <a href="#stakeholders">Stakeholders</a>
         <a href="#requisitos">Requisitos do Sistema</a>
+        <a href="#coleta-requisitos">Coleta Visual de Requisitos</a>
         <a href="#user-stories">Histórias de Usuário</a>
         <a href="#infraestrutura">Infraestrutura</a>
         <a href="#modelo-er">Modelo ER</a>
@@ -263,7 +269,91 @@
                 <li>Saídas dos dados com dashboards e mapas de calor.</li>
             </ul>
         </section>
-
+        <section id="coleta-requisitos">
+            <h2>Coleta Visual de Requisitos</h2>
+            <table>
+                <tr>
+                    <th>Conceito</th>
+                    <th>Detalhamento</th>
+                </tr>
+                <tr>
+                    <td>Floresta</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Árvore</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Galhos</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Folhas</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="4">MoniMete</td>
+                    <td>Receber dados via satélite</td>
+                </tr>
+                <tr>
+                    <td>Criação de sistema de recepção via satélite</td>
+                </tr>
+                <tr>
+                    <td>Montar antena</td>
+                </tr>
+                <tr>
+                    <td>Configurar Raspberry Pi</td>
+                </tr>
+                <tr>
+                    <td rowspan="4">Armazenar dados históricos</td>
+                    <td>Criação de CRUD</td>
+                </tr>
+                <tr>
+                    <td>Modelagem do banco de dados</td>
+                </tr>
+                <tr>
+                    <td>Desenvolvimento backoffice</td>
+                </tr>
+                <tr>
+                    <td>Ajustes de navegação</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Integrar com sistema de mapas</td>
+                    <td>Desenvolver chamadas do serviço</td>
+                </tr>
+                <tr>
+                    <td>Desenvolver chamadas do serviço</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">Permitir acesso não autenticado aos dashboards</td>
+                    <td>Realizar liberações</td>
+                </tr>
+                <tr>
+                    <td>Mapear riscos</td>
+                </tr>
+                <tr>
+                    <td>Executar ajustes de sistema</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">Integrar com API de dados meteorológicos</td>
+                    <td>Desenvolver chamadas do serviço</td>
+                </tr>
+                <tr>
+                    <td>Desenvolver chamadas dos serviços</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">Saídas dos dados com dashboards e mapas de calor</td>
+                    <td>Definição de gráficos a serem utilizados</td>
+                </tr>
+                <tr>
+                    <td>Desenvolvimento de templates das views</td>
+                </tr>
+                <tr>
+                    <td>Desenvolvimento de código para alimentação dos gráficos</td>
+                </tr>
+            </table>
+        </section>
         <section id="user-stories">
             <h2>Histórias de Usuário</h2>
             <h3>Cadastro e Integração de APIs</h3>
