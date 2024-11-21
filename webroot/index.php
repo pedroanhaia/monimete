@@ -38,8 +38,11 @@
             max-width: 1200px;
             margin: auto;
         }
-        h1, h2, h3 {
+        h2, h3 {
             color: #004080;
+        }
+        h1{
+            color:#FFFFFF;
         }
         section {
             margin-bottom: 40px;
