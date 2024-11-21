@@ -68,6 +68,14 @@
         th {
             background-color: #e6f0ff;
         }
+
+        .rotate-text {
+            text-align: center;
+            vertical-align: middle;
+            writing-mode: vertical-rl; /* Rota o texto verticalmente */
+            transform: rotate(180deg); /* Ajusta a direção */
+            font-weight: bold;
+        }
         footer {
             background-color: #004080;
             color: #fff;
@@ -279,40 +287,53 @@
                     <th>Folhas</th>
                 </tr>
                 <tr>
-                    <td rowspan="5">MoniMete</td>
+                    <td class="rotate-text" rowspan="12">MoniMete</td>
                     <td rowspan="2">Receber dados via satélite</td>
-                    <td>Criação de sistema de recepção via satélite</td>
+                    <td rowspan="2">Criação de sistema de recepção via satélite</td>
                     <td>Montar antena</td>
                 </tr>
                 <tr>
-                    <td></td>
                     <td>Configurar Raspberry Pi</td>
                 </tr>
                 <tr>
                     <td rowspan="3">Armazenar dados históricos</td>
-                    <td>Criação de CRUD</td>
+                    <td rowspan="3">Criação de CRUD</td>
                     <td>Modelagem do banco de dados</td>
                 </tr>
                 <tr>
                     <td>Desenvolvimento backoffice</td>
+                </tr>
+                <tr>
                     <td>Ajustes de navegação</td>
                 </tr>
                 <tr>
-                    <td rowspan="2">Integrar com sistema de mapas</td>
+                    <td>Integrar com sistema de mapas</td>
+                    <td>Desenvolver chamadas do serviço</td>
                     <td>Desenvolver chamadas do serviço</td>
                 </tr>
                 <tr>
-                    <td>Permitir acesso não autenticado aos dashboards</td>
-                    <td>Realizar liberações</td>
+                    <td rowspan="2">Permitir acesso não autenticado aos dashboards</td>
+                    <td rowspan="2">Realizar liberações</td>
+                    <td>Mapear riscos</td>
                 </tr>
                 <tr>
-                    <td rowspan="2">Integrar com API de dados meteorológicos</td>
+                    <td>Executar ajustes de sistema</td>
+                </tr>
+                <tr>
+                    <td>Integrar com API de dados meteorológicos</td>
                     <td>Desenvolver chamadas do serviço</td>
+                    <td>Desenvolver chamadas do serviço</td>
+                </tr>
+                <tr>
+                    <td rowspan="3">Saídas dos dados com dashboards e mapas de calor</td>
+                    <td rowspan="3">Saídas dos dados com dashboards e mapas de calor</td>
                     <td>Definição de gráficos a serem utilizados</td>
                 </tr>
                 <tr>
-                    <td></td>
                     <td>Desenvolvimento de templates das views</td>
+                </tr>
+                <tr>
+                    <td>Desenvolvimento de código para alimentação dos gráficos</td>
                 </tr>
             </table>
         </section>
