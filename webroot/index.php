@@ -85,6 +85,17 @@
         .code-block pre {
             margin: 0;
         }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            transition: transform 0.2s; /* Efeito suave ao ampliar */
+        }
+        img:hover {
+            transform: scale(1.05); /* Amplia a imagem em 5% ao passar o mouse */
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
