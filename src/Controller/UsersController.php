@@ -18,7 +18,7 @@ class UsersController extends AppController
     public function index()
     {
         $query = $this->Users->find()
-            ->contain(['Cities']);
+            ->contain(['cities']);
         $users = $this->paginate($query);
 
         $this->set(compact('users'));

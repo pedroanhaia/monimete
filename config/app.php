@@ -283,7 +283,18 @@ return [
             'driver' => Mysql::class,
             'persistent' => false,
             'timezone' => 'UTC',
+            'host' => '149.100.151.52',
+            /*
+             * CakePHP will use the default DB port based on the driver selected
+             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
+             * the following line and set the port accordingly
+             */
+            //'port' => 'non_standard_port_number',
 
+            'username' => 'u365895095_monimete',
+            'password' => '_+ZayPC7DD7B42c',
+
+            'database' => 'u365895095_monimetebd',
             /*
              * For MariaDB/MySQL the internal default changed from utf8 to utf8mb4, aka full utf-8 support
              */
@@ -331,6 +342,18 @@ return [
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
             'log' => false,
+            'host' => '149.100.151.52',
+            /*
+             * CakePHP will use the default DB port based on the driver selected
+             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
+             * the following line and set the port accordingly
+             */
+            //'port' => 'non_standard_port_number',
+
+            'username' => 'u365895095_monimete',
+            'password' => '_+ZayPC7DD7B42c',
+
+            'database' => 'monimetebd',
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
     ],
