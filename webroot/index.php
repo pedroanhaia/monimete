@@ -273,49 +273,28 @@
             <h2>Coleta Visual de Requisitos</h2>
             <table>
                 <tr>
-                    <th>Conceito</th>
-                    <th>Detalhamento</th>
+                    <th>Floresta</th>
+                    <th>Árvore</th>
+                    <th>Galhos</th>
+                    <th>Folhas</th>
                 </tr>
                 <tr>
-                    <td>Floresta</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Árvore</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Galhos</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Folhas</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td rowspan="4">MoniMete</td>
-                    <td>Receber dados via satélite</td>
-                </tr>
-                <tr>
+                    <td rowspan="5">MoniMete</td>
+                    <td rowspan="2">Receber dados via satélite</td>
                     <td>Criação de sistema de recepção via satélite</td>
-                </tr>
-                <tr>
                     <td>Montar antena</td>
                 </tr>
                 <tr>
+                    <td></td>
                     <td>Configurar Raspberry Pi</td>
                 </tr>
                 <tr>
-                    <td rowspan="4">Armazenar dados históricos</td>
+                    <td rowspan="3">Armazenar dados históricos</td>
                     <td>Criação de CRUD</td>
-                </tr>
-                <tr>
                     <td>Modelagem do banco de dados</td>
                 </tr>
                 <tr>
                     <td>Desenvolvimento backoffice</td>
-                </tr>
-                <tr>
                     <td>Ajustes de navegação</td>
                 </tr>
                 <tr>
@@ -323,34 +302,17 @@
                     <td>Desenvolver chamadas do serviço</td>
                 </tr>
                 <tr>
-                    <td>Desenvolver chamadas do serviço</td>
-                </tr>
-                <tr>
-                    <td rowspan="3">Permitir acesso não autenticado aos dashboards</td>
+                    <td>Permitir acesso não autenticado aos dashboards</td>
                     <td>Realizar liberações</td>
-                </tr>
-                <tr>
-                    <td>Mapear riscos</td>
-                </tr>
-                <tr>
-                    <td>Executar ajustes de sistema</td>
                 </tr>
                 <tr>
                     <td rowspan="2">Integrar com API de dados meteorológicos</td>
                     <td>Desenvolver chamadas do serviço</td>
-                </tr>
-                <tr>
-                    <td>Desenvolver chamadas dos serviços</td>
-                </tr>
-                <tr>
-                    <td rowspan="3">Saídas dos dados com dashboards e mapas de calor</td>
                     <td>Definição de gráficos a serem utilizados</td>
                 </tr>
                 <tr>
+                    <td></td>
                     <td>Desenvolvimento de templates das views</td>
-                </tr>
-                <tr>
-                    <td>Desenvolvimento de código para alimentação dos gráficos</td>
                 </tr>
             </table>
         </section>
