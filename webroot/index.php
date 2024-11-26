@@ -109,6 +109,20 @@
             transform: scale(1.05); /* Amplia a imagem em 5% ao passar o mouse */
             cursor: pointer;
         }
+        .collaboration {
+            background-color: #e6f7ff;
+            border: 1px solid #cceeff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        .collaboration a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        .collaboration a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +156,18 @@
             <h2>Objetivo</h2>
             <p>Criar plataforma centralizada de dados meteorológicos, sendo capaz de receber dados oriundos de APIs e satélites de monitoramento. Sendo a entrega proposta uma plataforma web com recepção de dados via satélite por meio de antena APT e comunicação com outras plataformas via internet. Espera-se que a plataforma permita visualização histórica dos dados por região e independência nas análises.</p>
         </section>
-
+        <section id="colaborativo">
+            <h2>Colaboração no Projeto</h2>
+            <div class="collaboration">
+                <p>Este projeto é <strong>colaborativo</strong> e aberto à contribuição de desenvolvedores e pesquisadores interessados. Todas as alterações podem ser feitas via <em>push</em> no repositório GitHub do projeto e serão revisadas antes de serem integradas à versão final.</p>
+                <p>Além disso, utilizamos o Trello para organização de tarefas, backlog e progresso do projeto.</p>
+                <ul>
+                    <li><strong>GitHub do Projeto:</strong> <a href="https://github.com/seu-usuario/projeto-meteorologico" target="_blank">https://github.com/seu-usuario/projeto-meteorologico</a></li>
+                    <li><strong>Trello:</strong> <a href="https://trello.com/b/seuprojeto" target="_blank">https://trello.com/b/seuprojeto</a></li>
+                </ul>
+                <p>Sinta-se à vontade para contribuir com melhorias, correções de bugs e novas funcionalidades! 🚀</p>
+            </div>
+        </section>
         <section id="esforcos">
             <h2>Esforços Necessários</h2>
             <ul>
