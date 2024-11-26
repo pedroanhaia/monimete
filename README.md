@@ -106,18 +106,7 @@ Este é um **projeto colaborativo** e está aberto para contribuições! 🎉
 
 Se você tiver dúvidas ou sugestões sobre o projeto, entre em contato:
 
-- E-mail: **seuemail@dominio.com**
-- GitHub: [seu-usuario](https://github.com/seu-usuario)
+- E-mail: pasantos1@ucs.br
+- GitHub: pedroanhaia (https://github.com/pedroanhaia)
 
 Contribua para tornar este projeto ainda mais incrível! 🚀
-```
-
-### Principais Pontos do README:
-1. **Descrição Geral:** Apresenta o objetivo do projeto e suas funcionalidades principais.
-2. **Colaboração:** Explica o processo para contribuir com o projeto e detalha como alterações podem ser enviadas e revisadas.
-3. **Políticas:** Reforça que o código pode ser alterado para melhorar a integração e que contribuições serão revisadas.
-4. **Tecnologias Utilizadas:** Lista todas as ferramentas e tecnologias importantes.
-5. **Roadmap:** Dá uma visão clara sobre o progresso do projeto e as etapas concluídas.
-6. **Contato:** Disponibiliza informações para quem deseja contribuir ou tirar dúvidas.
-
-Se precisar de ajustes ou quiser adicionar mais detalhes, posso ajudar! 😊
