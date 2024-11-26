@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Projeto de Monitoramento Meteorológico</title>
+    <link rel="icon" type="image/png" href="img/leaf.png">
     <style>
         body {
             font-family: Arial, sans-serif;
