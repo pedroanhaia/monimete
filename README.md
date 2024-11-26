@@ -1,5 +1,3 @@
-Segue o modelo de README para o seu projeto no GitHub:
-
 ```markdown
 # Projeto de Monitoramento Meteorológico - MoniMete 🌦️
 
