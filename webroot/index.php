@@ -162,8 +162,8 @@
                 <p>Este projeto é <strong>colaborativo</strong> e aberto à contribuição de desenvolvedores e pesquisadores interessados. Todas as alterações podem ser feitas via <em>push</em> no repositório GitHub do projeto e serão revisadas antes de serem integradas à versão final.</p>
                 <p>Além disso, utilizamos o Trello para organização de tarefas, backlog e progresso do projeto.</p>
                 <ul>
-                    <li><strong>GitHub do Projeto:</strong> <a href="https://github.com/seu-usuario/projeto-meteorologico" target="_blank">https://github.com/seu-usuario/projeto-meteorologico</a></li>
-                    <li><strong>Trello:</strong> <a href="https://trello.com/b/seuprojeto" target="_blank">https://trello.com/b/seuprojeto</a></li>
+                    <li><strong>GitHub do Projeto:</strong> <a href="https://github.com/pedroanhaia/monimete" target="_blank">https://github.com/pedroanhaia/monimete</a></li>
+                    <li><strong>Trello:</strong> <a href="https://trello.com/invite/b/670f5d357789eb16b37381d1/ATTI7dff1f21b9adc9c15bf1b4865dc87ab104F119AE/tarefas-sistema-metereologico" target="_blank">https://trello.com/invite/b/670f5d357789eb16b37381d1/ATTI7dff1f21b9adc9c15bf1b4865dc87ab104F119AE/tarefas-sistema-metereologico</a></li>
                 </ul>
                 <p>Sinta-se à vontade para contribuir com melhorias, correções de bugs e novas funcionalidades! 🚀</p>
             </div>
