@@ -11,7 +11,6 @@ atendendo às necessidades de análise e previsão de produtores rurais e equipe
 
 O sistema abrange desde a recepção de dados via satélite utilizando antena APT
 
-
 configurada em Raspberry Pi, até a visualização interativa de dashboards com gráficos e mapas.
 
 ---
