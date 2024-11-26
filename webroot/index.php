@@ -134,6 +134,7 @@
     <nav>
         <a href="#introducao">Introdução</a>
         <a href="#objetivo">Objetivo</a>
+        <a href="#colaborativo">Colaborativo</a>
         <a href="#esforcos">Esforços Necessários</a>
         <a href="#materiais">Materiais Necessários</a>
         <a href="#software">Ferramentas de Software</a>
