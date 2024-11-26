@@ -68,7 +68,7 @@ Este é um **projeto colaborativo** e está aberto para contribuições! 🎉
 ### Instalação:
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/seu-usuario/projeto-meteorologico.git
+   git clone https://github.com/pedroanhaia/monimete.git
    ```
 2. Configure o ambiente de desenvolvimento:
    - Instale o [XAMPP](https://www.apachefriends.org/pt_br/index.html) e configure o servidor Apache.
