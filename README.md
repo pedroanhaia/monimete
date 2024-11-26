@@ -3,7 +3,11 @@
 
 ## Descrição do Projeto 📖
 
-O **Projeto MoniMete** tem como objetivo criar uma solução robusta para o monitoramento meteorológico, permitindo a coleta de dados via satélite e integração com APIs confiáveis. Essa solução foi idealizada para fornecer dados climáticos históricos e em tempo real, atendendo às necessidades de análise e previsão de produtores rurais e equipes de pesquisa.
+O **Projeto MoniMete** tem como objetivo criar uma solução robusta para o monitoramento meteorológico,
+permitindo a coleta de dados via satélite e integração com APIs confiáveis.
+
+Essa solução foi idealizada para fornecer dados climáticos históricos e em tempo real,
+atendendo às necessidades de análise e previsão de produtores rurais e equipes de pesquisa.
 
 O sistema abrange desde a recepção de dados via satélite utilizando antena APT configurada em Raspberry Pi, até a visualização interativa de dashboards com gráficos e mapas.
 
