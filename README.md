@@ -10,7 +10,6 @@ Essa solução foi idealizada para fornecer dados climáticos históricos e em t
 atendendo às necessidades de análise e previsão de produtores rurais e equipes de pesquisa.
 
 O sistema abrange desde a recepção de dados via satélite utilizando antena APT
-
 configurada em Raspberry Pi, até a visualização interativa de dashboards com gráficos e mapas.
 
 ---
