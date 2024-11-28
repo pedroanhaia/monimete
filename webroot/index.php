@@ -387,7 +387,7 @@
             <p><strong>Critérios de Aceitação:</strong> O ambiente está funcionando corretamente se todos os desenvolvedores têm acesso ao repositório.</p>
         </section>
         <section id="infraestrutura">
-            <h2>Esquema de Infraestrutura</h2>
+            <h2>Esquema de Infraestrutura feito por gabriela</h2>
             <img src="webroot/img/InfraestruturaMonimete.png" alt="Esquema de Infraestrutura do Sistema MoniMete">
         </section>
 
