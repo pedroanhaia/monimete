@@ -28,6 +28,7 @@
                     echo $this->Form->control('last_update', ['empty' => true]);
                     echo $this->Form->control('role');
                     echo $this->Form->control('powered');
+                    echo $this->Form->control('darkmode');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

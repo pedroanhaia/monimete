@@ -1,8 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\User $user
- * @var string[]|\Cake\Collection\CollectionInterface $cities
+ * @var \Cake\Datasource\EntityInterface $user
  */
 ?>
 <div class="row">
@@ -25,10 +24,10 @@
                 <?php
                     echo $this->Form->control('name');
                     echo $this->Form->control('email');
-                    echo $this->Form->control('passwotd');
+                    echo $this->Form->control('password');
                     echo $this->Form->control('type');
                     echo $this->Form->control('role');
-                    echo $this->Form->control('city_id', ['options' => $cities, 'empty' => true]);
+                    echo $this->Form->control('city_id');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

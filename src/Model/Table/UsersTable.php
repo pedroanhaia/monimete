@@ -47,7 +47,7 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('cities', [
+        $this->belongsTo('Cities', [
             'foreignKey' => 'city_id',
         ]);
     }
@@ -70,9 +70,9 @@ class UsersTable extends Table
             ->allowEmptyString('email');
 
         $validator
-            ->scalar('passwotd')
-            ->maxLength('passwotd', 255)
-            ->allowEmptyString('passwotd');
+            ->scalar('password')
+            ->maxLength('password', 255)
+            ->allowEmptyString('password');
 
         $validator
             ->integer('type')

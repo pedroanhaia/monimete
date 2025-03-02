@@ -103,7 +103,7 @@
                             <th><?= __('Id') ?></th>
                             <th><?= __('Name') ?></th>
                             <th><?= __('Email') ?></th>
-                            <th><?= __('Passwotd') ?></th>
+                            <th><?= __('Password') ?></th>
                             <th><?= __('Type') ?></th>
                             <th><?= __('Created') ?></th>
                             <th><?= __('Modified') ?></th>
@@ -116,7 +116,7 @@
                             <td><?= h($user->id) ?></td>
                             <td><?= h($user->name) ?></td>
                             <td><?= h($user->email) ?></td>
-                            <td><?= h($user->passwotd) ?></td>
+                            <td><?= h($user->password) ?></td>
                             <td><?= h($user->type) ?></td>
                             <td><?= h($user->created) ?></td>
                             <td><?= h($user->modified) ?></td>

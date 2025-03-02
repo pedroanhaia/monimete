@@ -20,6 +20,7 @@
                     <th><?= $this->Paginator->sort('modified') ?></th>
                     <th><?= $this->Paginator->sort('role') ?></th>
                     <th><?= $this->Paginator->sort('powered') ?></th>
+                    <th><?= $this->Paginator->sort('darkmode') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -35,6 +36,7 @@
                     <td><?= h($platform->modified) ?></td>
                     <td><?= $platform->role === null ? '' : $this->Number->format($platform->role) ?></td>
                     <td><?= h($platform->powered) ?></td>
+                    <td><?= $this->Number->format($platform->darkmode) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $platform->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $platform->id]) ?>

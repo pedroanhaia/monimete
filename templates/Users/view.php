@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\User $user
+ * @var \Cake\Datasource\EntityInterface $user
  */
 ?>
 <div class="row">
@@ -27,14 +27,6 @@
                     <td><?= h($user->email) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Passwotd') ?></th>
-                    <td><?= h($user->passwotd) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('City') ?></th>
-                    <td><?= $user->hasValue('city') ? $this->Html->link($user->city->name, ['controller' => 'Cities', 'action' => 'view', $user->city->id]) : '' ?></td>
-                </tr>
-                <tr>
                     <th><?= __('Id') ?></th>
                     <td><?= $this->Number->format($user->id) ?></td>
                 </tr>
@@ -45,6 +37,10 @@
                 <tr>
                     <th><?= __('Role') ?></th>
                     <td><?= $user->role === null ? '' : $this->Number->format($user->role) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('City Id') ?></th>
+                    <td><?= $user->city_id === null ? '' : $this->Number->format($user->city_id) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Created') ?></th>

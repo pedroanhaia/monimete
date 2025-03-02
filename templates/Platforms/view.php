@@ -43,6 +43,10 @@
                     <td><?= $platform->role === null ? '' : $this->Number->format($platform->role) ?></td>
                 </tr>
                 <tr>
+                    <th><?= __('Darkmode') ?></th>
+                    <td><?= $this->Number->format($platform->darkmode) ?></td>
+                </tr>
+                <tr>
                     <th><?= __('Last Update') ?></th>
                     <td><?= h($platform->last_update) ?></td>
                 </tr>

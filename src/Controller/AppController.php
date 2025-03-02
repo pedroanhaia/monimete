@@ -18,13 +18,19 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 
+use Cake\View\JsonView;
+use Cake\View\XmlView;
+use Cake\Event\EventInterface;
+use Authentication\AuthenticationService;
+use Cake\Controller\Component\AuthComponent;
+
 /**
  * Application Controller
  *
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.
  *
- * @link https://book.cakephp.org/5/en/controllers.html#the-app-controller
+ * @link https://book.cakephp.org/4/en/controllers.html#the-app-controller
  */
 class AppController extends Controller
 {
@@ -41,12 +47,60 @@ class AppController extends Controller
     {
         parent::initialize();
 
+        //$this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
+        $this->loadComponent('Authentication.Authentication');
+		$this->loadComponent('Authorization.Authorization');
+
+        $this->fetchTable('Users');
+
+		$this->Authorization->skipAuthorization();
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.
-         * see https://book.cakephp.org/5/en/controllers/components/form-protection.html
+         * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
     }
+
+    
+	public function beforeFilter(\Cake\Event\EventInterface $event) {
+		parent::beforeFilter($event);
+
+		$userLogado = $this->Authentication->getIdentity();
+		// Skip authorization for DebugKit
+		if ($this->request->getParam('plugin') === 'DebugKit') {
+			$this->Authorization->skipAuthorization();
+		}
+
+		if(!empty($userLogado)) {
+			$userData = $this->Authentication->getIdentity()->getOriginalData();
+			$usuarioId = $userData->id; // Obtém o ID do usuário autenticado
+			$this->userObj = $this->Users->findById($usuarioId)->first();
+			$this->set('darkMode', $this->userObj->darkmode);
+			$this->set('iduserLogado', $this->userObj->id);
+			$this->set('role', $this->userObj->role);
+
+			$currentController = $this->request->getParam('controller');
+			$currentAction = $this->request->getParam('action');
+			$this->set('currentAction', $currentAction);
+			$this->set('currentController', $currentController);
+		}
+	}
+
+	public function isAuthorized($user)	{
+		return true;
+	}
+
+	public function viewClasses(): array {
+		return [JsonView::class];
+	}
+
+	public function jsonResponse($responseData = [], $responseStatusCode = 200) {
+		return $this->response
+		->withType('json', ['application/json'])
+		->withStatus($responseStatusCode)
+		->withStringBody(json_encode($responseData));
+		
+	}
 }

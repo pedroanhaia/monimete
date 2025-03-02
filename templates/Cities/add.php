@@ -26,7 +26,6 @@
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>
             <?= $this->Form->end() ?>
-            <button type="button" onclick="alert('Hello world!')">Click Me!</button>
         </div>
     </div>
 </div>

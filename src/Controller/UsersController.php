@@ -2,14 +2,24 @@
 declare(strict_types=1);
 
 namespace App\Controller;
-
+use Cake\Log\Log;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
+use App\Service\UsersPlatformService;
 /**
  * Users Controller
  *
  * @property \App\Model\Table\UsersTable $Users
+ * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class UsersController extends AppController
 {
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+
+        $this->Authentication->addUnauthenticatedActions(['login', 'add']);
+        parent::beforeFilter($event);
+        
+    }
     /**
      * Index method
      *
@@ -17,9 +27,7 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $query = $this->Users->find()
-            ->contain(['cities']);
-        $users = $this->paginate($query);
+        $users = $this->paginate($this->Users);
 
         $this->set(compact('users'));
     }
@@ -33,7 +41,10 @@ class UsersController extends AppController
      */
     public function view($id = null)
     {
-        $user = $this->Users->get($id, contain: ['Cities']);
+        $user = $this->Users->get($id, [
+            'contain' => [],
+        ]);
+
         $this->set(compact('user'));
     }
 
@@ -54,8 +65,7 @@ class UsersController extends AppController
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
-        $cities = $this->Users->Cities->find('list', limit: 200)->all();
-        $this->set(compact('user', 'cities'));
+        $this->set(compact('user'));
     }
 
     /**
@@ -67,7 +77,9 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
-        $user = $this->Users->get($id, contain: []);
+        $user = $this->Users->get($id, [
+            'contain' => [],
+        ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
@@ -77,15 +89,14 @@ class UsersController extends AppController
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
-        $cities = $this->Users->Cities->find('list', limit: 200)->all();
-        $this->set(compact('user', 'cities'));
+        $this->set(compact('user'));
     }
 
     /**
      * Delete method
      *
      * @param string|null $id User id.
-     * @return \Cake\Http\Response|null Redirects to index.
+     * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
@@ -100,4 +111,42 @@ class UsersController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+    public function login() {
+		$this->viewBuilder()->setLayout("login");
+		$this->request->allowMethod(['get', 'post']);
+		$result = $this->Authentication->getResult();
+		// regardless of POST or GET, redirect if user is logged in
+		if ($result && $result->isValid()) {
+			$_SESSION['bLogin'] = true;
+			$redirect = $this->request->getQuery('redirect', [
+				'controller' => 'Arts',
+				'action' => 'index',
+			]);
+			return $this->redirect($redirect);
+		}
+
+		if ($this->request->is('post') && !$result->isValid()) {
+			$this->Flash->error(__('Usuário ou senha inválidos!'));
+		}
+	}
+
+	public function logout() {
+		$this->Authentication->logout();
+		return $this->redirect(['controller' => 'Pages', 'action' => 'homepage']);
+	}
+
+	public function atualizardarkmode() {
+		$this->autoRender = false; // Desativa a renderização automática da visão
+
+		if ($this->request->is('ajax')) {
+			$userData = $this->Authentication->getIdentity()->getOriginalData();
+			$usuarioId = $userData->id; // Obtém o ID do usuário autenticado
+			$darkMode = $this->request->getData('darkmode'); // Obtém o valor do campo darkmode enviado por AJAX
+
+			$usuario = $this->Users->findById($usuarioId)->first();
+			$usuario->darkmode = $darkMode;
+			$this->Users->save($usuario);
+			return $this->jsonResponse(['Msg' => 'Alterado com sucesso'], 200);
+		}
+	}    
 }
