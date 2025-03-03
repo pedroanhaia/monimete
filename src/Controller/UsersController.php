@@ -119,7 +119,7 @@ class UsersController extends AppController
 		if ($result && $result->isValid()) {
 			$_SESSION['bLogin'] = true;
 			$redirect = $this->request->getQuery('redirect', [
-				'controller' => 'Arts',
+				'controller' => 'Logs',
 				'action' => 'index',
 			]);
 			return $this->redirect($redirect);

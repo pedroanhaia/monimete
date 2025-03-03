@@ -202,7 +202,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'username' => 'email',
                 'password' => 'password',
             ],
-            'loginUrl' => Router::url('/users/index'),
+            'loginUrl' => Router::url('/users/login'),
         ]);
 
         return $authenticationService;
