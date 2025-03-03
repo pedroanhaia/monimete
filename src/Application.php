@@ -42,7 +42,7 @@ use Authorization\AuthorizationServiceProviderInterface;
 use Authorization\Middleware\AuthorizationMiddleware;
 use Authorization\Policy\OrmResolver;
 use Cake\Http\Middleware\CorsMiddleware;
-use App\middleware\CorsMiddleware as MiddlewareCorsMiddleware;
+use App\Middleware\CorsMiddleware as MiddlewareCorsMiddleware;
 
 /**
  * Application setup class.
