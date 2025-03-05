@@ -132,7 +132,7 @@ class UsersController extends AppController
 
 	public function logout() {
 		$this->Authentication->logout();
-		return $this->redirect(['controller' => 'Pages', 'action' => 'homepage']);
+		return $this->redirect(['controller' => 'Pages', 'action' => 'display', 'indexhome']);
 	}
 
 	public function atualizardarkmode() {
