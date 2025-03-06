@@ -76,10 +76,10 @@ class AppController extends Controller
 		if(!empty($userLogado)) {
 			$userData = $this->Authentication->getIdentity()->getOriginalData();
 			$usuarioId = $userData->id; // Obtém o ID do usuário autenticado
-			$this->userObj = $this->users->findById($usuarioId)->first();
-			$this->set('darkMode', $this->userObj->darkmode);
-			$this->set('iduserLogado', $this->userObj->id);
-			$this->set('role', $this->userObj->role);
+			//$this->userObj = $this->users->findById($usuarioId)->first();
+			$this->set('darkMode', 0);
+			$this->set('iduserLogado', 0);
+			$this->set('role', 99);
 
 			$currentController = $this->request->getParam('controller');
 			$currentAction = $this->request->getParam('action');
