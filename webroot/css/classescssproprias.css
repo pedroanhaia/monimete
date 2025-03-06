@@ -1,5 +1,9 @@
+.top-nav-title {
+    display: flex;
+    flex-direction: column;
+}
 .top-nav-title a {
-    padding: 0rem 1rem;
+    padding: 0rem 0rem;
     color: #4a6533;
 }
 .top-nav {
@@ -7,4 +11,28 @@
 }
 .top-nav-links a {
     color: #4a6533;
+}
+.containerlogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+.containerTextLogin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+.btndefault {
+    background-color: #4a6533;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0.5rem 0.5rem;
+    cursor: pointer;
 }

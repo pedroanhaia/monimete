@@ -3,8 +3,8 @@
 	<head>
 		<?= $this->Html->charset() ?>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title> Assistências: Casa Lar </title>
+        <?= $this->Html->meta('icon','img/AGROCITY_LIVING_LABicon.jpg') ?>
+        <title> Monimete: Monitoramento metereológico - Agrocity </title>
 
 		<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
 		<?=
@@ -45,13 +45,11 @@
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="card">
-                        <div class = "containerText">
-                            <h4 class="mb-0">Login</h4>
-                        </div>
-                        <div class="containerlogo card-header text-center">
-                            <div>
-                                <img src="/img/atendimento-ao-cliente.png" alt="Seu Logo"  class="custom-logologin-size">
+                            <div class = "containerTextLogin">
+                                <h4 class="mb-0">Login</h4>
                             </div>
+                            <div class = "containerlogo">
+                            <?=$this->Html->image('AGROCITY_LIVING_LABicon.jpg', ['alt' => 'Agrocity Logo', 'width'=>'200em'])?>
                         </div>
                         <main class="main card-body">
                             <div class="container">

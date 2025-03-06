@@ -10,6 +10,10 @@
         <?= $this->Form->control('email') ?>
         <?= $this->Form->control('password') ?>
     </fieldset>
-    <?= $this->Form->button(__('login')); ?>
+    <?= $this->Form->button(__('login', ['class' => 'btndefault'])); ?>
     <?= $this->Form->end() ?>
+    <?= $this->Html->link(
+        'cadastre-se',
+        ['controller' => 'Users', 'action' => 'add', 'class' => 'button btndefault'],
+    )?>
 </div>
