@@ -33,11 +33,14 @@ class InstalledVersions
     private static $installed;
 
     /**
+<<<<<<< HEAD
      * @var bool
      */
     private static $installedIsLocalDir;
 
     /**
+=======
+>>>>>>> main
      * @var bool|null
      */
     private static $canGetVendors;
@@ -314,12 +317,15 @@ class InstalledVersions
     {
         self::$installed = $data;
         self::$installedByVendor = array();
+<<<<<<< HEAD
 
         // when using reload, we disable the duplicate protection to ensure that self::$installed data is
         // always returned, but we cannot know whether it comes from the installed.php in __DIR__ or not,
         // so we have to assume it does not, and that may result in duplicate data being returned when listing
         // all installed packages for example
         self::$installedIsLocalDir = false;
+=======
+>>>>>>> main
     }
 
     /**
@@ -336,9 +342,13 @@ class InstalledVersions
         $copiedLocalDir = false;
 
         if (self::$canGetVendors) {
+<<<<<<< HEAD
             $selfDir = strtr(__DIR__, '\\', '/');
             foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
                 $vendorDir = strtr($vendorDir, '\\', '/');
+=======
+            foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
+>>>>>>> main
                 if (isset(self::$installedByVendor[$vendorDir])) {
                     $installed[] = self::$installedByVendor[$vendorDir];
                 } elseif (is_file($vendorDir.'/composer/installed.php')) {
@@ -346,6 +356,7 @@ class InstalledVersions
                     $required = require $vendorDir.'/composer/installed.php';
                     self::$installedByVendor[$vendorDir] = $required;
                     $installed[] = $required;
+<<<<<<< HEAD
                     if (self::$installed === null && $vendorDir.'/composer' === $selfDir) {
                         self::$installed = $required;
                         self::$installedIsLocalDir = true;
@@ -354,6 +365,13 @@ class InstalledVersions
                 if (self::$installedIsLocalDir && $vendorDir.'/composer' === $selfDir) {
                     $copiedLocalDir = true;
                 }
+=======
+                    if (strtr($vendorDir.'/composer', '\\', '/') === strtr(__DIR__, '\\', '/')) {
+                        self::$installed = $required;
+                        $copiedLocalDir = true;
+                    }
+                }
+>>>>>>> main
             }
         }
 

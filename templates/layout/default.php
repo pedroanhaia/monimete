@@ -36,7 +36,11 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
 <body>
     <nav class="top-nav">
         <div class="top-nav-title">
+<<<<<<< HEAD
             
+=======
+            <img src="/img/AGROCITY_LIVING_LABicon.jpg" alt="Agrocity Logo" width="100em">
+>>>>>>> main
             <?=$this->Html->image('AGROCITY_LIVING_LABicon.jpg', ['alt' => 'Agrocity Logo', 'width'=>'100em'])?>
             
             <a  href="<?= $this->Url->build('/') ?>"><span>Moni</span>mete</a>

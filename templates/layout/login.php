@@ -3,7 +3,11 @@
 	<head>
 		<?= $this->Html->charset() ?>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+<<<<<<< HEAD
      
+=======
+        <?= $this->Html->meta('icon','img/AGROCITY_LIVING_LABicon.jpg') ?>
+>>>>>>> main
         <title> Monimete: Monitoramento metereológico - Agrocity </title>
 
 		<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">

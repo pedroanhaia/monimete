@@ -41,8 +41,13 @@ class User extends Entity
         'created' => true,
         'modified' => true,
         'role' => true,
+<<<<<<< HEAD
        // 'city_id' => true,
         //'city' => true,
+=======
+        'city_id' => true,
+        'city' => true,
+>>>>>>> main
     ];
 
     /**

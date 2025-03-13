@@ -11,7 +11,11 @@
             <?= $this->Html->link(__('List Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
+<<<<<<< HEAD
     <div class="column column-90">
+=======
+    <div class="column column-80">
+>>>>>>> main
         <div class="users form content">
             <?= $this->Form->create($user) ?>
             <fieldset>
