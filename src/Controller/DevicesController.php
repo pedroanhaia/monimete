@@ -10,6 +10,13 @@ namespace App\Controller;
  */
 class DevicesController extends AppController
 {
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+
+        $this->Authentication->addUnauthenticatedActions(['iunputdatadevices']);
+        parent::beforeFilter($event);
+        
+    }
     /**
      * Index method
      *
@@ -99,5 +106,55 @@ class DevicesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    public function iunputdatadevices()
+    {
+        $this->autoRender = false;
+        // Identificar dispositivo
+        $deviceId = $this->request->getQuery('device_id');
+        if (!$deviceId) {
+            $this->response = $this->response->withStatus(400)->withStringBody('Device ID is required.');
+            return $this->response;
+        }
+
+        $device = $this->Devices->find()
+            ->where(['id' => $deviceId])
+            ->first();
+
+        if (!$device) {
+            $this->response = $this->response->withStatus(404)->withStringBody('Device not found.');
+            return $this->response;
+        }
+
+        
+        // Decodificar JSON
+        $jsonData = $this->request->getData('payload');
+        if (!$jsonData) {
+            $this->response = $this->response->withStatus(400)->withStringBody('Payload is required.');
+            return $this->response;
+        }
+        
+        $decodedData = json_decode($jsonData, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->response = $this->response->withStatus(400)->withStringBody('Invalid JSON payload.');
+            return $this->response;
+        }
+        
+        $this->fetchTable('Logs');
+        // Salvar na base de dados
+        $dataEntity = $this->Logs->newEmptyEntity();
+        $dataEntity->device_id = $deviceId;
+        $dataEntity->date_time = $decodedData['date_time'];
+        $dataEntity->message = $jsonData;
+        $dataEntity->status = $decodedData['status'];
+        $dataEntity->type = $decodedData['data_type'];
+        $dataEntity->platform_id = $device->platform_id;
+        if ($this->Devices->Data->save($dataEntity)) {
+            $this->response = $this->response->withStatus(200)->withStringBody('Data saved successfully.');
+        } else {
+            $this->response = $this->response->withStatus(500)->withStringBody('Failed to save data.');
+        }
+
+        return $this->response;
     }
 }

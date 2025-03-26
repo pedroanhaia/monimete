@@ -33,26 +33,34 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 </head>
+
 <body>
-    <nav class="top-nav">
-        <div class="top-nav-title">
-            <img src="/img/AGROCITY_LIVING_LABicon.jpg" alt="Agrocity Logo" width="100em">
-            <?=$this->Html->image('AGROCITY_LIVING_LABicon.jpg', ['alt' => 'Agrocity Logo', 'width'=>'100em'])?>
-            
-            <a  href="<?= $this->Url->build('/') ?>"><span>Moni</span>mete</a>
+    <div class="containerpersonalizado">
+        <div>
+            <?= $this->Html->link(__('dispositivos'), ['controller'=>'Devices','action' => 'index'], ['class' => 'button']) ?>
+            <?= $this->Html->link(__('dispositivos'), ['controller'=>'Devices','action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
-        <div class="top-nav-links">
-            <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/">Documentação</a>
-            <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
-            <?= $this->Html->link(__('Acesso restrito'), ['controller' => 'users'],['action' => 'login'], ['class' => 'button float-right']) ?>
+        <div>
+            <nav class="top-nav">
+                <div class="top-nav-title">
+                    <img src="/img/AGROCITY_LIVING_LABicon.jpg" alt="Agrocity Logo" width="100em">
+                    <?=$this->Html->image('AGROCITY_LIVING_LABicon.jpg', ['alt' => 'Agrocity Logo', 'width'=>'100em'])?>
+                    <a  href="<?= $this->Url->build('/') ?>"><span>Moni</span>mete</a>
+                </div>
+                <div class="top-nav-links">
+                    <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/">Documentação</a>
+                    <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
+                    <?= $this->Html->link(__('Acesso restrito'), ['controller' => 'users'],['action' => 'login'], ['class' => 'button float-right']) ?>
+                </div>
+            </nav>
+            <main class="main">
+                <div class="container">
+                    <?= $this->Flash->render() ?>
+                    <?= $this->fetch('content') ?>
+                </div>
+            </main>
         </div>
-    </nav>
-    <main class="main">
-        <div class="container">
-            <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
-        </div>
-    </main>
+    </div>
     <footer>
     </footer>
 </body>
