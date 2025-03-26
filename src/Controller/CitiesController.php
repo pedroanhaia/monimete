@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 namespace App\Controller;
-
+use Cake\Http\Client;
+use Cake\Collection\Collection;
 /**
  * Cities Controller
  *
@@ -17,6 +18,27 @@ class CitiesController extends AppController
      */
     public function index()
     {
+        $http = new Client();
+        
+        // Realiza a requisição GET para o endpoint desejado
+        $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
+        $body = $response->getStringBody();
+        $xml = simplexml_load_string($body);
+        $this->add();
+        //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
+        if ($response->isOk()) {
+            // Se o retorno for JSON, você pode decodificá-lo diretamente:
+            $data = $xml;
+        } else {
+            // Caso contrário, pode capturar o corpo da resposta ou tratar o erro
+            
+        }
+        
+        // Passa os dados para a view
+        //$this->set(compact('data'));
+        $xmlObject = simplexml_load_string($body, "SimpleXMLElement", LIBXML_NOCDATA);
+        $dataArray = json_decode(json_encode($xmlObject), true);
+        $collection = new Collection($dataArray);
         $query = $this->Cities->find();
         $cities = $this->paginate($query);
 

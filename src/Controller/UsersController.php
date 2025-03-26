@@ -16,11 +16,19 @@ class UsersController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
 
-        $this->Authentication->addUnauthenticatedActions(['login', 'add']);
+        $this->Authentication->addUnauthenticatedActions(['login', 'add','indexapi']);
         parent::beforeFilter($event);
         
     }
-    /**
+    public function indexapi() {
+        $this->autoRender = false; // Desativa a renderização automática da visão
+        $users = $this->Users->find('all')->toArray();
+        /* $this->jsonResponse($users, 200);*/
+        $this->response = $this->response->withType('application/json')
+        ->withStringBody(json_encode($users    ));
+        return $this->response;
+    }
+    /** 
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view

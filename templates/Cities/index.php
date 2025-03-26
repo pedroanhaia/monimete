@@ -4,9 +4,45 @@
  * @var iterable<\App\Model\Entity\City> $cities
  */
 ?>
+
 <div class="cities index content">
+
     <?= $this->Html->link(__('New City'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('Cities') ?></h3>
+        <!-- Seção para exibir os dados externos -->
+        <div class="external-data">
+        
+        <?php if (isset($data) && !empty($data)): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <?php
+                        // Supondo que $data seja um array de arrays ou objetos, pegamos as chaves do primeiro item
+                        $headers = is_object($data[0]) ? array_keys(get_object_vars($data[0])) : array_keys($data[0]);
+                        foreach ($headers as $header):
+                        ?>
+                            <th><?= h($header) ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($data as $item): ?>
+                        <tr>
+                            <?php
+                            // Se for objeto, converte para array para iterar; se for array, já é
+                            $values = is_object($item) ? get_object_vars($item) : $item;
+                            foreach ($values as $value):
+                            ?>
+                                <td><?= h($value) ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Nenhum dado externo disponível.</p>
+        <?php endif; ?>
+    </div>
     <div class="table-responsive">
         <table>
             <thead>
