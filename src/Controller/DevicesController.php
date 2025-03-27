@@ -107,6 +107,7 @@ class DevicesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+    
     public function iunputdatadevices()
     {
         $this->autoRender = false;
