@@ -11,6 +11,8 @@
         "cakephp/cakephp": "5.1.*",
         "cakephp/migrations": "^4.0.0",
         "cakephp/plugin-installer": "^2.0",
+        "composer/ca-bundle": "^1.5",
+        "curl/curl": "^2.5",
         "mobiledetect/mobiledetectlib": "^4.8.03"
     },
     "require-dev": {

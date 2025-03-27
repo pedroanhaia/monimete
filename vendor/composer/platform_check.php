@@ -13,6 +13,7 @@ if (PHP_INT_SIZE !== 8) {
 }
 
 $missingExtensions = array();
+extension_loaded('curl') || $missingExtensions[] = 'curl';
 extension_loaded('intl') || $missingExtensions[] = 'intl';
 extension_loaded('json') || $missingExtensions[] = 'json';
 extension_loaded('openssl') || $missingExtensions[] = 'openssl';

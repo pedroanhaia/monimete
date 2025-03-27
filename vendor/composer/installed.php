@@ -3,7 +3,7 @@
         'name' => 'cakephp/app',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '9df3281626377333366fbf91f7afe5f8ca50c103',
+        'reference' => '3d29daa7316571238ace8f8797a646da93388c25',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'cakephp/app' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '9df3281626377333366fbf91f7afe5f8ca50c103',
+            'reference' => '3d29daa7316571238ace8f8797a646da93388c25',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -273,6 +273,15 @@
             'install_path' => __DIR__ . '/./xdebug-handler',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'curl/curl' => array(
+            'pretty_version' => '2.5.0',
+            'version' => '2.5.0.0',
+            'reference' => 'c4f8799c471e43b7c782c77d5c6e178d0465e210',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../curl/curl',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'dealerdirect/phpcodesniffer-composer-installer' => array(
             'pretty_version' => 'v1.0.0',
