@@ -23,12 +23,12 @@ class CitiesController extends AppController
         // Realiza a requisição GET para o endpoint desejado
         $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
         $body = $response->getStringBody();
-        $xml = simplexml_load_string($body);
-        $this->add();
+       // $xml = $response->getBody()
+        //$this->add();
         //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
         if ($response->isOk()) {
             // Se o retorno for JSON, você pode decodificá-lo diretamente:
-            $data = $xml;
+       //     $data = $xml;
         } else {
             // Caso contrário, pode capturar o corpo da resposta ou tratar o erro
             
@@ -36,9 +36,9 @@ class CitiesController extends AppController
         
         // Passa os dados para a view
         //$this->set(compact('data'));
-        $xmlObject = simplexml_load_string($body, "SimpleXMLElement", LIBXML_NOCDATA);
-        $dataArray = json_decode(json_encode($xmlObject), true);
-        $collection = new Collection($dataArray);
+       // $xmlObject = simplexml_load_string($body, "SimpleXMLElement", LIBXML_NOCDATA);
+        //$dataArray = json_decode(json_encode($xmlObject), true);
+        //$collection = new Collection($dataArray);
         $query = $this->Cities->find();
         $cities = $this->paginate($query);
 
