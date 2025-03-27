@@ -13,7 +13,7 @@ class DevicesController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
 
-        $this->Authentication->addUnauthenticatedActions(['iunputdatadevices']);
+        $this->Authentication->addUnauthenticatedActions(['inputdatadevices']);
         parent::beforeFilter($event);
         
     }
@@ -108,11 +108,11 @@ class DevicesController extends AppController
         return $this->redirect(['action' => 'index']);
     }
     
-    public function iunputdatadevices()
+    public function inputdatadevices($deviceId = null)
     {
         $this->autoRender = false;
         // Identificar dispositivo
-        $deviceId = $this->request->getQuery('device_id');
+        //$deviceId = $this->request->getQuery('device_id');
         if (!$deviceId) {
             $this->response = $this->response->withStatus(400)->withStringBody('Device ID is required.');
             return $this->response;

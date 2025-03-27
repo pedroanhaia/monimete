@@ -21,18 +21,18 @@ class CitiesController extends AppController
         $http = new Client();
         
         // Realiza a requisição GET para o endpoint desejado
-        $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
-        $body = $response->getStringBody();
+        //$response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
+        //$body = $response->getStringBody();
        // $xml = $response->getBody()
         //$this->add();
         //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
-        if ($response->isOk()) {
+        // if ($response->isOk()) {
             // Se o retorno for JSON, você pode decodificá-lo diretamente:
        //     $data = $xml;
-        } else {
+        // } else {
             // Caso contrário, pode capturar o corpo da resposta ou tratar o erro
             
-        }
+        // }
         
         // Passa os dados para a view
         //$this->set(compact('data'));
