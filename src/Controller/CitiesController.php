@@ -11,6 +11,13 @@ use Cake\Collection\Collection;
  */
 class CitiesController extends AppController
 {
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+
+        $this->Authentication->addUnauthenticatedActions(['addinpedata']);
+        parent::beforeFilter($event);
+        
+    }
     /**
      * Index method
      *
@@ -20,25 +27,7 @@ class CitiesController extends AppController
     {
         $http = new Client();
         
-        // Realiza a requisição GET para o endpoint desejado
-        //$response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
-        //$body = $response->getStringBody();
-       // $xml = $response->getBody()
-        //$this->add();
-        //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
-        // if ($response->isOk()) {
-            // Se o retorno for JSON, você pode decodificá-lo diretamente:
-       //     $data = $xml;
-        // } else {
-            // Caso contrário, pode capturar o corpo da resposta ou tratar o erro
-            
-        // }
-        
-        // Passa os dados para a view
-        //$this->set(compact('data'));
-       // $xmlObject = simplexml_load_string($body, "SimpleXMLElement", LIBXML_NOCDATA);
-        //$dataArray = json_decode(json_encode($xmlObject), true);
-        //$collection = new Collection($dataArray);
+
         $query = $this->Cities->find();
         $cities = $this->paginate($query);
 
@@ -76,6 +65,48 @@ class CitiesController extends AppController
             $this->Flash->error(__('The city could not be saved. Please, try again.'));
         }
         $this->set(compact('city'));
+    }
+
+
+
+    public function addinpedata(){
+        $http = new Client();  
+        $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
+        $xml = simplexml_load_string($response->getStringBody());
+        if($this->request->is("get")) {
+        foreach($xml ->cidade as $cidade) {
+                $city = $this->Cities->newEmptyEntity();
+                $city->name = $cidade->nome;
+                $city->cod_ibge = $cidade->id;
+                if ($this->Cities->save($city)) {
+                    $this->Flash->success(__('The city has been saved.'));
+                }else{
+                    $this->Flash->error(__('The city could not be saved. Please, try again.'));
+                }
+            }}
+            ;
+       // $xml = $response->getBody()
+        //$this->add();
+        //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
+        // if ($response->isOk()) {
+            // Se o retorno for JSON, você pode decodificá-lo diretamente:
+       //     $data = $xml;
+        // } else {
+            // Caso contrário, pode capturar o corpo da resposta ou tratar o erro
+            
+        // }
+        
+        // Passa os dados para a view
+        //$this->set(compact('data'));
+       // $xmlObject = simplexml_load_string($body, "SimpleXMLElement", LIBXML_NOCDATA);
+        //$dataArray = json_decode(json_encode($xmlObject), true);
+        //$collection = new Collection($dataArray);
+
+
+
+
+
+
     }
 
     /**

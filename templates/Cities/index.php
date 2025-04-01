@@ -8,41 +8,10 @@
 <div class="cities index content">
 
     <?= $this->Html->link(__('New City'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link(__('teste'), '#', ['class' => 'button float-right', 'id' => 'newCityAjax']) ?>
+
     <h3><?= __('Cities') ?></h3>
-        <!-- Seção para exibir os dados externos -->
-        <div class="external-data">
-        
-        <?php if (isset($data) && !empty($data)): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <?php
-                        // Supondo que $data seja um array de arrays ou objetos, pegamos as chaves do primeiro item
-                        $headers = is_object($data[0]) ? array_keys(get_object_vars($data[0])) : array_keys($data[0]);
-                        foreach ($headers as $header):
-                        ?>
-                            <th><?= h($header) ?></th>
-                        <?php endforeach; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($data as $item): ?>
-                        <tr>
-                            <?php
-                            // Se for objeto, converte para array para iterar; se for array, já é
-                            $values = is_object($item) ? get_object_vars($item) : $item;
-                            foreach ($values as $value):
-                            ?>
-                                <td><?= h($value) ?></td>
-                            <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>Nenhum dado externo disponível.</p>
-        <?php endif; ?>
-    </div>
+      
     <div class="table-responsive">
         <table>
             <thead>
@@ -86,3 +55,26 @@
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+    
+        document.getElementById('newCityAjax').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita o comportamento padrão do link
+            newCityAjax();
+        });
+        function newCityAjax(){
+            $.ajax({
+                url: '<?php $link = $this->Url->build(['controller' => 'Cities', 'action' => 'addinpedata'],['fullBase' => true]);
+                echo $link;
+                ?>',
+                type: 'POST',
+        
+                success: function(response) {
+                    // Manipule a resposta do servidor aqui
+                    // Por exemplo, você pode atualizar uma parte da página com os dados recebidos
+                    console.log(response);
+                },
+            });
+        }
+    });
+</script>

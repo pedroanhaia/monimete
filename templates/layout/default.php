@@ -28,6 +28,8 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
     <?= $this->Html->meta('icon','img/AGROCITY_LIVING_LABicon.jpg') ?>
 
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake', 'classescssproprias']) ?>
+    <?= $this->Html->script(['http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js']) ?>
+    
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
