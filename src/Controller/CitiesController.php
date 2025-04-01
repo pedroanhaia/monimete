@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Controller;
 use Cake\Http\Client;
 use Cake\Collection\Collection;
+
+use Cake\Log\Log;
 /**
  * Cities Controller
  *
@@ -68,23 +70,90 @@ class CitiesController extends AppController
     }
 
 
+    // Método alternativo utilizando cURL
+    public function makeRequestWithCurl(string $method, string $url, array $data = [], array $headers = [])
+    {
+        $this->autorender = false;
+        Log::write('debug', 'Executando requisição na URL: ' . $url);
 
+        // Adicionar o token atual nos headers
+        // $headers['Authorization'] = 'Bearer ' . $this->accessToken;
+        // $headers['Content-Type'] = 'application/json';
+        // $headers['Accept-Encoding'] = 'gzip, deflate';
+
+        // Inicializar cURL
+        $ch = curl_init();
+
+        // Configurar o método HTTP
+        $method = strtoupper($method);
+        if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // Enviar os dados como JSON
+        }
+
+        if ($method === 'GET' || $method === 'DELETE') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        }
+
+        // Configurar as opções do cURL
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => true, // Para capturar os cabeçalhos da resposta
+            CURLOPT_HTTPHEADER => array_map(
+                fn ($key, $value) => "$key: $value",
+                array_keys($headers),
+                $headers
+            ),
+            CURLOPT_ENCODING => '', // Suporte a gzip e deflate
+            CURLOPT_TIMEOUT => 30,
+        ]);
+
+        // Executar a requisição
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+
+        // Separar cabeçalhos e corpo
+        $responseHeaders = substr($response, 0, $headerSize);
+        $responseBody = substr($response, $headerSize);
+
+        // Verificar erros de cURL
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            Log::write('error', 'Erro cURL: ' . $error);
+            throw new \Exception('Erro na requisição cURL: ' . $error);
+        }
+        curl_close($ch);
+
+        
+        // Retornar a resposta como array
+        return [
+            'http_code' => $httpCode,
+            'headers' => $responseHeaders,
+            'body' => $responseBody,
+        ];
+    }
     public function addinpedata(){
-        $http = new Client();  
-        $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
-        $xml = simplexml_load_string($response->getStringBody());
-        if($this->request->is("get")) {
-        foreach($xml ->cidade as $cidade) {
-                $city = $this->Cities->newEmptyEntity();
-                $city->name = $cidade->nome;
-                $city->cod_ibge = $cidade->id;
-                if ($this->Cities->save($city)) {
-                    $this->Flash->success(__('The city has been saved.'));
-                }else{
-                    $this->Flash->error(__('The city could not be saved. Please, try again.'));
-                }
-            }}
-            ;
+        $this->autorender = false;
+        // $http = new Client();  
+        $retorno = $this->makeRequestWithCurl('GET', 'http://servicos.cptec.inpe.br/XML/listaCidades', [], []);
+        return ($this->response->withStringBody($retorno['body']));
+        // $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
+        // $xml = simplexml_load_string($response->getStringBody());
+        // if($this->request->is("get")) {
+        // foreach($xml ->cidade as $cidade) {
+        //         $city = $this->Cities->newEmptyEntity();
+        //         $city->name = $cidade->nome;
+        //         $city->cod_ibge = $cidade->id;
+        //         if ($this->Cities->save($city)) {
+        //             $this->Flash->success(__('The city has been saved.'));
+        //         }else{
+        //             $this->Flash->error(__('The city could not be saved. Please, try again.'));
+        //         }
+        //     }}
+        //     ;
        // $xml = $response->getBody()
         //$this->add();
         //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
