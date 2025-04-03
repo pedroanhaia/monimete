@@ -111,6 +111,9 @@ class CitiesController extends AppController
 
         // Executar a requisição
         $response = curl_exec($ch);
+        if ($response === false) {
+            throw new \Exception('Erro ao executar cURL: ' . curl_error($ch));
+        }
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 
@@ -136,47 +139,37 @@ class CitiesController extends AppController
         ];
     }
     public function addinpedata(){
-        $this->autorender = false;
+        $this->autoRender = false;
         // $http = new Client();  
+       
         $retorno = $this->makeRequestWithCurl('GET', 'http://servicos.cptec.inpe.br/XML/listaCidades', [], []);
-        return ($this->response->withStringBody($retorno['body']));
-        // $response = $http->get("http://servicos.cptec.inpe.br/XML/listaCidades");
-        // $xml = simplexml_load_string($response->getStringBody());
-        // if($this->request->is("get")) {
-        // foreach($xml ->cidade as $cidade) {
-        //         $city = $this->Cities->newEmptyEntity();
-        //         $city->name = $cidade->nome;
-        //         $city->cod_ibge = $cidade->id;
-        //         if ($this->Cities->save($city)) {
-        //             $this->Flash->success(__('The city has been saved.'));
-        //         }else{
-        //             $this->Flash->error(__('The city could not be saved. Please, try again.'));
-        //         }
-        //     }}
-        //     ;
-       // $xml = $response->getBody()
-        //$this->add();
-        //$response = $http->get('http://servicos.cptec.inpe.br/XML/listaCidades');
-        // if ($response->isOk()) {
-            // Se o retorno for JSON, você pode decodificá-lo diretamente:
-       //     $data = $xml;
-        // } else {
-            // Caso contrário, pode capturar o corpo da resposta ou tratar o erro
-            
-        // }
         
-        // Passa os dados para a view
-        //$this->set(compact('data'));
-       // $xmlObject = simplexml_load_string($body, "SimpleXMLElement", LIBXML_NOCDATA);
-        //$dataArray = json_decode(json_encode($xmlObject), true);
-        //$collection = new Collection($dataArray);
-
-
-
-
-
-
-    }
+        if($retorno===null){
+            throw new \Exception('Erro ao executar cURL: inpe fora do ar provavelmente');
+        }
+            // Testa se é XML
+            libxml_use_internal_errors(true); // Para evitar warnings de XML inválido
+            $xml = simplexml_load_string($retorno['body']);
+            if ($this->request->is("get")) {
+            foreach ($xml->cidade as $cidade) {
+                    $city = $this->Cities->newEmptyEntity();
+                    $city->name = $cidade->nome;
+                    $city->cod_ibge = $cidade->id;
+                    $repetida=$this->Cities->find()->where(['cod_ibge' => $cidade->id])->first();
+                    if($city!==$repetida){
+                        if ($this->Cities->save($city)) {
+                            $this->Flash->success(__('The city has been saved.'));break;
+                        }else{
+                            $this->Flash->error(__('The city could not be saved. Please, try again.'));break;
+                    }
+                    }else{
+                        $this->Flash->error(__('A cidade já existe na base de dados.'));break;
+                    }
+                }
+            }
+        }
+    
+        
 
     /**
      * Edit method
@@ -218,5 +211,41 @@ class CitiesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    public function removeDuplicates()
+    {
+        $this->autoRender = false;
+
+        // Busca todas as cidades agrupadas pelo cod_ibge e conta quantas existem de cada
+        $duplicates = $this->Cities->find()
+            ->select(['cod_ibge', 'count' => 'COUNT(*)'])
+            ->group(['cod_ibge'])
+            ->having(['COUNT(*) >' => 1]) // Filtra apenas os que têm mais de uma ocorrência
+            ->toArray();
+
+        $deletedCount = 0;
+
+        foreach ($duplicates as $duplicate) {
+            // Busca todas as cidades com o mesmo cod_ibge
+            $cities = $this->Cities->find()
+                ->where(['cod_ibge' => $duplicate->cod_ibge])
+                ->order(['id' => 'ASC']) // Ordena para manter o primeiro inserido e excluir os outros
+                ->toArray();
+
+            // Mantém a primeira cidade e deleta as outras
+            array_shift($cities); // Remove o primeiro item da lista (mantém ele)
+
+            foreach ($cities as $city) {
+                if ($this->Cities->delete($city)) {
+                    $deletedCount++;
+                }
+            }
+        }
+
+        //return $this->response->withType('application/json')
+          //  ->withStringBody(json_encode([
+            //    'message' => "Remoção de duplicatas concluída.",
+              //  'deleted_count' => $deletedCount
+            //]));
     }
 }
