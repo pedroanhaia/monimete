@@ -6,6 +6,7 @@ use Cake\Http\Client;
 use Cake\Collection\Collection;
 
 use Cake\Log\Log;
+use SebastianBergmann\Invoker\TimeoutException;
 /**
  * Cities Controller
  *
@@ -139,10 +140,16 @@ class CitiesController extends AppController
         ];
     }
     public function addinpedata(){
-        $this->autoRender = false;
-        // $http = new Client();  
-       
-        $retorno = $this->makeRequestWithCurl('GET', 'http://servicos.cptec.inpe.br/XML/listaCidades', [], []);
+        $this->autoRender = false; 
+        set_time_limit(0);
+        $adicionadas=0;
+        $numRepetidas=0;
+        $numErros=0;
+        //itera de a-z duas vezes
+        //pra pegar todas as cidades
+        for ($letra = 'a';$letra != 'aa'; $letra++) {
+        for ($segletra = 'a';$segletra != 'aa'; $segletra++) {
+        $retorno = $this->makeRequestWithCurl('GET', "http://servicos.cptec.inpe.br/XML/listaCidades?city=$letra$segletra", [], []);
         
         if($retorno===null){
             throw new \Exception('Erro ao executar cURL: inpe fora do ar provavelmente');
@@ -150,25 +157,37 @@ class CitiesController extends AppController
             // Testa se é XML
             libxml_use_internal_errors(true); // Para evitar warnings de XML inválido
             $xml = simplexml_load_string($retorno['body']);
-            if ($this->request->is("get")) {
+          //  if ($this->request->is("get")) {
             foreach ($xml->cidade as $cidade) {
                     $city = $this->Cities->newEmptyEntity();
                     $city->name = $cidade->nome;
                     $city->cod_ibge = $cidade->id;
-                    $repetida=$this->Cities->find()->where(['cod_ibge' => $cidade->id])->first();
-                    if($city!==$repetida){
-                        if ($this->Cities->save($city)) {
-                            $this->Flash->success(__('The city has been saved.'));break;
-                        }else{
-                            $this->Flash->error(__('The city could not be saved. Please, try again.'));break;
-                    }
+                    if($cidade->uf=='RS'){
+                        $naors = false;
                     }else{
-                        $this->Flash->error(__('A cidade já existe na base de dados.'));break;
+                        $naors = true;
+                    }
+                    $repetida=$this->Cities->find()->where(['cod_ibge' => $cidade->id])->first();//impede cadastrar duplicatas
+                    if($repetida===null&&!$naors){
+                        if ($this->Cities->save($city)) {
+                           // $this->Flash->success(__('The city has been saved.'));
+                            $adicionadas++;
+                        }else{
+                           // $this->Flash->error(__('The city could not be saved. Please, try again.'));
+                            $numErros++;
+                        }
+                    }else{
+                      //  $this->Flash->error(__('A cidade já existe na base de dados.'));
+                        $numRepetidas++;
                     }
                 }
-            }
+         //   }
         }
-    
+    }$this->Flash->success(_("$adicionadas cidades foram adicionadas"));
+    $this->Flash->error(_("$numRepetidas cidades já existiam na base de dados"));
+    $this->Flash->error(_("$numErros cidades não foram adicionadas"));    
+
+}
         
 
     /**
@@ -247,5 +266,17 @@ class CitiesController extends AppController
             //    'message' => "Remoção de duplicatas concluída.",
               //  'deleted_count' => $deletedCount
             //]));
+    }
+    public function deletatudo(){
+        $this->autoRender = false;
+        $cities = $this->Cities->find()->all();
+        foreach ($cities as $city) {
+            if ($this->Cities->delete($city)) {
+              //  $this->Flash->success(__('The city has been deleted.'));
+            } else {
+                $this->Flash->error(__('The city could not be deleted. Please, try again.'));
+            }
+        }
+        return $this->redirect(['action' => 'index']);
     }
 }

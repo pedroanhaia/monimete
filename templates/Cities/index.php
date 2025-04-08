@@ -8,7 +8,8 @@
 <div class="cities index content">
 
     <?= $this->Html->link(__('New City'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <?= $this->Html->link(__('teste'), '#', ['class' => 'button float-right', 'id' => 'newCityAjax']) ?>
+    <?= $this->Html->link(__('testeadd'), '#', ['class' => 'button float-right', 'id' => 'newCityAjax']) ?>
+    <?= $this->Html->link(__('testeremovedupe'), '#', ['class' => 'button float-right', 'id' => 'removeDuplicates']) ?>
 
     <h3><?= __('Cities') ?></h3>
       
@@ -56,25 +57,33 @@
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-    
-        document.getElementById('newCityAjax').addEventListener('click', function(event) {
-            event.preventDefault(); // Evita o comportamento padrão do link
-            newCityAjax();
-        });
-        function newCityAjax(){
-            $.ajax({
-                url: '<?php $link = $this->Url->build(['controller' => 'Cities', 'action' => 'addinpedata'],['fullBase' => true]);
-                echo $link;
-                ?>',
-                type: 'POST',
+        $(document).ready(function () {
         
-                success: function(response) {
-                    // Manipule a resposta do servidor aqui
-                    // Por exemplo, você pode atualizar uma parte da página com os dados recebidos
-                    console.log(response);
-                },
+            document.getElementById('newCityAjax').addEventListener('click', function(event) {
+                event.preventDefault(); // Evita o comportamento padrão do link
+                newCityAjax();
             });
-        }
+            document.getElementById('removeDuplicates').addEventListener('click', function(event) {
+                event.preventDefault(); // Evita o comportamento padrão do link
+                AjaxRemove();
+            });
+            function newCityAjax(){
+                $.ajax({
+                    url: '<?php $link = $this->Url->build(['controller' => 'Cities', 'action' => 'addinpedata'],['fullBase' => true]);
+                    echo $link;
+                    ?>',
+                    type: 'POST',
+            
+                });
+            }
+            function AjaxRemove(){
+                $.ajax({
+                    url: '<?php $link = $this->Url->build(['controller' => 'Cities', 'action' => 'deletatudo'],['fullBase' => true]);
+                    echo $link;
+                    ?>',
+                    type: 'POST',
+            
+                });
+            }     
     });
 </script>
