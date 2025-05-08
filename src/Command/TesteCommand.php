@@ -9,16 +9,16 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 
 /**
- * ImportCities command.
+ * Teste command.
  */
-class ImportCitiesCommand extends Command
+class TesteCommand extends Command
 {
     /**
      * The name of this command.
      *
      * @var string
      */
-    protected string $name = 'import_cities';
+    protected string $name = 'teste';
 
     /**
      * Get the default command name.
@@ -27,7 +27,7 @@ class ImportCitiesCommand extends Command
      */
     public static function defaultName(): string
     {
-        return 'import_cities';
+        return 'teste';
     }
 
     /**
@@ -62,5 +62,10 @@ class ImportCitiesCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
+        $io->out('Hello world');
+        $io->out('This is a test command.');
+
+        // You can return an exit code if needed
+        return static::CODE_SUCCESS;        
     }
 }

@@ -6,6 +6,8 @@
 ?>
 <div class="dataMetereological index content">
     <?= $this->Html->link(__('New Data Metereological'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link(__('adiciona dados inpe'), '#', ['class' => 'button float-right', 'id' => 'metdatainpe']) ?>
+
     <h3><?= __('Data Metereological') ?></h3>
     <div class="table-responsive">
         <table>
@@ -70,3 +72,33 @@
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
 </div>
+<script>
+        $(document).ready(function () {
+        
+            document.getElementById('metdatainpe').addEventListener('click', function(event) {
+                event.preventDefault(); // Evita o comportamento padrão do link
+                addmetereological();
+            });
+            function addmetereological(){
+                $.ajax({
+                    url: '<?= $this->Url->build(['controller' => 'DataMetereologicalController', 'action' => 'addmetereological']) ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Dados meteorológicos adicionados com sucesso!');
+                            location.reload(); // Atualiza a página após o sucesso
+                        } else {
+                            alert('Erro ao adicionar dados meteorológicos: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Erro na requisição AJAX: ' + error);
+                    }
+                });
+            }
+                 
+    });
+</script>
+
+

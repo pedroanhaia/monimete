@@ -10,6 +10,7 @@
     <?= $this->Html->link(__('New City'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <?= $this->Html->link(__('testeadd'), '#', ['class' => 'button float-right', 'id' => 'newCityAjax']) ?>
     <?= $this->Html->link(__('testeremovedupe'), '#', ['class' => 'button float-right', 'id' => 'removeDuplicates']) ?>
+    
 
     <h3><?= __('Cities') ?></h3>
       
