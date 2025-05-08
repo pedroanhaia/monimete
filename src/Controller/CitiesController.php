@@ -279,4 +279,17 @@ class CitiesController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
+    public function dashboard()
+    {
+        $cities = $this->Cities->find()
+            ->select(['id', 'name', 'cod_ibge'])
+            ->toArray();
+
+        
+        if ($this->request->is(['post'])) {
+            $this->viewBuilder()->setLayout('ajax'); // Define o layout para a resposta AJAX
+        }
+        $this->set(compact('cities'));
+    }
 }
