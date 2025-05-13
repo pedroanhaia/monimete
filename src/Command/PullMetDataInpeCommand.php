@@ -116,7 +116,7 @@ class PullMetDataInpeCommand extends Command
         $metdata->find()->all();
         debug($metdata);
         $citiesTable = $this->fetchTable('Cities');
-        $cidades = $citiesTable->find()->limit(1)->all();
+        $cidades = $citiesTable->find()->all();
         debug($cidades);
         
         debug($cidades);
@@ -144,7 +144,7 @@ class PullMetDataInpeCommand extends Command
                 $dataHora = date('Y-m-d H:i:s', strtotime($previsao->data . ' ' . $previsao->hora));
     
                 // Evita duplicação
-                $existe = TableRegistry::getTableLocator()->get('DataMetereological')->find()
+                $existe = TableRegistry::getTableLocator()->get('DataMetereological')->limit(5)->find()
                     ->where([
                         'location_id' => $cidade->cod_ibge, // assumindo que location_id mapeia para cities.id
                         'date_time' => $dataHora
@@ -161,7 +161,8 @@ class PullMetDataInpeCommand extends Command
 
     
                 $registrometdata->date_time = $dataHora;
-                $registrometdata->temperature = isset($previsao->maxima) ? floatval($previsao->maxima) : null;
+                $registrometdata->tempmax = isset($previsao->maxima) ? floatval($previsao->maxima) : null;
+                $registrometdata->tempemix = isset($previsao->minima) ? floatval($previsao->minima) : null;
                 $registrometdata->humidity = null;
                 $registrometdata->precipitation = null;
                 $registrometdata->wind_direction = null;
