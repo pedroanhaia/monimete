@@ -108,4 +108,3 @@ define('VISIBILIDADE', 8);
  * Constantes unidades metereológicos.
  */
 define('CELSIUS', 'C');
-define('UV', 'UV');
