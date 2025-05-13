@@ -92,3 +92,20 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'c
  */
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
+/*
+ * Constantes dados metereológicos.
+ */
+define('TEMPERATURA', 1);
+define('PRECIPITACAO', 2);
+define('CLIMA', 3);
+define('DIRVENTO', 4);
+define('UV', 5);
+define('PRESSAO', 6);
+define('UMIDADE', 7);
+define('VISIBILIDADE', 8);
+
+/*
+ * Constantes unidades metereológicos.
+ */
+define('CELSIUS', 'C');
+define('UV', 'UV');
