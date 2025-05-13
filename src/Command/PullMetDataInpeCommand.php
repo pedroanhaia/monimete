@@ -173,7 +173,7 @@ class PullMetDataInpeCommand extends Command
                 $registrometdata->service_id = null; // ajustar depois conectando com o service certo
                 $registrometdata->device_id = null; // ajustar depois conectando com o device certo
                 $registrometdata->role = 0;
-                $registrometdata->type = ;
+                $registrometdata->type = TEMPERATURA;
                
                 $deucerto=TableRegistry::getTableLocator()->get('DataMetereological')->save($registrometdata);
                 debug($deucerto);
