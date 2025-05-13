@@ -110,7 +110,7 @@ class PullMetDataInpeCommand extends Command
 
     public function execute(Arguments $args, ConsoleIo $io)
     {
-        
+        log::write('error',"entrou");
         $adicionados = 0;
         $repetidos = 0;
         $erros = 0;
@@ -185,9 +185,9 @@ class PullMetDataInpeCommand extends Command
             $citiesTable->save($cidade);
              
         }
-        log::write('erros',"Erros: $erros");
-        log::write('repetidos',"Repetidos: $repetidos");
-        log::write('adicionado',"Adicionados: $adicionados");
+        log::write('error',"Erros: $erros");
+        log::write('error',"Repetidos: $repetidos");
+        log::write('error',"Adicionados: $adicionados");
         
     
     }
