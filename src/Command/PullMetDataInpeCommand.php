@@ -121,13 +121,11 @@ class PullMetDataInpeCommand extends Command
             'order'=>['datelastsearch' => 'ASC'], 
         ],
         )->toArray();
-        debug($cidades);
        Log::write('debug',"Cidades: ".json_encode($cidades));
         foreach ($cidades as $cidade) {
             $url = "http://servicos.cptec.inpe.br/XML/cidade/7dias/{$cidade->cod_ibge}/previsao.xml";
             $retorno = $this->makeRequestWithCurl('GET', $url, [], []);
-            debug($retorno);
-            debug($url);
+           
             if ($retorno === null || empty($retorno['body'])) {
                 $erros++;
                 continue;
@@ -135,8 +133,6 @@ class PullMetDataInpeCommand extends Command
     
             libxml_use_internal_errors(true);
             $xml = simplexml_load_string($retorno['body']);
-            debug($xml);
-            debug($retorno['body']);
             if ($xml === false || !isset($xml->previsao)) {
                 $erros++;
                 continue;
@@ -159,8 +155,7 @@ class PullMetDataInpeCommand extends Command
                 }
                 $metdataTable = TableRegistry::getTableLocator()->get('DataMetereological');
                 $registrometdata = $metdataTable->newEntity([]);
-                debug($registrometdata);
-
+            
     
                 $registrometdata->date_time = $dataHora;
                 $registrometdata->tempmax = isset($previsao->maxima) ? floatval($previsao->maxima) : null;
@@ -176,11 +171,9 @@ class PullMetDataInpeCommand extends Command
                 $registrometdata->device_id = null; // ajustar depois conectando com o device certo
                 $registrometdata->role = 0;
                 $registrometdata->type = TEMPERATURA;
-                $registrometdata->datelastsearch = date('Y-m-d H:i:s');
-               
+                
+                
                 $deucerto=TableRegistry::getTableLocator()->get('DataMetereological')->save($registrometdata);
-                debug($deucerto);
-                debug($registrometdata);
                 if ($deucerto) {
                     
                     $adicionados++;
@@ -188,14 +181,13 @@ class PullMetDataInpeCommand extends Command
                     $erros++;
                 }
             }
+            $cidade->datelastsearch = date('Y-m-d H:i:s');
+            $citiesTable->save($cidade);
              
         }
-        $io->success("Adicionados: $adicionados");
-        $io->warning("Repetidos: $repetidos");
-        $io->error("Erros: $erros");
-        log::write('error',"Erros: $erros");
-        log::write('error',"Repetidos: $repetidos");
-        log::write('error',"Adicionados: $adicionados");
+        log::write('erros',"Erros: $erros");
+        log::write('repetidos',"Repetidos: $repetidos");
+        log::write('adicionado',"Adicionados: $adicionados");
         
     
     }
