@@ -10,6 +10,8 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
+
 
 class PullMetDataInpeCommand extends Command
 {
@@ -27,7 +29,7 @@ class PullMetDataInpeCommand extends Command
      */
     public static function defaultName(): string
     {
-            return 'datainpe';
+            return 'pullmetdatainpedatainpe';
         }
     
         /**
@@ -115,8 +117,9 @@ class PullMetDataInpeCommand extends Command
         $metdata=$this->fetchTable('Cities');
         $metdata->find()->all();
         debug($metdata);
+        log::write('error', $metdata);        
         $citiesTable = $this->fetchTable('Cities');
-        $cidades = $citiesTable->find()->all();
+        $cidades = $citiesTable->find()->limit(5)->all();
         debug($cidades);
         
         debug($cidades);
@@ -191,5 +194,10 @@ class PullMetDataInpeCommand extends Command
         $io->success("Adicionados: $adicionados");
         $io->warning("Repetidos: $repetidos");
         $io->error("Erros: $erros");
+        log::write('error',"Erros: $erros");
+        log::write('error',"Repetidos: $repetidos");
+        log::write('error',"Adicionados: $adicionados");
+        
+    
     }
 }
