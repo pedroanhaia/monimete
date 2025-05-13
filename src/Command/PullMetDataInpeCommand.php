@@ -118,7 +118,7 @@ class PullMetDataInpeCommand extends Command
         $citiesTable = $this->fetchTable('Cities');
         $cidades = $citiesTable->find("all",[
             'limit' => 5,
-            'order'=>['date_last_search' => 'ASC'], 
+            'order'=>['datelastsearch' => 'ASC'], 
         ],
         )->toArray();
         debug($cidades);
