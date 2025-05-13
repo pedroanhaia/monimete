@@ -20,7 +20,7 @@ class PullMetDataInpeCommand extends Command
      *
      * @var string
      */
-    protected string $name = 'datainpe';
+    protected string $name = 'pullmetdatainpe';
 
     /**
      * Get the default command name.
@@ -29,7 +29,7 @@ class PullMetDataInpeCommand extends Command
      */
     public static function defaultName(): string
     {
-            return 'pullmetdatainpedatainpe';
+            return 'pullmetdatainpe';
         }
     
         /**
@@ -114,16 +114,13 @@ class PullMetDataInpeCommand extends Command
         $repetidos = 0;
         $erros = 0;
     
-        $metdata=$this->fetchTable('Cities');
-        $metdata->find()->all();
-        debug($metdata);
-        log::write('error', $metdata);        
         $citiesTable = $this->fetchTable('Cities');
-        $cidades = $citiesTable->find()->limit(5)->all();
+        $cidades = $citiesTable->find("all",[
+            'limit' => 5,
+            ],
+        )->toArray();
         debug($cidades);
-        
-        debug($cidades);
-    
+       Log::write('debug',"Cidades: ".json_encode($cidades));
         foreach ($cidades as $cidade) {
             $url = "http://servicos.cptec.inpe.br/XML/cidade/7dias/{$cidade->cod_ibge}/previsao.xml";
             $retorno = $this->makeRequestWithCurl('GET', $url, [], []);
@@ -147,7 +144,7 @@ class PullMetDataInpeCommand extends Command
                 $dataHora = date('Y-m-d H:i:s', strtotime($previsao->data . ' ' . $previsao->hora));
     
                 // Evita duplicação
-                $existe = TableRegistry::getTableLocator()->get('DataMetereological')->limit(5)->find()
+                $existe = TableRegistry::getTableLocator()->get('DataMetereological')->find()
                     ->where([
                         'location_id' => $cidade->cod_ibge, // assumindo que location_id mapeia para cities.id
                         'date_time' => $dataHora
@@ -175,10 +172,9 @@ class PullMetDataInpeCommand extends Command
                 $registrometdata->location_id = null;//$cidade->cod_ibge; // Cities → location_id
                 $registrometdata->service_id = null; // ajustar depois conectando com o service certo
                 $registrometdata->device_id = null; // ajustar depois conectando com o device certo
-                $registrometdata->created = date('Y-m-d H:i:s');
-                $registrometdata->modified = date('Y-m-d H:i:s');
                 $registrometdata->role = 0;
-                $registrometdata->type = 0;
+                $registrometdata->type = ;
+               
                 $deucerto=TableRegistry::getTableLocator()->get('DataMetereological')->save($registrometdata);
                 debug($deucerto);
                 debug($registrometdata);
