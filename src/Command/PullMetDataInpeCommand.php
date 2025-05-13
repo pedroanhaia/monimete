@@ -159,7 +159,7 @@ class PullMetDataInpeCommand extends Command
     
                 $registrometdata->date_time = $dataHora;
                 $registrometdata->tempmax = isset($previsao->maxima) ? floatval($previsao->maxima) : null;
-                $registrometdata->tempemix = isset($previsao->minima) ? floatval($previsao->minima) : null;
+                $registrometdata->tempemin = isset($previsao->minima) ? floatval($previsao->minima) : null;
                 $registrometdata->humidity = null;
                 $registrometdata->precipitation = null;
                 $registrometdata->wind_direction = null;
