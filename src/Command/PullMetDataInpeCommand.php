@@ -9,6 +9,7 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 
@@ -117,7 +118,8 @@ class PullMetDataInpeCommand extends Command
         $citiesTable = $this->fetchTable('Cities');
         $cidades = $citiesTable->find("all",[
             'limit' => 5,
-            ],
+            'order'=>['date_last_search' => 'ASC'], 
+        ],
         )->toArray();
         debug($cidades);
        Log::write('debug',"Cidades: ".json_encode($cidades));
@@ -174,6 +176,7 @@ class PullMetDataInpeCommand extends Command
                 $registrometdata->device_id = null; // ajustar depois conectando com o device certo
                 $registrometdata->role = 0;
                 $registrometdata->type = TEMPERATURA;
+                $registrometdata->datelastsearch = date('Y-m-d H:i:s');
                
                 $deucerto=TableRegistry::getTableLocator()->get('DataMetereological')->save($registrometdata);
                 debug($deucerto);
