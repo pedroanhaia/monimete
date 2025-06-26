@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 namespace App\Controller;
-
+use Cake\ORM\TableRegistry;
+use App\Model\Entity\Logs;
 /**
  * Devices Controller
  *
@@ -142,18 +143,24 @@ class DevicesController extends AppController
         }
         
         $this->fetchTable('Logs');
+        $logsTable = TableRegistry::getTableLocator()->get('Logs');
         // Salvar na base de dados
-        $dataEntity = $this->Logs->newEmptyEntity();
+        $dataEntity = $logsTable->newEmptyEntity();
         $dataEntity->device_id = $deviceId;
         $dataEntity->date_time = $decodedData['date_time'];
         $dataEntity->message = $jsonData;
         $dataEntity->status = $decodedData['status'];
         $dataEntity->type = $decodedData['data_type'];
         $dataEntity->platform_id = $device->platform_id;
-        if ($this->Devices->Data->save($dataEntity)) {
+        $sRet = $logsTable->save($dataEntity);
+        if ($sRet) {
             $this->response = $this->response->withStatus(200)->withStringBody('Data saved successfully.');
         } else {
-            $this->response = $this->response->withStatus(500)->withStringBody('Failed to save data.');
+            $errors = $dataEntity->getErrors();
+            Log::write('error', 'Erro ao salvar log: ' . json_encode($errors));
+            $this->response = $this->response->withStatus(500)->withStringBody('Erro ao salvar dados.');
+            return $this->response;
+            // $this->response = $this->response->withStatus(500)->withStringBody('Failed to save data.');
         }
 
         return $this->response;

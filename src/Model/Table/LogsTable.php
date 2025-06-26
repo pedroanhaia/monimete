@@ -64,35 +64,6 @@ class LogsTable extends Table
      */
     public function validationDefault(Validator $validator): Validator
     {
-        $validator
-            ->dateTime('date_time')
-            ->allowEmptyDateTime('date_time');
-
-        $validator
-            ->scalar('message')
-            ->allowEmptyString('message');
-
-        $validator
-            ->scalar('status')
-            ->maxLength('status', 50)
-            ->allowEmptyString('status');
-
-        $validator
-            ->integer('type')
-            ->allowEmptyString('type');
-
-        $validator
-            ->integer('device_id')
-            ->allowEmptyString('device_id');
-
-        $validator
-            ->integer('role')
-            ->allowEmptyString('role');
-
-        $validator
-            ->integer('platform_id')
-            ->allowEmptyString('platform_id');
-
         return $validator;
     }
 

@@ -14,14 +14,14 @@ use Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 
 
-class PullMetDataInpeCommand extends Command
+class ImportaLocalidadesCommand extends Command
 {
     /**
      * The name of this command.
      *
      * @var string
      */
-    protected string $name = 'pullmetdatainpe';
+    protected string $name = 'ImportaLocalidadesCommand';
 
     /**
      * Get the default command name.
@@ -30,7 +30,7 @@ class PullMetDataInpeCommand extends Command
      */
     public static function defaultName(): string
     {
-            return 'pullmetdatainpe';
+            return 'ImportaLocalidadesCommand';
         }
     
         /**
