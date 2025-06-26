@@ -150,8 +150,8 @@ class DevicesController extends AppController
         $dataEntity->date_time = $decodedData['date_time'];
         $dataEntity->message = $jsonData;
         $dataEntity->status = $decodedData['status'];
-        $dataEntity->type = $decodedData['data_type'];
-        $dataEntity->platform_id = $device->platform_id;
+        $dataEntity->type = 1;//$decodedData['data_type'];
+        $dataEntity->platform_id = 2;//$device->platform_id;
         $sRet = $logsTable->save($dataEntity);
         if ($sRet) {
             $this->response = $this->response->withStatus(200)->withStringBody('Data saved successfully.');
