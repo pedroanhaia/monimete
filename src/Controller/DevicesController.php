@@ -165,4 +165,40 @@ class DevicesController extends AppController
 
         return $this->response;
     }
+    public function getdevicelastlog($deviceId = null)
+    {
+        $this->autoRender = false;
+        if (!$deviceId) {
+            $this->response = $this->response->withStatus(400)->withStringBody('Device ID is required.');
+            return $this->response;
+        }
+
+        $device = $this->Devices->find()
+            ->where(['id' => $deviceId])
+            ->first();
+
+        if (!$device) {
+            $this->response = $this->response->withStatus(404)->withStringBody('Device not found.');
+            return $this->response;
+        }
+        $logsTable = TableRegistry::getTableLocator()->get('Logs');
+        $log = $logsTable->find()
+            ->where(['device_id' => $deviceId])
+            ->order(['date_time' => 'DESC'])
+            ->first();
+        // Fetch data from the device
+        // This is a placeholder for actual data fetching logic
+        // For example, you might call an external API or read from a file
+
+        // Example response
+        $data = [
+            'device_id' => $deviceId,
+            'status' => 'active',
+            'last_update' => date('Y-m-d H:i:s'),
+            'data' => [] // Replace with actual data
+        ];
+
+        $this->response = $this->response->withStatus(200)->withType('application/json')->withStringBody($log->message);
+        return $this->response;
+    }
 }
