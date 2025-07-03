@@ -184,7 +184,7 @@ class DevicesController extends AppController
         $logsTable = TableRegistry::getTableLocator()->get('Logs');
         $log = $logsTable->find()
             ->where(['device_id' => $deviceId])
-            ->order(['date_time' => 'ASC'])
+            ->order(['id' => 'DESC'])
             ->first();
         // Fetch data from the device
         // This is a placeholder for actual data fetching logic
