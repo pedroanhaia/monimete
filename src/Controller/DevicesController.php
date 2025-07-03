@@ -14,7 +14,7 @@ class DevicesController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
 
-        $this->Authentication->addUnauthenticatedActions(['inputdatadevices']);
+        $this->Authentication->addUnauthenticatedActions(['inputdatadevices', 'getdevicelastlog']);
         parent::beforeFilter($event);
         
     }
