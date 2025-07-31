@@ -26,7 +26,7 @@
         }).addTo(map);
 
         // Carregar GeoJSON do Rio Grande do Sul
-        $.getJSON('geojs-43-mun.geojson', function(data) {
+        $.getJSON('geojs-43-mun.json', function(data) {
             var geojsonLayer = L.geoJSON(data, {
                 style: {
                     color: "#3388ff",

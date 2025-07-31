@@ -163,20 +163,6 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
     </div>
     
     <main class="main" id="main" overflow-x: visible;>
-        <nav class="top-nav" id="top-nav">
-            <div class="top-nav-links">
-                <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/">Documentação</a>
-                <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
-                <?= $this->Html->link(__('Acesso restrito'), ['controller' => 'users'],['action' => 'login'], ['class' => 'button float-right']) ?>
-            </div>
-            <div class="top-nav-title">
-                
-                <?=$this->Html->image('AGROCITY_LIVING_LABicon.jpg', ['alt' => 'Agrocity Logo', 'width'=>'100em'])?>
-                
-                <a  href="<?= $this->Url->build('/') ?>"><span>Moni</span>mete</a>
-            </div>
-        </nav>
-        
         <div class="container">
             
             <?= $this->Flash->render() ?>

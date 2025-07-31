@@ -3,7 +3,26 @@
 
 ## Descrição do Projeto 📖
 
-O **Projeto MoniMete** tem como objetivo criar uma solução robusta para o monitoramento meteorológico,
+O **Projeto MoniMet| **Mapas Interativos** | 🟡 Básico     | Estrutura básica, sem dados reais |
+
+## Próximos Passos Prioritários 🎯
+
+### **Imediatos (Próximas 2 semanas)**
+- [ ] **Implementar lógica real na API `getdevicelastlog`** - Substituir placeholder por dados reais
+- [ ] **Conectar relacionamentos no PullMetDataInpeCommand** - Vincular services, devices e locations
+- [ ] **Desenvolver testes unitários básicos** - Implementar testes marcados como incompletos
+
+### **Curto Prazo (Próximo mês)**
+- [ ] **Dashboard com dados reais** - Substituir dados simulados por consultas ao banco
+- [ ] **Mapas de calor funcionais** - Implementar visualização baseada em dados coletados
+- [ ] **Validação robusta de APIs** - Melhorar tratamento de erros e validações
+
+### **Médio Prazo (Próximos 3 meses)**
+- [ ] **Sistema de recepção via satélite** - Implementar integração com Raspberry Pi
+- [ ] **Antena APT funcional** - Hardware e configuração física
+- [ ] **Interface pública de dashboards** - Acesso não autenticado conforme especificado
+
+--- tem como objetivo criar uma solução robusta para o monitoramento meteorológico,
 permitindo a coleta de dados via satélite e integração com APIs confiáveis.
 
 Essa solução foi idealizada para fornecer dados climáticos históricos e em tempo real,
@@ -90,15 +109,31 @@ Este é um **projeto colaborativo** e está aberto para contribuições! 🎉
 
 ## Roadmap do Projeto 🚀
 
-| Data         | Etapa                                       | Status        |
-|--------------|---------------------------------------------|---------------|
-| 24/10/2024   | Levantamento de requisitos e arquitetura    | ✔️ Concluído  |
-| 31/10/2024   | Modelagem do banco de dados                | ✔️ Concluído  |
-| 07/11/2024   | Configuração do ambiente de desenvolvimento | ✔️ Concluído  |
-| 14/11/2024   | Criação de back-office e estrutura inicial  | ✔️ Concluído  |
-| 21/11/2024   | Desenvolvimento da integração com APIs      | ⏳ Em Progresso |
-| 28/11/2024   | Configuração e testes da antena             | ⏳ Em Progresso |
-| 05/12/2024   | Implementação de dashboards                | 🚧 Pendente   |
+| Data         | Etapa                                       | Status        | % Completo |
+|--------------|---------------------------------------------|---------------|------------|
+| 24/10/2024   | Levantamento de requisitos e arquitetura    | ✔️ Concluído  | 100% |
+| 31/10/2024   | Modelagem do banco de dados                | ✔️ Concluído  | 100% |
+| 07/11/2024   | Configuração do ambiente de desenvolvimento | ✔️ Concluído  | 100% |
+| 14/11/2024   | Criação de back-office e estrutura inicial  | ✔️ Concluído  | 100% |
+| 21/11/2024   | Desenvolvimento da integração com APIs      | 🟡 Parcial    | 70% |
+| 28/11/2024   | Configuração e testes da antena             | ❌ Pendente   | 0% |
+| 05/12/2024   | Implementação de dashboards                | 🟡 Parcial    | 30% |
+| 12/12/2024   | Sistema de mapas interativos               | 🟡 Básico     | 20% |
+| 19/12/2024   | Testes unitários e integração             | ❌ Pendente   | 0% |
+| 26/12/2024   | API endpoints completos                    | 🟡 Parcial    | 60% |
+
+## Status Detalhado dos Componentes 📊
+
+| Componente | Status | Observações |
+|------------|---------|-------------|
+| **Back-office CRUD** | ✅ Concluído | Sistema completo de gerenciamento |
+| **Modelo de Dados** | ✅ Concluído | Entidades e relacionamentos definidos |
+| **API Endpoints** | 🟡 Parcial | Funcionalidades básicas, dados simulados |
+| **Integração CPTEC** | 🟡 Parcial | Importação funcional, relacionamentos pendentes |
+| **Dashboard/Visualização** | 🟡 Básico | Interface criada, dados simulados |
+| **Sistema Satélite** | ❌ Pendente | Não iniciado |
+| **Testes** | ❌ Pendente | Marcados como incompletos |
+| **Mapas Interativos** | 🟡 Básico | Estrutura básica, sem dados reais |
 
 ---
 
