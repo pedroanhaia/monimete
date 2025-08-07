@@ -139,6 +139,7 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
                             'Cidades' => ['controller' => 'Cities', 'action' => 'index'],
                             'Metereologico' => ['controller' => 'DataMetereological', 'action' => 'index'],
                             'Satélite' => ['controller' => 'DataSatellite', 'action' => 'index'],   
+                            'MQTT IoT' => ['controller' => 'Mqtt', 'action' => 'index'],
                             'Dispositivos' => ['controller' => 'Devices', 'action' => 'index'],
                             'Locais' => ['controller' => 'Locations', 'action' => 'index'],
                             'Logs' => ['controller' => 'Logs', 'action' => 'index'],

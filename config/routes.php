@@ -93,4 +93,20 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
+    
+    // Rotas de API para dispositivos IoT Agrocity
+    $routes->scope('/api', function (RouteBuilder $builder): void {
+        // Permitir apenas JSON
+        $builder->setExtensions(['json']);
+        
+        // APIs Agrocity - seguindo especificação do PDF
+        $builder->connect('/login', ['controller' => 'Mqtt', 'action' => 'login'], ['_method' => 'POST']);
+        $builder->connect('/mqtt_data', ['controller' => 'Mqtt', 'action' => 'mqttData'], ['_method' => ['GET', 'POST']]);
+        
+        // APIs internas do sistema
+        $builder->connect('/mqtt/status', ['controller' => 'Mqtt', 'action' => 'status']);
+        $builder->connect('/mqtt/messages', ['controller' => 'Mqtt', 'action' => 'messages']);
+        $builder->connect('/mqtt/stats', ['controller' => 'Mqtt', 'action' => 'stats']);
+        $builder->connect('/mqtt/weather-data', ['controller' => 'Mqtt', 'action' => 'weatherData']);
+    });
 };
