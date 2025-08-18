@@ -132,6 +132,10 @@ class MqttController extends AppController
         $this->viewBuilder()->setOption('serialize', ['data']);
     }
 
+
+
+
+    
     /**
      * API para buscar estatísticas MQTT
      */

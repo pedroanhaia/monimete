@@ -109,7 +109,7 @@
                         <div class="loading">🔄 Carregando mensagens...</div>
                     </div>
                     <div class="pagination-controls" style="margin-top: 1rem; text-align: center;">
-                        <button onclick="loadMessages(0)" class="button small">⏮️ Primeira</button>
+                        <button onclick="loadMessages(1)" class="button small">⏮️ Primeira</button>
                         <button onclick="loadMessages(currentOffset - 20)" class="button small" id="prev-btn">⬅️ Anterior</button>
                         <span id="page-info">Página 1</span>
                         <button onclick="loadMessages(currentOffset + 20)" class="button small" id="next-btn">➡️ Próxima</button>
@@ -216,7 +216,7 @@ async function updateMqttStatus() {
 // Carregar estatísticas
 async function loadStats() {
     try {
-        const response = await fetch('/mqtt/stats');
+        const response = await fetch('http://localhost/mqtt/messages/mqtt/stats');
         const result = await response.json();
         
         if (result.status === 'success') {
@@ -264,19 +264,22 @@ function renderStats(stats) {
 // Carregar mensagens
 async function loadMessages(offset = 0) {
     try {
-        const response = await fetch(`/mqtt/messages?limit=20&offset=${offset}`);
+        const response = await fetch(`http://localhost/mqtt/messages`);
         const result = await response.json();
+        console.log(result);
+        console.log(response);
+        console.log(response.status);
         
-        if (result.status === 'success') {
-            renderMessages(result.messages);
-            updatePagination(result.pagination);
+        if (response.status == 200) {
+            renderMessages(result.data.messages);
+            updatePagination(result.data.pagination);
             currentOffset = offset;
         } else {
             console.error('Erro ao carregar mensagens:', result.message);
         }
         
     } catch (error) {
-        console.error('Erro ao carregar mensagens:', error);
+        console.error('Erro ao carregar mensagenss:', error);
     }
 }
 
@@ -284,7 +287,7 @@ async function loadMessages(offset = 0) {
 function renderMessages(messages) {
     const container = document.getElementById('messages-container');
     
-    if (messages.length === 0) {
+    if (Object.keys(messages).length === 0) {
         container.innerHTML = `
             <div class="empty-state" style="text-align: center; padding: 2rem; background: #f9f9f9; border-radius: 8px;">
                 <p>📭 Nenhuma mensagem MQTT encontrada.</p>
