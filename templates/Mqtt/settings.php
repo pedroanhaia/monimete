@@ -19,11 +19,11 @@
     <div class="column column-80">
         <div class="mqtt settings content">
             <h3><?= __('⚙️ Configurações MQTT') ?></h3>
-            
+
             <?= $this->Form->create(null) ?>
             <fieldset>
                 <legend><?= __('Configurações do Servidor MQTT') ?></legend>
-                
+
                 <div class="server-config" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
                     <div class="internal-server" style="padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;">
                         <h4 style="margin-top: 0; color: #17a2b8;">🏠 Servidor Interno</h4>
@@ -32,11 +32,11 @@
                             'value' => $settings['mqtt_host_internal'],
                             'readonly' => true
                         ]) ?>
-                        
+
                         <p><strong>Uso:</strong> Para dispositivos na rede local</p>
                         <p><strong>Vantagens:</strong> Baixa latência, sem dependência de internet</p>
                     </div>
-                    
+
                     <div class="external-server" style="padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">
                         <h4 style="margin-top: 0; color: #28a745;">🌐 Servidor Externo</h4>
                         <?= $this->Form->control('mqtt_host_external', [
@@ -44,26 +44,26 @@
                             'value' => $settings['mqtt_host_external'],
                             'readonly' => true
                         ]) ?>
-                        
+
                         <p><strong>Uso:</strong> Para dispositivos remotos via internet</p>
                         <p><strong>Vantagens:</strong> Acessível de qualquer lugar</p>
                     </div>
                 </div>
-                
+
                 <?= $this->Form->control('mqtt_port', [
                     'label' => 'Porta MQTT',
                     'value' => $settings['mqtt_port'],
-                    'readonly' => true,
+                    'readonly' => false,
                     'help' => 'Porta padrão para comunicação MQTT'
                 ]) ?>
-                
+
                 <?= $this->Form->control('mqtt_username', [
                     'label' => 'Usuário',
                     'value' => $settings['mqtt_username'],
                     'readonly' => true,
                     'help' => 'Nome de usuário para autenticação'
                 ]) ?>
-                
+
                 <?= $this->Form->control('mqtt_password', [
                     'type' => 'password',
                     'label' => 'Senha',
@@ -71,20 +71,20 @@
                     'readonly' => true,
                     'help' => 'Senha para autenticação no broker MQTT'
                 ]) ?>
-                
+
                 <?= $this->Form->control('default_topic', [
                     'label' => 'Tópico Padrão',
                     'value' => $settings['default_topic'],
                     'help' => 'Tópico MQTT padrão para escutar mensagens. Use + como wildcard para um nível, # para múltiplos níveis'
                 ]) ?>
             </fieldset>
-            
+
             <fieldset style="margin-top: 2rem;">
                 <legend><?= __('Estrutura de Tópicos Recomendada') ?></legend>
-                
+
                 <div class="topic-structure" style="background: #e9ecef; padding: 1.5rem; border-radius: 8px;">
                     <h5>📂 Hierarquia de Tópicos Sugerida:</h5>
-                    
+
                     <div style="font-family: monospace; background: #fff; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
                         <div style="margin: 0.5rem 0;">📁 <strong>agrocity/</strong> (Namespace principal)</div>
                         <div style="margin: 0.5rem 0; margin-left: 1rem;">├── 📁 <strong>station001/</strong> (ID da estação meteorológica)</div>
@@ -96,7 +96,7 @@
                         <div style="margin: 0.5rem 0; margin-left: 1rem;">├── 📁 <strong>sensor002/</strong></div>
                         <div style="margin: 0.5rem 0; margin-left: 1rem;">└── 📁 <strong>camera003/</strong></div>
                     </div>
-                    
+
                     <h5>🔍 Exemplos de Filtros (Wildcards):</h5>
                     <ul>
                         <li><code>agrocity/+/data</code> - Todos os dados de qualquer dispositivo</li>
@@ -106,10 +106,10 @@
                     </ul>
                 </div>
             </fieldset>
-            
+
             <fieldset style="margin-top: 2rem;">
                 <legend><?= __('Formato de Dados JSON Esperado') ?></legend>
-                
+
                 <div class="json-format" style="background: #263238; color: #fff; padding: 1.5rem; border-radius: 8px;">
                     <h5 style="color: #4caf50;">📄 Exemplo de Payload JSON:</h5>
                     <pre style="margin: 1rem 0; overflow-x: auto;"><code>{
@@ -134,7 +134,7 @@
     "uptime": 86400
   }
 }</code></pre>
-                    
+
                     <h5 style="color: #4caf50;">📋 Campos Reconhecidos pelo Sistema:</h5>
                     <ul style="margin: 1rem 0;">
                         <li><strong>temperature</strong> - Temperatura em °C</li>
@@ -147,13 +147,13 @@
                     </ul>
                 </div>
             </fieldset>
-            
+
             <div class="form-actions" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd;">
                 <?= $this->Form->button(__('💾 Salvar Configurações'), ['type' => 'submit', 'class' => 'button']) ?>
                 <?= $this->Html->link(__('🔙 Cancelar'), ['action' => 'index'], ['class' => 'button secondary']) ?>
             </div>
             <?= $this->Form->end() ?>
-            
+
             <!-- Informações de Segurança -->
             <div class="security-info" style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #ffc107; margin-top: 2rem;">
                 <h5 style="margin-top: 0; color: #856404;">🔒 Informações de Segurança</h5>
@@ -203,7 +203,7 @@
     .server-config {
         grid-template-columns: 1fr;
     }
-    
+
     .json-format pre {
         font-size: 0.8em;
     }
