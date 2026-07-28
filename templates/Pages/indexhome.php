@@ -465,10 +465,107 @@
             opacity: .85;
         }
 
+        .river-label {
+            border: 0;
+            background: rgba(255,255,255,.82);
+            box-shadow: none;
+            color: #005b96;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 1px 4px;
+            text-shadow:
+                -1px -1px 0 #fff,
+                 1px -1px 0 #fff,
+                -1px  1px 0 #fff,
+                 1px  1px 0 #fff;
+        }
+
+        .river-label::before {
+            display: none;
+        }
+
+        .leaflet-popup-content-wrapper,
+        .leaflet-popup-content {
+            box-sizing: border-box;
+        }
+
+        .leaflet-popup-content {
+            max-width: min(320px, calc(100vw - 70px));
+        }
+
         @media (max-width: 700px) {
-            #map { height: 520px; }
-            .map-container { padding: 15px; }
+            html, body {
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            main {
+                width: 100%;
+                padding-left: 8px;
+                padding-right: 8px;
+                box-sizing: border-box;
+            }
+
+            #map {
+                width: 100%;
+                height: 560px;
+                box-sizing: border-box;
+            }
+
+            .map-container {
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+
             .hydro-toolbar button { flex: 1 1 100%; }
+
+            .hydro-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 7px;
+            }
+
+            .hydro-card {
+                min-width: 0;
+                padding: 9px 5px;
+                font-size: .8rem;
+                overflow-wrap: anywhere;
+            }
+
+            .hydro-card strong {
+                font-size: .92rem;
+            }
+
+            .leaflet-popup-content {
+                width: calc(100vw - 82px) !important;
+                max-width: 300px;
+                margin: 12px;
+                line-height: 1.3;
+            }
+
+            .weather-popup {
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
+            }
+
+            .weather-metric {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 8px;
+                align-items: start;
+            }
+
+            .weather-value {
+                max-width: 120px;
+                text-align: right;
+                overflow-wrap: anywhere;
+            }
+
+            .rain-legend {
+                max-width: 145px;
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -1410,6 +1507,7 @@ CREATE TABLE `data_satellite` (
             const municipalityLayers = new Map();
             const hydroResults = new Map();
             let geojsonLayer;
+            let riverLayer;
             let basinBounds;
             let basinMunicipalities = new Map();
             let basinFeatureCount = 0;
@@ -1432,9 +1530,10 @@ CREATE TABLE `data_satellite` (
             };
 
             try {
-                const [municipalityData, basinData] = await Promise.all([
+                const [municipalityData, basinData, riverData] = await Promise.all([
                     $.getJSON('geojs-43-mun.json'),
-                    $.getJSON('taquari-antas-municipios.json')
+                    $.getJSON('taquari-antas-municipios.json'),
+                    $.getJSON('rios-taquari-antas.geojson')
                 ]);
 
                 Object.entries(basinData.municipios).forEach(([name, percentage]) => {
@@ -1456,12 +1555,47 @@ CREATE TABLE `data_satellite` (
 
                         layer.bindTooltip(cityName, { permanent: false, direction: 'center' });
                         if (basinPercentage !== undefined) {
-                            layer.bindPopup(createHydroPopup(cityName, basinPercentage, null));
+                            layer.bindPopup(createHydroPopup(cityName, basinPercentage, null), {
+                                maxWidth: 320,
+                                autoPanPaddingTopLeft: [45, 85],
+                                autoPanPaddingBottomRight: [25, 45]
+                            });
                             if (!basinBounds) basinBounds = layer.getBounds();
                             else basinBounds.extend(layer.getBounds());
                         }
                     }
                 }).addTo(map);
+
+                map.createPane('rivers');
+                map.getPane('rivers').style.zIndex = 450;
+                riverLayer = L.geoJSON(riverData, {
+                    pane: 'rivers',
+                    style: feature => ({
+                        color: feature.properties.name === 'Rio Taquari' ||
+                               feature.properties.name === 'Rio das Antas'
+                            ? '#003f88'
+                            : '#0077b6',
+                        weight: feature.properties.name === 'Rio Taquari' ||
+                                feature.properties.name === 'Rio das Antas'
+                            ? 4
+                            : 2.5,
+                        opacity: 0.95
+                    }),
+                    onEachFeature: function(feature, layer) {
+                        const riverName = feature.properties && feature.properties.name;
+                        if (!riverName) return;
+                        layer.bindTooltip(escapeHtml(riverName), {
+                            permanent: true,
+                            direction: 'center',
+                            className: 'river-label'
+                        });
+                        layer.bindPopup(`<div class="weather-popup"><h3>${escapeHtml(riverName)}</h3>
+                            <p>Curso d’água integrante da Bacia Hidrográfica Taquari-Antas.</p>
+                            <small>Fonte cartográfica: SEMA/FEPAM, escala 1:25.000.</small></div>`, {
+                            maxWidth: 300
+                        });
+                    }
+                });
 
                 map.fitBounds(geojsonLayer.getBounds());
                 bindViewButtons();
@@ -1498,6 +1632,7 @@ CREATE TABLE `data_satellite` (
                     $('#view-hydro').removeClass('active');
                     $('#hydro-summary').removeClass('visible');
                     if (!map.hasLayer(weatherMarkers)) weatherMarkers.addTo(map);
+                    if (riverLayer && map.hasLayer(riverLayer)) map.removeLayer(riverLayer);
                     if (legend._map) legend.remove();
                     geojsonLayer.setStyle(featureStyle);
                     map.fitBounds(geojsonLayer.getBounds());
@@ -1509,6 +1644,7 @@ CREATE TABLE `data_satellite` (
                     $('#view-weather').removeClass('active');
                     $('#hydro-summary').addClass('visible');
                     if (map.hasLayer(weatherMarkers)) map.removeLayer(weatherMarkers);
+                    if (riverLayer && !map.hasLayer(riverLayer)) riverLayer.addTo(map);
                     if (!legend._map) legend.addTo(map);
                     geojsonLayer.setStyle(featureStyle);
                     if (basinBounds) map.fitBounds(basinBounds, { padding: [15, 15] });
@@ -1558,7 +1694,11 @@ CREATE TABLE `data_satellite` (
                                 hydroResults.set(key, weatherData);
                                 const layer = municipalityLayers.get(key);
                                 if (layer) {
-                                    layer.bindPopup(createHydroPopup(cityName, basinPercentage, weatherData));
+                                    layer.bindPopup(createHydroPopup(cityName, basinPercentage, weatherData), {
+                                        maxWidth: 320,
+                                        autoPanPaddingTopLeft: [45, 85],
+                                        autoPanPaddingBottomRight: [25, 45]
+                                    });
                                     if (hydroMode) layer.setStyle(featureStyle(feature));
                                 }
                                 updateHydroSummary();
