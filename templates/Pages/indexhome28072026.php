@@ -384,92 +384,6 @@
             border: 1px solid #f5c6cb;
             color: #721c24;
         }
-
-        /* Painel hidroclimático da Bacia Taquari-Antas */
-        .hydro-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            margin: 0 0 15px;
-            padding: 12px;
-            background: rgba(255,255,255,0.96);
-            border-radius: 8px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hydro-toolbar button {
-            border: 1px solid #0066cc;
-            border-radius: 6px;
-            background: #fff;
-            color: #004080;
-            padding: 9px 14px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .hydro-toolbar button.active {
-            background: #004080;
-            color: #fff;
-        }
-
-        .hydro-summary {
-            display: none;
-            grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-            gap: 10px;
-            margin: 0 0 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hydro-summary.visible {
-            display: grid;
-        }
-
-        .hydro-card {
-            background: rgba(255,255,255,0.96);
-            border-radius: 8px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .hydro-card strong {
-            display: block;
-            color: #004080;
-            font-size: 1.25rem;
-            margin-top: 4px;
-        }
-
-        .hydro-note {
-            flex: 1 1 100%;
-            margin: 0;
-            color: #555;
-            font-size: 0.86rem;
-        }
-
-        .rain-legend {
-            line-height: 1.5;
-            color: #333;
-            background: rgba(255,255,255,0.95);
-            padding: 8px 10px;
-            border-radius: 6px;
-            box-shadow: 0 1px 5px rgba(0,0,0,.25);
-        }
-
-        .rain-legend i {
-            width: 14px;
-            height: 14px;
-            float: left;
-            margin: 3px 7px 0 0;
-            opacity: .85;
-        }
-
-        @media (max-width: 700px) {
-            #map { height: 520px; }
-            .map-container { padding: 15px; }
-            .hydro-toolbar button { flex: 1 1 100%; }
-        }
     </style>
 </head>
 <body>
@@ -525,31 +439,15 @@
                 <p class="map-subtitle">Dados meteorológicos atualizados de todos os municípios do Rio Grande do Sul</p>
                 
                 <div class="map-info">
-                    <p><strong>🎯 Visualização Inteligente:</strong> Este mapa apresenta dados meteorológicos dos municípios presentes na base geográfica do Rio Grande do Sul, integrando temperatura, precipitação e vento através da API Open-Meteo.</p>
+                    <p><strong>🎯 Visualização Inteligente:</strong> Este mapa apresenta dados meteorológicos em tempo real de todos os 497 municípios do Rio Grande do Sul, integrando informações de temperatura, precipitação e vento através da API Open-Meteo.</p>
                     <p><strong>📊 Dados Exibidos:</strong> 🌡️ Temperatura (°C) | 🌧️ Precipitação (mm) | 💨 Velocidade do Vento (km/h) | 🧭 Direção do Vento (°)</p>
                     <p><strong>🎨 Indicadores Visuais:</strong> As cores dos marcadores variam conforme a temperatura - do azul (frio) ao vermelho (quente).</p>
-                </div>
-
-                <div class="hydro-toolbar">
-                    <button type="button" id="view-weather" class="active">🌦️ Clima no RS</button>
-                    <button type="button" id="view-hydro">🌊 Bacia Taquari-Antas</button>
-                    <p class="hydro-note">
-                        A análise hidroclimática utiliza chuva observada e prevista. Ela é indicativa e não substitui alertas da Defesa Civil, SEMA, ANA ou municípios.
-                    </p>
-                </div>
-
-                <div id="hydro-summary" class="hydro-summary" aria-live="polite">
-                    <div class="hydro-card">Municípios analisados<strong id="hydro-count">0</strong></div>
-                    <div class="hydro-card">Média ponderada 24 h<strong id="hydro-rain-24">-- mm</strong></div>
-                    <div class="hydro-card">Maior acumulado 24 h<strong id="hydro-max-24">-- mm</strong></div>
-                    <div class="hydro-card">Previsão média 72 h<strong id="hydro-forecast-72">-- mm</strong></div>
-                    <div class="hydro-card">Situação predominante<strong id="hydro-status">Calculando</strong></div>
                 </div>
                 
                 <div id="map"></div>
                 
                 <p style="margin-top: 20px; font-size: 0.9em; color: rgba(255,255,255,0.8); text-align: center; position: relative; z-index: 1;">
-                    <strong>💡 Como usar:</strong> escolha “Bacia Taquari-Antas” para destacar os municípios contribuintes e clique em um município para consultar seus acumulados de chuva.
+                    <strong>💡 Como usar:</strong> Clique nos indicadores circulares para ver detalhes completos. Os dados são atualizados automaticamente e armazenados em cache por 30 minutos para otimizar a performance.
                 </p>
             </div>
         </section>
@@ -1141,53 +1039,6 @@ CREATE TABLE `data_satellite` (
                 toggleText.textContent = '✖️ Fechar';
             }
         }
-
-        function calculateRainMetrics(hourly) {
-            if (!hourly || !Array.isArray(hourly.time) || !Array.isArray(hourly.precipitation)) {
-                return null;
-            }
-
-            const now = Date.now();
-            const hour = 60 * 60 * 1000;
-            let observed24h = 0;
-            let observed72h = 0;
-            let forecast24h = 0;
-            let forecast72h = 0;
-
-            hourly.time.forEach((time, index) => {
-                const timestamp = new Date(time).getTime();
-                const value = Number(hourly.precipitation[index]) || 0;
-                if (timestamp <= now && timestamp > now - (24 * hour)) observed24h += value;
-                if (timestamp <= now && timestamp > now - (72 * hour)) observed72h += value;
-                if (timestamp > now && timestamp <= now + (24 * hour)) forecast24h += value;
-                if (timestamp > now && timestamp <= now + (72 * hour)) forecast72h += value;
-            });
-
-            return { observed24h, observed72h, forecast24h, forecast72h };
-        }
-
-        function normalizeMunicipalityName(value) {
-            return String(value || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .trim()
-                .toLowerCase();
-        }
-
-        function escapeHtml(value) {
-            const div = document.createElement('div');
-            div.textContent = String(value ?? '');
-            return div.innerHTML;
-        }
-
-        function getRainStatus(rain24h, forecast72h) {
-            const combined = Number(rain24h || 0) + Number(forecast72h || 0);
-            if (rain24h >= 100 || combined >= 180) return { label: 'Muito alta', color: '#7b1fa2' };
-            if (rain24h >= 60 || combined >= 120) return { label: 'Alta', color: '#d73027' };
-            if (rain24h >= 30 || combined >= 70) return { label: 'Atenção', color: '#fc8d59' };
-            if (rain24h >= 10 || combined >= 35) return { label: 'Moderada', color: '#fee08b' };
-            return { label: 'Baixa', color: '#1a9850' };
-        }
         
         // Sistema de gerenciamento de APIs e cache
         class WeatherManager {
@@ -1245,8 +1096,8 @@ CREATE TABLE `data_satellite` (
                 }
             }
             
-            getCachedWeather(lat, lng, includeHydrology = false) {
-                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}_${includeHydrology ? 'hydro' : 'current'}`;
+            getCachedWeather(lat, lng) {
+                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}`;
                 const cached = this.weatherCache.get(key);
                 if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
                     return cached.data;
@@ -1254,17 +1105,17 @@ CREATE TABLE `data_satellite` (
                 return null;
             }
             
-            setCachedWeather(lat, lng, data, includeHydrology = false) {
-                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}_${includeHydrology ? 'hydro' : 'current'}`;
+            setCachedWeather(lat, lng, data) {
+                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}`;
                 this.weatherCache.set(key, {
                     data: data,
                     timestamp: Date.now()
                 });
             }
             
-            async fetchWeatherData(lat, lng, includeHydrology = false) {
+            async fetchWeatherData(lat, lng) {
                 // Verificar cache primeiro
-                const cached = this.getCachedWeather(lat, lng, includeHydrology);
+                const cached = this.getCachedWeather(lat, lng);
                 if (cached) {
                     return cached;
                 }
@@ -1274,10 +1125,7 @@ CREATE TABLE `data_satellite` (
                     throw new Error('Limite diário de API excedido');
                 }
                 
-                let url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m&timezone=America/Sao_Paulo`;
-                if (includeHydrology) {
-                    url += '&hourly=precipitation&past_days=3&forecast_days=3';
-                }
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m&timezone=America/Sao_Paulo`;
                 
                 try {
                     const response = await fetch(url);
@@ -1292,11 +1140,10 @@ CREATE TABLE `data_satellite` (
                         temperature: data.current.temperature_2m,
                         precipitation: data.current.precipitation,
                         windSpeed: data.current.wind_speed_10m,
-                        windDirection: data.current.wind_direction_10m,
-                        rain: includeHydrology ? calculateRainMetrics(data.hourly) : null
+                        windDirection: data.current.wind_direction_10m
                     };
                     
-                    this.setCachedWeather(lat, lng, weatherData, includeHydrology);
+                    this.setCachedWeather(lat, lng, weatherData);
                     return weatherData;
                     
                 } catch (error) {
@@ -1340,8 +1187,8 @@ CREATE TABLE `data_satellite` (
             const color = getTemperatureColor(temp);
             
             const icon = L.divIcon({
-                className: '',
-                html: `<div class="weather-indicator" style="border-color:${color};color:${color}">${Math.round(temp)}°</div>`,
+                className: 'weather-indicator',
+                html: `${Math.round(temp)}°`,
                 iconSize: [40, 40],
                 iconAnchor: [20, 20]
             });
@@ -1350,7 +1197,7 @@ CREATE TABLE `data_satellite` (
             
             const popupContent = `
                 <div class="weather-popup">
-                    <h3>${escapeHtml(cityName)}</h3>
+                    <h3>${cityName}</h3>
                     <div class="weather-current">
                         <div class="weather-metric">
                             <span>🌡️ Temperatura:</span>
@@ -1376,249 +1223,131 @@ CREATE TABLE `data_satellite` (
             marker.bindPopup(popupContent);
             return marker;
         }
-
-        function createHydroPopup(cityName, basinPercentage, weatherData) {
-            const rain = weatherData && weatherData.rain;
-            if (!rain) {
-                return `<div class="weather-popup"><h3>${escapeHtml(cityName)}</h3>
-                    <p><strong>Bacia Taquari-Antas:</strong> ${basinPercentage}% da área municipal</p>
-                    <p>Dados hidroclimáticos ainda estão sendo carregados.</p></div>`;
-            }
-
-            const status = getRainStatus(rain.observed24h, rain.forecast72h);
-            return `
-                <div class="weather-popup">
-                    <h3>${escapeHtml(cityName)}</h3>
-                    <div class="weather-current">
-                        <div class="weather-metric"><span>Área inserida na bacia:</span><span class="weather-value">${basinPercentage}%</span></div>
-                        <div class="weather-metric"><span>Chuva observada 24 h:</span><span class="weather-value">${rain.observed24h.toFixed(1)} mm</span></div>
-                        <div class="weather-metric"><span>Chuva observada 72 h:</span><span class="weather-value">${rain.observed72h.toFixed(1)} mm</span></div>
-                        <div class="weather-metric"><span>Previsão 24 h:</span><span class="weather-value">${rain.forecast24h.toFixed(1)} mm</span></div>
-                        <div class="weather-metric"><span>Previsão 72 h:</span><span class="weather-value">${rain.forecast72h.toFixed(1)} mm</span></div>
-                        <div class="weather-metric"><span>Situação meteorológica:</span><span class="weather-value" style="color:${status.color}">${status.label}</span></div>
-                    </div>
-                    <small>Estimativa Open-Meteo no ponto central do município. Não representa nível ou vazão do rio.</small>
-                </div>`;
-        }
         
-        $(document).ready(async function() {
+        $(document).ready(function() {
+            // Restaurar estado do cabeçalho
             restoreHeaderState();
-
+            
             const weatherManager = new WeatherManager();
-            const map = L.map('map').setView([-30.0346, -51.2177], 7);
-            const weatherMarkers = L.layerGroup().addTo(map);
-            const municipalityLayers = new Map();
-            const hydroResults = new Map();
-            let geojsonLayer;
-            let basinBounds;
-            let basinMunicipalities = new Map();
-            let basinFeatureCount = 0;
-            let hydroMode = false;
-
+            let map, geojsonLayer;
+            let weatherMarkers = L.layerGroup();
+            
+            // Inicializar o mapa centralizado no RS
+            map = L.map('map').setView([-30.0346, -51.2177], 7);
+            
+            // Adicionar camada de tiles (mapa base)
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
-
-            const legend = L.control({ position: 'bottomleft' });
-            legend.onAdd = function() {
-                const div = L.DomUtil.create('div', 'rain-legend');
-                div.innerHTML = '<strong>Chuva observada 24 h</strong><br>' +
-                    '<i style="background:#1a9850"></i>Baixa (&lt; 10 mm)<br>' +
-                    '<i style="background:#fee08b"></i>Moderada (10–30 mm)<br>' +
-                    '<i style="background:#fc8d59"></i>Atenção (30–60 mm)<br>' +
-                    '<i style="background:#d73027"></i>Alta (60–100 mm)<br>' +
-                    '<i style="background:#7b1fa2"></i>Muito alta (≥ 100 mm)';
-                return div;
-            };
-
-            try {
-                const [municipalityData, basinData] = await Promise.all([
-                    $.getJSON('geojs-43-mun.json'),
-                    $.getJSON('taquari-antas-municipios.json')
-                ]);
-
-                Object.entries(basinData.municipios).forEach(([name, percentage]) => {
-                    basinMunicipalities.set(normalizeMunicipalityName(name), Number(percentage));
-                });
-                const availableNames = new Set(
-                    municipalityData.features.map(feature => normalizeMunicipalityName(feature.properties.name))
-                );
-                basinFeatureCount = [...basinMunicipalities.keys()].filter(key => availableNames.has(key)).length;
-
-                geojsonLayer = L.geoJSON(municipalityData, {
-                    style: featureStyle,
-                    onEachFeature: function(feature, layer) {
-                        const cityName = feature.properties && feature.properties.name;
-                        if (!cityName) return;
-                        const key = normalizeMunicipalityName(cityName);
-                        const basinPercentage = basinMunicipalities.get(key);
-                        municipalityLayers.set(key, layer);
-
-                        layer.bindTooltip(cityName, { permanent: false, direction: 'center' });
-                        if (basinPercentage !== undefined) {
-                            layer.bindPopup(createHydroPopup(cityName, basinPercentage, null));
-                            if (!basinBounds) basinBounds = layer.getBounds();
-                            else basinBounds.extend(layer.getBounds());
+            
+            // Adicionar camada de marcadores meteorológicos
+            weatherMarkers.addTo(map);
+            
+            // Carregar GeoJSON do Rio Grande do Sul
+            $.getJSON('geojs-43-mun.json', function(data) {
+                geojsonLayer = L.geoJSON(data, {
+                    style: {
+                        color: "#0066cc",
+                        weight: 1,
+                        fillOpacity: 0.1,
+                        fillColor: "#4da6ff"
+                    },
+                    onEachFeature: function (feature, layer) {
+                        // Adicionar tooltip básico
+                        if (feature.properties && feature.properties.name) {
+                            layer.bindTooltip(feature.properties.name, {
+                                permanent: false,
+                                direction: 'center'
+                            });
                         }
                     }
                 }).addTo(map);
-
+                
+                // Ajustar o zoom para o RS
                 map.fitBounds(geojsonLayer.getBounds());
-                bindViewButtons();
-                loadWeatherDataForMunicipalities(municipalityData.features);
-            } catch (error) {
-                console.error('Erro ao carregar os arquivos geográficos:', error);
-                showMessage('Não foi possível carregar os arquivos do mapa.', '#b71c1c');
-            }
-
-            function featureStyle(feature) {
-                const key = normalizeMunicipalityName(feature.properties && feature.properties.name);
-                const inBasin = basinMunicipalities.has(key);
-                const result = hydroResults.get(key);
-
-                if (!hydroMode) {
-                    return { color: '#0066cc', weight: 1, fillOpacity: 0.1, fillColor: '#4da6ff' };
-                }
-                if (!inBasin) {
-                    return { color: '#b0bec5', weight: 0.5, fillOpacity: 0.02, fillColor: '#eceff1' };
-                }
-
-                const rain = result && result.rain;
-                if (!rain) {
-                    return { color: '#003b5c', weight: 1.5, fillOpacity: 0.5, fillColor: '#90a4ae' };
-                }
-                const status = getRainStatus(rain ? rain.observed24h : 0, rain ? rain.forecast72h : 0);
-                return { color: '#003b5c', weight: 1.5, fillOpacity: 0.72, fillColor: status.color };
-            }
-
-            function bindViewButtons() {
-                $('#view-weather').on('click', function() {
-                    hydroMode = false;
-                    $(this).addClass('active');
-                    $('#view-hydro').removeClass('active');
-                    $('#hydro-summary').removeClass('visible');
-                    if (!map.hasLayer(weatherMarkers)) weatherMarkers.addTo(map);
-                    if (legend._map) legend.remove();
-                    geojsonLayer.setStyle(featureStyle);
-                    map.fitBounds(geojsonLayer.getBounds());
-                });
-
-                $('#view-hydro').on('click', function() {
-                    hydroMode = true;
-                    $(this).addClass('active');
-                    $('#view-weather').removeClass('active');
-                    $('#hydro-summary').addClass('visible');
-                    if (map.hasLayer(weatherMarkers)) map.removeLayer(weatherMarkers);
-                    if (!legend._map) legend.addTo(map);
-                    geojsonLayer.setStyle(featureStyle);
-                    if (basinBounds) map.fitBounds(basinBounds, { padding: [15, 15] });
-                    updateHydroSummary();
-                });
-            }
-
+                
+                // Iniciar carregamento de dados meteorológicos
+                loadWeatherDataForMunicipalities(data.features);
+                
+            }).fail(function() {
+                console.error('Erro ao carregar dados geográficos do Rio Grande do Sul');
+                map.setView([-30.0346, -51.2177], 7);
+            });
+            
+            // Função para carregar dados meteorológicos em lotes
             async function loadWeatherDataForMunicipalities(features) {
+                console.log(`Iniciando carregamento de dados para ${features.length} municípios...`);
+                
+                // Mostrar indicador de carregamento
                 const loadingIndicator = document.createElement('div');
                 loadingIndicator.id = 'loading-indicator';
-                loadingIndicator.style.cssText = 'position:fixed;top:70px;right:10px;background:#0066cc;color:white;padding:10px;border-radius:5px;z-index:1100';
+                loadingIndicator.style.cssText = `
+                    position: fixed; top: 50px; right: 10px; background: #0066cc; 
+                    color: white; padding: 10px; border-radius: 5px; z-index: 1000;
+                `;
+                loadingIndicator.textContent = 'Carregando dados meteorológicos...';
                 document.body.appendChild(loadingIndicator);
-
+                
                 let processedCount = 0;
                 let successCount = 0;
-
-                // Prioriza municípios da bacia para disponibilizar a análise mais cedo.
-                const orderedFeatures = [...features].sort((a, b) => {
-                    const aBasin = basinMunicipalities.has(normalizeMunicipalityName(a.properties.name)) ? 1 : 0;
-                    const bBasin = basinMunicipalities.has(normalizeMunicipalityName(b.properties.name)) ? 1 : 0;
-                    return bBasin - aBasin;
-                });
-
-                for (let i = 0; i < orderedFeatures.length; i += weatherManager.BATCH_SIZE) {
-                    const batch = orderedFeatures.slice(i, i + weatherManager.BATCH_SIZE);
-                    if (!weatherManager.canMakeApiCall()) break;
-
-                    await Promise.allSettled(batch.map(async feature => {
-                        const cityName = feature.properties.name;
-                        const key = normalizeMunicipalityName(cityName);
-                        const basinPercentage = basinMunicipalities.get(key);
-                        const includeHydrology = basinPercentage !== undefined;
-
+                
+                // Processar em lotes para evitar sobrecarga
+                for (let i = 0; i < features.length; i += weatherManager.BATCH_SIZE) {
+                    const batch = features.slice(i, i + weatherManager.BATCH_SIZE);
+                    
+                    // Verificar se ainda podemos fazer calls
+                    if (!weatherManager.canMakeApiCall()) {
+                        console.warn('Limite de API atingido, parando carregamento');
+                        break;
+                    }
+                    
+                    // Processar lote atual
+                    const promises = batch.map(async (feature) => {
                         try {
-                            // O centro dos limites funciona para Polygon e MultiPolygon.
-                            const center = L.geoJSON(feature).getBounds().getCenter();
-                            const weatherData = await weatherManager.fetchWeatherData(
-                                center.lat,
-                                center.lng,
-                                includeHydrology
-                            );
-
-                            const marker = createWeatherMarker(center.lat, center.lng, weatherData, cityName);
+                            const centroid = calculateCentroid(feature.geometry.coordinates);
+                            if (!centroid) return;
+                            
+                            const [lat, lng] = centroid;
+                            const weatherData = await weatherManager.fetchWeatherData(lat, lng);
+                            
+                            const marker = createWeatherMarker(lat, lng, weatherData, feature.properties.name);
                             weatherMarkers.addLayer(marker);
-
-                            if (includeHydrology) {
-                                hydroResults.set(key, weatherData);
-                                const layer = municipalityLayers.get(key);
-                                if (layer) {
-                                    layer.bindPopup(createHydroPopup(cityName, basinPercentage, weatherData));
-                                    if (hydroMode) layer.setStyle(featureStyle(feature));
-                                }
-                                updateHydroSummary();
-                            }
+                            
                             successCount++;
+                            
                         } catch (error) {
-                            console.warn(`Erro ao carregar dados para ${cityName}:`, error.message);
-                        } finally {
-                            processedCount++;
-                            loadingIndicator.textContent =
-                                `Carregando ${processedCount}/${orderedFeatures.length} — ${successCount} disponíveis`;
+                            console.warn(`Erro ao carregar dados para ${feature.properties.name}:`, error.message);
                         }
-                    }));
-
-                    if (i + weatherManager.BATCH_SIZE < orderedFeatures.length) {
+                        
+                        processedCount++;
+                        loadingIndicator.textContent = `Carregando... ${processedCount}/${features.length} (${successCount} sucessos)`;
+                    });
+                    
+                    await Promise.allSettled(promises);
+                    
+                    // Pausa entre lotes para não sobrecarregar a API
+                    if (i + weatherManager.BATCH_SIZE < features.length) {
                         await new Promise(resolve => setTimeout(resolve, weatherManager.DELAY_BETWEEN_BATCHES));
                     }
                 }
-
+                
+                // Remover indicador de carregamento
                 loadingIndicator.remove();
-                showMessage(`✅ ${successCount} municípios carregados`, '#1b5e20');
-            }
-
-            function updateHydroSummary() {
-                let weightTotal = 0;
-                let observedWeighted = 0;
-                let forecastWeighted = 0;
-                let max24 = -1;
-                let maxCity = '';
-
-                hydroResults.forEach((weatherData, key) => {
-                    if (!weatherData.rain) return;
-                    const weight = basinMunicipalities.get(key) || 0;
-                    weightTotal += weight;
-                    observedWeighted += weatherData.rain.observed24h * weight;
-                    forecastWeighted += weatherData.rain.forecast72h * weight;
-                    if (weatherData.rain.observed24h > max24) {
-                        max24 = weatherData.rain.observed24h;
-                        const layer = municipalityLayers.get(key);
-                        maxCity = layer && layer.feature ? layer.feature.properties.name : '';
-                    }
-                });
-
-                const avg24 = weightTotal ? observedWeighted / weightTotal : 0;
-                const avgForecast = weightTotal ? forecastWeighted / weightTotal : 0;
-                const status = getRainStatus(avg24, avgForecast);
-
-                $('#hydro-count').text(`${hydroResults.size}/${basinFeatureCount}`);
-                $('#hydro-rain-24').text(`${avg24.toFixed(1)} mm`);
-                $('#hydro-max-24').text(max24 >= 0 ? `${max24.toFixed(1)} mm${maxCity ? ` — ${maxCity}` : ''}` : '-- mm');
-                $('#hydro-forecast-72').text(`${avgForecast.toFixed(1)} mm`);
-                $('#hydro-status').text(status.label).css('color', status.color);
-            }
-
-            function showMessage(text, color) {
-                const element = document.createElement('div');
-                element.style.cssText = `position:fixed;bottom:10px;right:10px;background:${color};color:white;padding:10px;border-radius:5px;z-index:1100`;
-                element.textContent = text;
-                document.body.appendChild(element);
-                setTimeout(() => element.remove(), 5000);
+                
+                console.log(`Carregamento concluído: ${successCount}/${processedCount} municípios com dados meteorológicos`);
+                
+                // Mostrar estatísticas finais
+                if (successCount > 0) {
+                    const statsDiv = document.createElement('div');
+                    statsDiv.style.cssText = `
+                        position: fixed; bottom: 10px; right: 10px; background: #28a745; 
+                        color: white; padding: 10px; border-radius: 5px; z-index: 1000;
+                    `;
+                    statsDiv.textContent = `✅ ${successCount} municípios carregados`;
+                    document.body.appendChild(statsDiv);
+                    
+                    setTimeout(() => statsDiv.remove(), 5000);
+                }
             }
         });
     </script>
