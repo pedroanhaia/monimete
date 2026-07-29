@@ -121,6 +121,18 @@ class DataMetereologicalTable extends Table
             ->integer('type')
             ->allowEmptyString('type');
 
+        $validator
+            ->numeric('tempmin')
+            ->notEmptyString('tempmin');
+
+        $validator
+            ->numeric('tempmax')
+            ->notEmptyString('tempmax');
+
+        $validator
+            ->scalar('weather')
+            ->notEmptyString('weather');
+
         return $validator;
     }
 
@@ -134,8 +146,14 @@ class DataMetereologicalTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['location_id'], 'Locations'), ['errorField' => 'location_id']);
-        $rules->add($rules->existsIn(['service_id'], 'Services'), ['errorField' => 'service_id']);
-        $rules->add($rules->existsIn(['device_id'], 'Devices'), ['errorField' => 'device_id']);
+        $rules->add(
+            $rules->existsIn(['service_id'], 'Services', ['allowNullableNulls' => true]),
+            ['errorField' => 'service_id']
+        );
+        $rules->add(
+            $rules->existsIn(['device_id'], 'Devices', ['allowNullableNulls' => true]),
+            ['errorField' => 'device_id']
+        );
 
         return $rules;
     }

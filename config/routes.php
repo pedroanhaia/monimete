@@ -62,6 +62,13 @@ return function (RouteBuilder $routes): void {
          */
         $builder->connect('/pages/*', 'Pages::display');
 
+        $builder
+            ->post('/weather-cache/load', ['controller' => 'WeatherCache', 'action' => 'load'])
+            ->setName('weatherCacheLoad');
+        $builder
+            ->post('/weather-cache/save', ['controller' => 'WeatherCache', 'action' => 'save'])
+            ->setName('weatherCacheSave');
+
         /*
          * Connect catchall routes for all controllers.
          *

@@ -619,9 +619,8 @@
             }
         }
     </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
-     crossorigin="anonymous"></script>
-     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"crossorigin="anonymous"></script>
+
 </head>
 <body>
     <!-- Barra superior fixa com logo e toggle -->
@@ -646,21 +645,14 @@
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-6951165665893251"
-                data-ad-slot="9541071374"
+                data-ad-slot="9972766898"
                 data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
+                data-full-width-responsive="true">
+            </ins>
         </aside>
     </div>
 
     <main>
-        <amp-ad width="100vw" height="320"
-            type="adsense"
-            data-ad-client="ca-pub-6951165665893251"
-            data-ad-slot="9541071374"
-            data-auto-format="rspv"
-            data-full-width="">
-            <div overflow=""></div>
-        </amp-ad>
         <section id="introducao">
             <h2>Bacia do rio Taquari</h2>
             <p><strong>Confira abaixo nosso mapa interativo em tempo real com os dados meteorológicos</strong></p>
@@ -708,7 +700,8 @@
     </main>
 
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push({});
     </script>
 
     <footer>
@@ -808,10 +801,25 @@
                 this.apiCallCount = parseInt(localStorage.getItem('openmeteo_calls') || '0');
                 this.lastResetDate = localStorage.getItem('openmeteo_reset') || new Date().toDateString();
                 this.weatherCache = new Map();
-                this.CACHE_DURATION = 30 * 60 * 1000; // 30 minutos
+                this.databaseCache = new Map();
+                this.pendingSaves = [];
+                this.providerUnavailable = false;
+                this.cacheHits = 0;
+                this.staleHits = 0;
+                this.externalCalls = 0;
+                this.CACHE_DURATION = 60 * 60 * 1000; // 1 hora, igual ao cache do banco
                 this.API_LIMIT = 9500; // Limite seguro (500 calls de margem)
-                this.BATCH_SIZE = 50; // Processa 50 municípios por vez
-                this.DELAY_BETWEEN_BATCHES = 2000; // 2 segundos entre lotes
+                this.BATCH_SIZE = 20; // Evita rajadas excessivas quando a API está limitada
+                this.DELAY_BETWEEN_BATCHES = 300;
+                this.CACHE_LOAD_URL = <?= json_encode($this->Url->build([
+                    'controller' => 'WeatherCache',
+                    'action' => 'load',
+                ]), JSON_UNESCAPED_SLASHES) ?>;
+                this.CACHE_SAVE_URL = <?= json_encode($this->Url->build([
+                    'controller' => 'WeatherCache',
+                    'action' => 'save',
+                ]), JSON_UNESCAPED_SLASHES) ?>;
+                this.CSRF_TOKEN = <?= json_encode((string)$this->request->getAttribute('csrfToken')) ?>;
 
                 this.resetDailyCountIfNeeded();
                 this.updateApiStatus();
@@ -859,7 +867,7 @@
             }
 
             getCachedWeather(lat, lng, includeHydrology = false) {
-                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}_${includeHydrology ? 'hydro' : 'current'}`;
+                const key = this.getCacheKey(lat, lng, includeHydrology);
                 const cached = this.weatherCache.get(key);
                 if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
                     return cached.data;
@@ -868,22 +876,148 @@
             }
 
             setCachedWeather(lat, lng, data, includeHydrology = false) {
-                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}_${includeHydrology ? 'hydro' : 'current'}`;
+                const key = this.getCacheKey(lat, lng, includeHydrology);
                 this.weatherCache.set(key, {
                     data: data,
                     timestamp: Date.now()
                 });
             }
 
-            async fetchWeatherData(lat, lng, includeHydrology = false) {
+            getCacheKey(lat, lng, includeHydrology = false) {
+                return `${Number(lat).toFixed(4)}_${Number(lng).toFixed(4)}_${includeHydrology ? 'hydrology' : 'current'}`;
+            }
+
+            async preloadDatabaseCache(points) {
+                const uniquePoints = [];
+                const seen = new Set();
+                points.forEach(point => {
+                    const cacheKey = this.getCacheKey(point.lat, point.lng, point.includeHydrology);
+                    if (seen.has(cacheKey)) return;
+                    seen.add(cacheKey);
+                    uniquePoints.push({
+                        cityName: point.cityName,
+                        latitude: Number(point.lat),
+                        longitude: Number(point.lng),
+                        scope: point.includeHydrology ? 'hydrology' : 'current'
+                    });
+                });
+                if (!uniquePoints.length) return;
+
+                try {
+                    const response = await fetch(this.CACHE_LOAD_URL, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-Token': this.CSRF_TOKEN
+                        },
+                        body: JSON.stringify({ points: uniquePoints })
+                    });
+                    if (!response.ok) throw new Error(`Cache HTTP ${response.status}`);
+                    const payload = await response.json();
+                    Object.entries(payload.records || {}).forEach(([key, record]) => {
+                        if (record) this.databaseCache.set(key, record);
+                    });
+                } catch (error) {
+                    // O mapa continua consultando a API externa caso o cache interno falhe.
+                    console.warn('Cache compartilhado indisponível:', error.message);
+                }
+            }
+
+            queueDatabaseSave(cityName, lat, lng, data, includeHydrology = false) {
+                this.pendingSaves.push({
+                    cityName,
+                    latitude: Number(lat),
+                    longitude: Number(lng),
+                    scope: includeHydrology ? 'hydrology' : 'current',
+                    data
+                });
+            }
+
+            async flushPendingSaves() {
+                if (!this.pendingSaves.length) return;
+                const records = this.pendingSaves.splice(0, this.BATCH_SIZE);
+                try {
+                    const response = await fetch(this.CACHE_SAVE_URL, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-Token': this.CSRF_TOKEN
+                        },
+                        body: JSON.stringify({ records })
+                    });
+                    if (!response.ok) throw new Error(`Cache HTTP ${response.status}`);
+                } catch (error) {
+                    this.pendingSaves.unshift(...records);
+                    console.warn('Não foi possível persistir o lote meteorológico:', error.message);
+                }
+            }
+
+            async fetchWeatherData(lat, lng, includeHydrology = false, cityName = '') {
                 // Verificar cache primeiro
                 const cached = this.getCachedWeather(lat, lng, includeHydrology);
                 if (cached) {
+                    this.cacheHits++;
                     return cached;
+                }
+
+                const cacheKey = this.getCacheKey(lat, lng, includeHydrology);
+                const databaseRecord = this.databaseCache.get(cacheKey);
+                if (databaseRecord && databaseRecord.fresh) {
+                    const databaseData = {
+                        ...databaseRecord.data,
+                        _cache: true,
+                        _stale: false,
+                        _fetchedAt: databaseRecord.fetchedAt || null
+                    };
+                    this.setCachedWeather(lat, lng, databaseData, includeHydrology);
+                    this.cacheHits++;
+                    return databaseData;
+                }
+
+                // Outro navegador recebeu a tarefa de renovar este ponto.
+                if (databaseRecord && databaseRecord.data && !databaseRecord.fresh && !databaseRecord.refresh) {
+                    this.staleHits++;
+                    return {
+                        ...databaseRecord.data,
+                        _cache: true,
+                        _stale: true,
+                        _fetchedAt: databaseRecord.fetchedAt || null
+                    };
+                }
+
+                if (databaseRecord && !databaseRecord.data && !databaseRecord.refresh) {
+                    throw new Error('A atualização compartilhada deste município já está em andamento.');
+                }
+
+                // Quando a cota acaba, não insiste em centenas de chamadas condenadas a falhar.
+                if (this.providerUnavailable) {
+                    if (databaseRecord && databaseRecord.data) {
+                        this.staleHits++;
+                        return {
+                            ...databaseRecord.data,
+                            _cache: true,
+                            _stale: true,
+                            _fetchedAt: databaseRecord.fetchedAt || null
+                        };
+                    }
+                    throw new Error('API temporariamente indisponível e não há valor salvo.');
                 }
 
                 // Verificar limite de API
                 if (!this.canMakeApiCall()) {
+                    if (databaseRecord && databaseRecord.data) {
+                        this.staleHits++;
+                        return {
+                            ...databaseRecord.data,
+                            _cache: true,
+                            _stale: true,
+                            _fetchedAt: databaseRecord.fetchedAt || null
+                        };
+                    }
                     throw new Error('Limite diário de API excedido');
                 }
 
@@ -894,12 +1028,24 @@
 
                 try {
                     const response = await fetch(url);
+                    const data = await response.json().catch(() => ({}));
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+                        const reason = data.reason || data.error || `HTTP ${response.status}`;
+                        if (response.status === 429 || /daily api request limit|limit exceeded|quota/i.test(String(reason))) {
+                            this.providerUnavailable = true;
+                        }
+                        throw new Error(String(reason));
                     }
-
-                    const data = await response.json();
+                    if (data.error) {
+                        const reason = data.reason || data.error;
+                        if (/daily api request limit|limit exceeded|quota/i.test(String(reason))) {
+                            this.providerUnavailable = true;
+                        }
+                        throw new Error(String(reason));
+                    }
+                    if (!data.current) throw new Error('Resposta meteorológica incompleta.');
                     this.incrementApiCall();
+                    this.externalCalls++;
 
                     const weatherData = {
                         temperature: data.current.temperature_2m,
@@ -910,10 +1056,20 @@
                     };
 
                     this.setCachedWeather(lat, lng, weatherData, includeHydrology);
+                    this.queueDatabaseSave(cityName, lat, lng, weatherData, includeHydrology);
                     return weatherData;
 
                 } catch (error) {
                     console.error('Erro ao buscar dados meteorológicos:', error);
+                    if (databaseRecord && databaseRecord.data) {
+                        this.staleHits++;
+                        return {
+                            ...databaseRecord.data,
+                            _cache: true,
+                            _stale: true,
+                            _fetchedAt: databaseRecord.fetchedAt || null
+                        };
+                    }
                     throw error;
                 }
             }
@@ -951,6 +1107,9 @@
         function createWeatherMarker(lat, lng, weatherData, cityName) {
             const temp = weatherData.temperature;
             const color = getTemperatureColor(temp);
+            const cacheNotice = weatherData._stale
+                ? `<small style="color:#b45309;">Último valor salvo${weatherData._fetchedAt ? ` em ${new Date(weatherData._fetchedAt).toLocaleString('pt-BR')}` : ''}. API temporariamente indisponível.</small>`
+                : '<small style="color: #666;">Dados: Open-Meteo API</small>';
 
             const icon = L.divIcon({
                 className: '',
@@ -982,7 +1141,7 @@
                             <span class="weather-value">${weatherData.windDirection}°</span>
                         </div>
                     </div>
-                    <small style="color: #666;">Dados: Open-Meteo API</small>
+                    ${cacheNotice}
                 </div>
             `;
 
@@ -999,6 +1158,9 @@
             }
 
             const status = getRainStatus(rain.observed24h, rain.forecast72h);
+            const cacheNotice = weatherData._stale
+                ? `<small style="color:#b45309;">Último valor salvo${weatherData._fetchedAt ? ` em ${new Date(weatherData._fetchedAt).toLocaleString('pt-BR')}` : ''}. A API está temporariamente indisponível.</small>`
+                : '<small>Estimativa Open-Meteo no ponto central do município. Não representa nível ou vazão do rio.</small>';
             return `
                 <div class="weather-popup">
                     <h3>${escapeHtml(cityName)}</h3>
@@ -1010,7 +1172,7 @@
                         <div class="weather-metric"><span>Previsão 72 h:</span><span class="weather-value">${rain.forecast72h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Situação meteorológica:</span><span class="weather-value" style="color:${status.color}">${status.label}</span></div>
                     </div>
-                    <small>Estimativa Open-Meteo no ponto central do município. Não representa nível ou vazão do rio.</small>
+                    ${cacheNotice}
                 </div>`;
         }
 
@@ -1273,9 +1435,23 @@
                     return bBasin - aBasin;
                 });
 
+                // Uma única leitura em lote busca o cache compartilhado de todos os pontos.
+                const weatherPoints = new Map();
+                orderedFeatures.forEach(feature => {
+                    const cityName = feature.properties.name;
+                    const key = normalizeMunicipalityName(cityName);
+                    const center = L.geoJSON(feature).getBounds().getCenter();
+                    weatherPoints.set(key, {
+                        cityName,
+                        lat: center.lat,
+                        lng: center.lng,
+                        includeHydrology: basinMunicipalities.has(key)
+                    });
+                });
+                await weatherManager.preloadDatabaseCache([...weatherPoints.values()]);
+
                 for (let i = 0; i < orderedFeatures.length; i += weatherManager.BATCH_SIZE) {
                     const batch = orderedFeatures.slice(i, i + weatherManager.BATCH_SIZE);
-                    if (!weatherManager.canMakeApiCall()) break;
 
                     await Promise.allSettled(batch.map(async feature => {
                         const cityName = feature.properties.name;
@@ -1285,11 +1461,12 @@
 
                         try {
                             // O centro dos limites funciona para Polygon e MultiPolygon.
-                            const center = L.geoJSON(feature).getBounds().getCenter();
+                            const center = weatherPoints.get(key);
                             const weatherData = await weatherManager.fetchWeatherData(
                                 center.lat,
                                 center.lng,
-                                includeHydrology
+                                includeHydrology,
+                                cityName
                             );
 
                             const marker = createWeatherMarker(center.lat, center.lng, weatherData, cityName);
@@ -1318,13 +1495,22 @@
                         }
                     }));
 
+                    await weatherManager.flushPendingSaves();
                     if (i + weatherManager.BATCH_SIZE < orderedFeatures.length) {
                         await new Promise(resolve => setTimeout(resolve, weatherManager.DELAY_BETWEEN_BATCHES));
                     }
                 }
 
+                while (weatherManager.pendingSaves.length) {
+                    await weatherManager.flushPendingSaves();
+                }
                 loadingIndicator.remove();
-                showMessage(`✅ ${successCount} municípios carregados`, '#1b5e20');
+                const details = [
+                    `${weatherManager.cacheHits} do cache`,
+                    `${weatherManager.externalCalls} da API`,
+                    weatherManager.staleHits ? `${weatherManager.staleHits} salvos anteriormente` : null
+                ].filter(Boolean).join(', ');
+                showMessage(`✅ ${successCount} municípios carregados — ${details}`, '#1b5e20');
             }
 
             function updateHydroSummary() {

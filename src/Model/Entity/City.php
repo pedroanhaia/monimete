@@ -39,6 +39,7 @@ class City extends Entity
         'created' => true,
         'modified' => true,
         'role' => true,
+        'datelastsearch' => true,
         'locations' => true,
         'users' => true,
     ];

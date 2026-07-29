@@ -86,6 +86,10 @@ class CitiesTable extends Table
             ->integer('role')
             ->allowEmptyString('role');
 
+        $validator
+            ->dateTime('datelastsearch')
+            ->allowEmptyDateTime('datelastsearch');
+
         return $validator;
     }
 }

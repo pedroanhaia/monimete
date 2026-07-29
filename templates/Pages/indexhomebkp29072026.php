@@ -17,6 +17,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
+
+    <!-- Chart.js para o gráfico de precipitação da bacia -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -139,7 +142,7 @@
             padding: 20px;
             max-width: 1200px;
             margin: auto;
-            padding-top: 80px; /* Espaço apenas para a top-bar */
+            padding-top: 30px; /* Espaço apenas para a top-bar */
             transition: all 0.5s ease;
         }
 
@@ -441,6 +444,41 @@
             margin-top: 4px;
         }
 
+        .hydro-chart-container {
+            display: none;
+            background: rgba(255,255,255,0.97);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 0 0 15px;
+            min-height: 310px;
+            position: relative;
+            z-index: 2;
+            box-sizing: border-box;
+        }
+
+        .hydro-chart-container.visible {
+            display: block;
+        }
+
+        .hydro-chart-title {
+            color: #004080;
+            font-size: 1.05rem;
+            margin: 0 0 4px;
+            text-align: center;
+        }
+
+        .hydro-chart-description {
+            color: #555;
+            font-size: .82rem;
+            margin: 0 0 12px;
+            text-align: center;
+        }
+
+        .hydro-chart-wrapper {
+            height: 245px;
+            position: relative;
+        }
+
         .hydro-note {
             flex: 1 1 100%;
             margin: 0;
@@ -536,6 +574,19 @@
                 font-size: .92rem;
             }
 
+            .hydro-chart-container {
+                min-height: 285px;
+                padding: 10px 6px;
+            }
+
+            .hydro-chart-wrapper {
+                height: 225px;
+            }
+
+            .hydro-chart-title {
+                font-size: .95rem;
+            }
+
             .leaflet-popup-content {
                 width: calc(100vw - 82px) !important;
                 max-width: 300px;
@@ -568,20 +619,50 @@
             }
         }
     </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
+     crossorigin="anonymous"></script>
+     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 </head>
 <body>
     <!-- Barra superior fixa com logo e toggle -->
     <div class="top-bar">
         <div class="logo-section">
-            <?=$this->Html->image('favicon.png', ['alt' => 'favicon', 'width'=>'100em'])?>
-            <span>Monitoramento da Bacia do Rio Taquari - <a href="https://www.adatecnologia.com" target="_blank">ADA Tecnologia LTDA</a></span>
+            <?= $this->Html->image('favicon.png', [
+                'alt' => 'favicon',
+                'width' => '100'
+            ]) ?>
+
+            <span>
+                Monitoramento da Bacia do Rio Taquari -
+                <a href="https://www.adatecnologia.com" target="_blank" rel="noopener noreferrer">
+                    ADA Tecnologia LTDA
+                </a>
+            </span>
         </div>
+
+        <aside class="header-ad" aria-label="Publicidade">
+            <span class="ad-label">Publicidade</span>
+
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-6951165665893251"
+                data-ad-slot="9541071374"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+        </aside>
     </div>
 
     <main>
+        <amp-ad width="100vw" height="320"
+            type="adsense"
+            data-ad-client="ca-pub-6951165665893251"
+            data-ad-slot="9541071374"
+            data-auto-format="rspv"
+            data-full-width="">
+            <div overflow=""></div>
+        </amp-ad>
         <section id="introducao">
-            <h2>Introdução</h2>
-            <p>O seguinte projeto tem como objetivo criar um sistema de acompanhamento da bacia do rio Taquari com comunicação a satélites existentes para essa finalidade e APIs de fontes confiáveis. Seu objetivo principal é permitir o acompanhamento em tempo real das condições hidroclimáticas nos municípios da bacia.</p>
+            <h2>Bacia do rio Taquari</h2>
             <p><strong>Confira abaixo nosso mapa interativo em tempo real com os dados meteorológicos</strong></p>
         </section>
 
@@ -590,20 +671,7 @@
                 <h2 class="map-title">Monitoramento Meteorológico em Tempo Real</h2>
                 <p class="map-subtitle">Dados meteorológicos atualizados</p>
 
-                <div class="map-info">
-                    <p><strong>🎯 Visualização Inteligente:</strong> Este mapa apresenta dados meteorológicos dos municípios presentes na bacia do rio Taquari, integrando temperatura, precipitação e vento através da API Open-Meteo.</p>
-                    <p><strong>📊 Dados Exibidos:</strong> 🌡️ Temperatura (°C) | 🌧️ Precipitação (mm) | 💨 Velocidade do Vento (km/h) | 🧭 Direção do Vento (°)</p>
-                </div>
-
-                <div class="hydro-toolbar">
-                    <button type="button" id="view-weather" class="active">🌦️ Clima no RS</button>
-                    <button type="button" id="view-hydro">🌊 Bacia Taquari-Antas</button>
-                    <p class="hydro-note">
-                        A análise hidroclimática utiliza chuva observada e prevista. Ela é indicativa e não substitui alertas da Defesa Civil, SEMA, ANA ou municípios.
-                    </p>
-                </div>
-
-                <div id="hydro-summary" class="hydro-summary" aria-live="polite">
+                <div id="hydro-summary" class="hydro-summary visible" aria-live="polite">
                     <div class="hydro-card">Municípios analisados<strong id="hydro-count">0</strong></div>
                     <div class="hydro-card">Média ponderada 24 h<strong id="hydro-rain-24">-- mm</strong></div>
                     <div class="hydro-card">Maior acumulado 24 h<strong id="hydro-max-24">-- mm</strong></div>
@@ -611,15 +679,37 @@
                     <div class="hydro-card">Situação predominante<strong id="hydro-status">Calculando</strong></div>
                 </div>
 
+                <div id="hydro-chart-container" class="hydro-chart-container visible">
+                    <h3 class="hydro-chart-title">Precipitação média na Bacia Taquari-Antas</h3>
+                    <p class="hydro-chart-description">
+                        Média ponderada dos municípios já carregados, em milímetros acumulados por janela.
+                    </p>
+                    <div class="hydro-chart-wrapper">
+                        <canvas id="hydro-rain-chart" role="img" aria-label="Gráfico em linha da precipitação média observada e prevista para a Bacia Taquari-Antas"></canvas>
+                    </div>
+                </div>
+
                 <div id="map"></div>
 
+
                 <p style="margin-top: 20px; font-size: 0.9em; color: rgba(255,255,255,0.8); text-align: center; position: relative; z-index: 1;">
-                    <strong>💡 Como usar:</strong> escolha “Bacia Taquari-Antas” para destacar os municípios contribuintes e clique em um município para consultar seus acumulados de chuva.
+                    <strong>💡 Como usar:</strong> a página inicia na precipitação da Bacia Taquari-Antas. Clique em um município para consultar seus acumulados ou escolha “Clima em todo o RS” para mudar a visualização.
                 </p>
+                <div class="hydro-toolbar">
+                    <button type="button" id="view-hydro" class="active">🌊 Precipitação da Bacia Taquari-Antas</button>
+                    <button type="button" id="view-weather">🌦️ Clima em todo o RS</button>
+                    <p class="hydro-note">
+                        A análise hidroclimática utiliza chuva observada e prevista. Ela é indicativa e não substitui alertas da Defesa Civil, SEMA, ANA ou municípios.
+                    </p>
+                </div>
             </div>
         </section>
 
     </main>
+
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
     <footer>
         &copy; ADA Tecnologia Desenvolvimentos LTDA - Todos os direitos reservados.
@@ -655,6 +745,9 @@
                 const headerNavContainer = document.getElementById('header-nav-container');
                 const body = document.body;
                 const toggleText = document.getElementById('toggle-text');
+
+                // Esta versão da página não possui o cabeçalho retrátil.
+                if (!headerNavContainer || !toggleText) return;
 
                 headerNavContainer.classList.add('visible');
                 body.classList.add('header-visible');
@@ -926,15 +1019,16 @@
 
             const weatherManager = new WeatherManager();
             const map = L.map('map').setView([-30.0346, -51.2177], 7);
-            const weatherMarkers = L.layerGroup().addTo(map);
+            const weatherMarkers = L.layerGroup();
             const municipalityLayers = new Map();
             const hydroResults = new Map();
+            let rainChart;
             let geojsonLayer;
             let riverLayer;
             let basinBounds;
             let basinMunicipalities = new Map();
             let basinFeatureCount = 0;
-            let hydroMode = false;
+            let hydroMode = true;
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
@@ -951,6 +1045,8 @@
                     '<i style="background:#7b1fa2"></i>Muito alta (≥ 100 mm)';
                 return div;
             };
+
+            initializeRainChart();
 
             try {
                 const [municipalityData, basinData, riverData] = await Promise.all([
@@ -1020,8 +1116,8 @@
                     }
                 });
 
-                map.fitBounds(geojsonLayer.getBounds());
                 bindViewButtons();
+                activateHydroView();
                 loadWeatherDataForMunicipalities(municipalityData.features);
             } catch (error) {
                 console.error('Erro ao carregar os arquivos geográficos:', error);
@@ -1050,28 +1146,114 @@
 
             function bindViewButtons() {
                 $('#view-weather').on('click', function() {
-                    hydroMode = false;
-                    $(this).addClass('active');
-                    $('#view-hydro').removeClass('active');
-                    $('#hydro-summary').removeClass('visible');
-                    if (!map.hasLayer(weatherMarkers)) weatherMarkers.addTo(map);
-                    if (riverLayer && map.hasLayer(riverLayer)) map.removeLayer(riverLayer);
-                    if (legend._map) legend.remove();
-                    geojsonLayer.setStyle(featureStyle);
-                    map.fitBounds(geojsonLayer.getBounds());
+                    activateWeatherView();
                 });
 
                 $('#view-hydro').on('click', function() {
-                    hydroMode = true;
-                    $(this).addClass('active');
-                    $('#view-weather').removeClass('active');
-                    $('#hydro-summary').addClass('visible');
-                    if (map.hasLayer(weatherMarkers)) map.removeLayer(weatherMarkers);
-                    if (riverLayer && !map.hasLayer(riverLayer)) riverLayer.addTo(map);
-                    if (!legend._map) legend.addTo(map);
-                    geojsonLayer.setStyle(featureStyle);
-                    if (basinBounds) map.fitBounds(basinBounds, { padding: [15, 15] });
-                    updateHydroSummary();
+                    activateHydroView();
+                });
+            }
+
+            function activateWeatherView() {
+                hydroMode = false;
+                $('#view-weather').addClass('active');
+                $('#view-hydro').removeClass('active');
+                $('#hydro-summary, #hydro-chart-container').removeClass('visible');
+                if (!map.hasLayer(weatherMarkers)) weatherMarkers.addTo(map);
+                if (riverLayer && map.hasLayer(riverLayer)) map.removeLayer(riverLayer);
+                if (legend._map) legend.remove();
+                geojsonLayer.setStyle(featureStyle);
+                map.fitBounds(geojsonLayer.getBounds());
+            }
+
+            function activateHydroView() {
+                hydroMode = true;
+                $('#view-hydro').addClass('active');
+                $('#view-weather').removeClass('active');
+                $('#hydro-summary, #hydro-chart-container').addClass('visible');
+                if (map.hasLayer(weatherMarkers)) map.removeLayer(weatherMarkers);
+                if (riverLayer && !map.hasLayer(riverLayer)) riverLayer.addTo(map);
+                if (!legend._map) legend.addTo(map);
+                geojsonLayer.setStyle(featureStyle);
+                if (basinBounds) map.fitBounds(basinBounds, { padding: [15, 15] });
+                updateHydroSummary();
+                if (rainChart) rainChart.resize();
+            }
+
+            function initializeRainChart() {
+                const canvas = document.getElementById('hydro-rain-chart');
+                if (!canvas || typeof Chart === 'undefined') {
+                    console.warn('Chart.js não foi carregado; o gráfico não será exibido.');
+                    return;
+                }
+
+                rainChart = new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        labels: ['Observado 72 h', 'Observado 24 h', 'Previsão 24 h', 'Previsão 72 h'],
+                        datasets: [{
+                            label: 'Precipitação média',
+                            data: [null, null, null, null],
+                            borderColor: '#0066cc',
+                            backgroundColor: 'rgba(0, 102, 204, 0.14)',
+                            pointBackgroundColor: '#004080',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            borderWidth: 3,
+                            tension: 0.28,
+                            fill: true,
+                            spanGaps: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: context => `${context.dataset.label}: ${Number(context.parsed.y).toFixed(1)} mm`
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Janela de acumulação'
+                                },
+                                ticks: {
+                                    maxRotation: 0,
+                                    autoSkip: false,
+                                    font: context => ({
+                                        size: context.chart.width < 500 ? 10 : 12
+                                    })
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Precipitação média (mm)'
+                                },
+                                ticks: {
+                                    callback: value => `${value} mm`
+                                }
+                            }
+                        }
+                    }
                 });
             }
 
@@ -1147,8 +1329,10 @@
 
             function updateHydroSummary() {
                 let weightTotal = 0;
-                let observedWeighted = 0;
-                let forecastWeighted = 0;
+                let observed24Weighted = 0;
+                let observed72Weighted = 0;
+                let forecast24Weighted = 0;
+                let forecast72Weighted = 0;
                 let max24 = -1;
                 let maxCity = '';
 
@@ -1156,8 +1340,10 @@
                     if (!weatherData.rain) return;
                     const weight = basinMunicipalities.get(key) || 0;
                     weightTotal += weight;
-                    observedWeighted += weatherData.rain.observed24h * weight;
-                    forecastWeighted += weatherData.rain.forecast72h * weight;
+                    observed24Weighted += weatherData.rain.observed24h * weight;
+                    observed72Weighted += weatherData.rain.observed72h * weight;
+                    forecast24Weighted += weatherData.rain.forecast24h * weight;
+                    forecast72Weighted += weatherData.rain.forecast72h * weight;
                     if (weatherData.rain.observed24h > max24) {
                         max24 = weatherData.rain.observed24h;
                         const layer = municipalityLayers.get(key);
@@ -1165,15 +1351,24 @@
                     }
                 });
 
-                const avg24 = weightTotal ? observedWeighted / weightTotal : 0;
-                const avgForecast = weightTotal ? forecastWeighted / weightTotal : 0;
-                const status = getRainStatus(avg24, avgForecast);
+                const avgObserved24 = weightTotal ? observed24Weighted / weightTotal : 0;
+                const avgObserved72 = weightTotal ? observed72Weighted / weightTotal : 0;
+                const avgForecast24 = weightTotal ? forecast24Weighted / weightTotal : 0;
+                const avgForecast72 = weightTotal ? forecast72Weighted / weightTotal : 0;
+                const status = getRainStatus(avgObserved24, avgForecast72);
 
                 $('#hydro-count').text(`${hydroResults.size}/${basinFeatureCount}`);
-                $('#hydro-rain-24').text(`${avg24.toFixed(1)} mm`);
+                $('#hydro-rain-24').text(`${avgObserved24.toFixed(1)} mm`);
                 $('#hydro-max-24').text(max24 >= 0 ? `${max24.toFixed(1)} mm${maxCity ? ` — ${maxCity}` : ''}` : '-- mm');
-                $('#hydro-forecast-72').text(`${avgForecast.toFixed(1)} mm`);
+                $('#hydro-forecast-72').text(`${avgForecast72.toFixed(1)} mm`);
                 $('#hydro-status').text(status.label).css('color', status.color);
+
+                if (rainChart) {
+                    rainChart.data.datasets[0].data = weightTotal
+                        ? [avgObserved72, avgObserved24, avgForecast24, avgForecast72]
+                        : [null, null, null, null];
+                    rainChart.update('none');
+                }
             }
 
             function showMessage(text, color) {
