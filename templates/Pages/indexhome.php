@@ -620,7 +620,7 @@
         }
     </style>
     <script async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_CLIENT_ID"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
         crossorigin="anonymous">
     </script>
 </head>
