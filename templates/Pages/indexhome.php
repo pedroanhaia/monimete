@@ -619,14 +619,39 @@
             }
         }
     </style>
+    <script async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-SEU_CLIENT_ID"
+        crossorigin="anonymous">
+    </script>
 </head>
 <body>
     <!-- Barra superior fixa com logo e toggle -->
     <div class="top-bar">
         <div class="logo-section">
-            <?=$this->Html->image('favicon.png', ['alt' => 'favicon', 'width'=>'100em'])?>
-            <span>Monitoramento da Bacia do Rio Taquari - <a href="https://www.adatecnologia.com" target="_blank">ADA Tecnologia LTDA</a></span>
+            <?= $this->Html->image('favicon.png', [
+                'alt' => 'favicon',
+                'width' => '100'
+            ]) ?>
+
+            <span>
+                Monitoramento da Bacia do Rio Taquari -
+                <a href="https://www.adatecnologia.com" target="_blank" rel="noopener noreferrer">
+                    ADA Tecnologia LTDA
+                </a>
+            </span>
         </div>
+
+        <aside class="header-ad" aria-label="Publicidade">
+            <span class="ad-label">Publicidade</span>
+
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-6951165665893251"
+                data-ad-slot="9972766898"
+                data-ad-format="auto"
+                data-full-width-responsive="true">
+            </ins>
+        </aside>
     </div>
 
     <main>
@@ -675,6 +700,11 @@
         </section>
 
     </main>
+
+    <script>
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push({});
+    </script>
 
     <footer>
         &copy; ADA Tecnologia Desenvolvimentos LTDA - Todos os direitos reservados.
