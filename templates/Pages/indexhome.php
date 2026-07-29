@@ -142,7 +142,7 @@
             padding: 20px;
             max-width: 1200px;
             margin: auto;
-            padding-top: 10px; /* Espaço apenas para a top-bar */
+            padding-top: 30px; /* Espaço apenas para a top-bar */
             transition: all 0.5s ease;
         }
 
