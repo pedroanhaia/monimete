@@ -631,8 +631,7 @@
 
     <main>
         <section id="introducao">
-            <h2>Introdução</h2>
-            <p>O seguinte projeto tem como objetivo criar um sistema de acompanhamento da bacia do rio Taquari com comunicação a satélites existentes para essa finalidade e APIs de fontes confiáveis. Seu objetivo principal é permitir o acompanhamento em tempo real das condições hidroclimáticas nos municípios da bacia.</p>
+            <h2>Bacia do rio Taquari</h2>
             <p><strong>Confira abaixo nosso mapa interativo em tempo real com os dados meteorológicos</strong></p>
         </section>
 
@@ -640,19 +639,6 @@
             <div class="map-container">
                 <h2 class="map-title">Monitoramento Meteorológico em Tempo Real</h2>
                 <p class="map-subtitle">Dados meteorológicos atualizados</p>
-
-                <div class="map-info">
-                    <p><strong>🎯 Visualização Inteligente:</strong> Este mapa apresenta dados meteorológicos dos municípios presentes na bacia do rio Taquari, integrando temperatura, precipitação e vento através da API Open-Meteo.</p>
-                    <p><strong>📊 Dados Exibidos:</strong> 🌡️ Temperatura (°C) | 🌧️ Precipitação (mm) | 💨 Velocidade do Vento (km/h) | 🧭 Direção do Vento (°)</p>
-                </div>
-
-                <div class="hydro-toolbar">
-                    <button type="button" id="view-hydro" class="active">🌊 Precipitação da Bacia Taquari-Antas</button>
-                    <button type="button" id="view-weather">🌦️ Clima em todo o RS</button>
-                    <p class="hydro-note">
-                        A análise hidroclimática utiliza chuva observada e prevista. Ela é indicativa e não substitui alertas da Defesa Civil, SEMA, ANA ou municípios.
-                    </p>
-                </div>
 
                 <div id="hydro-summary" class="hydro-summary visible" aria-live="polite">
                     <div class="hydro-card">Municípios analisados<strong id="hydro-count">0</strong></div>
@@ -674,9 +660,17 @@
 
                 <div id="map"></div>
 
+
                 <p style="margin-top: 20px; font-size: 0.9em; color: rgba(255,255,255,0.8); text-align: center; position: relative; z-index: 1;">
                     <strong>💡 Como usar:</strong> a página inicia na precipitação da Bacia Taquari-Antas. Clique em um município para consultar seus acumulados ou escolha “Clima em todo o RS” para mudar a visualização.
                 </p>
+                <div class="hydro-toolbar">
+                    <button type="button" id="view-hydro" class="active">🌊 Precipitação da Bacia Taquari-Antas</button>
+                    <button type="button" id="view-weather">🌦️ Clima em todo o RS</button>
+                    <p class="hydro-note">
+                        A análise hidroclimática utiliza chuva observada e prevista. Ela é indicativa e não substitui alertas da Defesa Civil, SEMA, ANA ou municípios.
+                    </p>
+                </div>
             </div>
         </section>
 
