@@ -621,6 +621,7 @@
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
      crossorigin="anonymous"></script>
+     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 </head>
 <body>
     <!-- Barra superior fixa com logo e toggle -->
@@ -652,6 +653,14 @@
     </div>
 
     <main>
+        <amp-ad width="100vw" height="320"
+            type="adsense"
+            data-ad-client="ca-pub-6951165665893251"
+            data-ad-slot="9541071374"
+            data-auto-format="rspv"
+            data-full-width="">
+            <div overflow=""></div>
+        </amp-ad>
         <section id="introducao">
             <h2>Bacia do rio Taquari</h2>
             <p><strong>Confira abaixo nosso mapa interativo em tempo real com os dados meteorológicos</strong></p>
