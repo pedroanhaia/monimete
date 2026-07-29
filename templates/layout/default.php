@@ -14,7 +14,7 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
+$cakeDescription = 'monitoramente metereológico da bacia do rio Taquari';
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,7 +25,7 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
         <?= $cakeDescription ?>:
         <?= $this->fetch('title') ?>
     </title>
-    <?= $this->Html->meta('icon','img/AGROCITY_LIVING_LABicon.jpg') ?>
+    <?= $this->Html->meta('icon','img/favicon.png') ?>
 
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake', 'classescssproprias', "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"]) ?>
     <?= $this->Html->script(['http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js', 'https://www.gstatic.com/charts/loader.js', "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"]) ?>
@@ -37,7 +37,7 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
 
 <body>
 <style>
-    
+
         .flex-parent-element {
         display: flex;
         width: 100vw;
@@ -51,8 +51,8 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
             transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
         }
         .main.stretch{
-            width: calc(300vw); 
-            margin-left: -250px; 
+            width: calc(300vw);
+            margin-left: -250px;
         }
         .flex-child-element {
         flex: 1;
@@ -78,7 +78,7 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
         }
         .sidebar.hidden{
             transform: translateX(-250px);
-            
+
         }
 
         .sidebar a {
@@ -102,10 +102,10 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
             z-index: 1000;
             transition: width: 0.3s ease-in-out;
         }
-        
+
         .sidebar-button{
             position: absolute;
-            
+
             right: -45px;
             display: flex;
             justify-content: flex-end;
@@ -120,7 +120,7 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
 
 <div class = "flex-parent-element"overflow-x= "auto">
     <div style="display: flex;z-index: 2;">
-        <div class="flex_child_element"> 
+        <div class="flex_child_element">
             <?php
                 $currenttemplate = $this->getRequest()->getParam('controller');
                 $currentaction = $this->getRequest()->getParam('action');
@@ -133,12 +133,12 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
                 </div>
                 <nav>
                     <?php
-                        
+
                         $menuItems = [
                             'Início' => ['controller' => 'Pages', 'action' => 'display', 'indexhome'],
                             'Cidades' => ['controller' => 'Cities', 'action' => 'index'],
                             'Metereologico' => ['controller' => 'DataMetereological', 'action' => 'index'],
-                            'Satélite' => ['controller' => 'DataSatellite', 'action' => 'index'],   
+                            'Satélite' => ['controller' => 'DataSatellite', 'action' => 'index'],
                             'MQTT IoT' => ['controller' => 'Mqtt', 'action' => 'index'],
                             'Dispositivos' => ['controller' => 'Devices', 'action' => 'index'],
                             'Locais' => ['controller' => 'Locations', 'action' => 'index'],
@@ -149,23 +149,23 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
                             'Configurações' => ['controller' => 'Settings', 'action' => 'index'],
                         ];
                         foreach ($menuItems as $label => $url) {
-                    
+
                             echo $this->Html->link($label, $url, ['class' => 'side-nav-item']);
                         }
-                    
-                    
-                    
+
+
+
                     ?>
                 </nav>
             </div>
             <?php } ?>
-        </div>  
-        
+        </div>
+
     </div>
-    
+
     <main class="main" id="main" overflow-x: visible;>
         <div class="container">
-            
+
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
         </div>
@@ -180,7 +180,7 @@ $cakeDescription = 'Monimete: monitoramente metereológico Agrocity';
   $currentaction = $this->getRequest()->getParam('action');
   if(!($currenttemplate == 'Pages' && $currentaction == 'display')){
  ?>
-    <script> 
+    <script>
     document.getElementById('sidebarCollapse').addEventListener('click', function() {
     document.getElementById('top-nav').classList.toggle('stretch');
     document.getElementById('main').classList.toggle('stretch');
