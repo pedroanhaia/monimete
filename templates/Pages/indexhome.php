@@ -619,8 +619,8 @@
             }
         }
     </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"crossorigin="anonymous"></script>
-
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
+     crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Barra superior fixa com logo e toggle -->
@@ -645,10 +645,9 @@
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-6951165665893251"
-                data-ad-slot="9972766898"
+                data-ad-slot="9541071374"
                 data-ad-format="auto"
-                data-full-width-responsive="true">
-            </ins>
+                data-full-width-responsive="true"></ins>
         </aside>
     </div>
 
@@ -700,8 +699,7 @@
     </main>
 
     <script>
-        window.adsbygoogle = window.adsbygoogle || [];
-        window.adsbygoogle.push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
 
     <footer>
