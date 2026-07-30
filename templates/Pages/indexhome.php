@@ -808,16 +808,23 @@
             }
 
             .hydro-chart-container {
-                min-height: 285px;
-                padding: 10px 6px;
+                min-height: 350px;
+                padding: 12px 6px;
             }
 
             .hydro-chart-wrapper {
-                height: 225px;
+                height: 280px;
             }
 
             .hydro-chart-title {
                 font-size: .95rem;
+                line-height: 1.3;
+                padding: 0 8px;
+            }
+
+            .hydro-chart-description {
+                padding: 0 8px;
+                line-height: 1.35;
             }
 
             .leaflet-popup-content {
@@ -955,7 +962,7 @@
                            href="https://kanbada.adatecnologia.com/"
                            target="_blank"
                            rel="noopener noreferrer">
-                            Conheça a plataforma Kanbada
+                            Conheça o Kanbada
                         </a>
                         <a class="kanbada-button secondary"
                            href="https://blogkanbada.adatecnologia.com/en-us"
@@ -1748,7 +1755,15 @@
                 rainChart = new Chart(canvas, {
                     type: 'line',
                     data: {
-                        labels: ['Observado 72 h', 'Observado 24 h', 'Atual', 'Previsão 24 h', 'Previsão 72 h'],
+                        // Arrays são renderizados pelo Chart.js em múltiplas linhas,
+                        // evitando sobreposição em telas estreitas.
+                        labels: [
+                            ['Observado', '72 h'],
+                            ['Observado', '24 h'],
+                            ['Atual'],
+                            ['Previsão', '24 h'],
+                            ['Previsão', '72 h']
+                        ],
                         datasets: [{
                             label: 'Precipitação média',
                             data: [null, null, null, null, null],
@@ -1769,6 +1784,13 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         animation: false,
+                        layout: {
+                            padding: {
+                                left: 2,
+                                right: 4,
+                                bottom: 4
+                            }
+                        },
                         interaction: {
                             mode: 'index',
                             intersect: false
@@ -1787,13 +1809,21 @@
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Janela de acumulação'
+                                    text: 'Janela de acumulação',
+                                    padding: {
+                                        top: 8
+                                    }
                                 },
                                 ticks: {
                                     maxRotation: 0,
+                                    minRotation: 0,
                                     autoSkip: false,
+                                    padding: 6,
                                     font: context => ({
-                                        size: context.chart.width < 500 ? 10 : 12
+                                        size: context.chart.width < 420
+                                            ? 9
+                                            : (context.chart.width < 500 ? 10 : 12),
+                                        lineHeight: 1.15
                                     })
                                 },
                                 grid: {
