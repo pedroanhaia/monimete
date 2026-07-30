@@ -27,21 +27,20 @@
             padding: 0;
             background-color: #f7f9fc;
             color: #333;
-            padding-top: 10px; /* Espaço para o header fixo */
         }
 
-        /* Header fixo no topo com logo */
+        /* Cabeçalho no fluxo da página: a main começa imediatamente abaixo. */
         .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
+            position: relative;
+            width: 100%;
+            min-height: 120px;
             background: linear-gradient(135deg, #004080 0%, #0059b3 100%);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            gap: 20px;
+            padding: 10px 20px;
+            box-sizing: border-box;
             z-index: 1001;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -49,16 +48,53 @@
         .logo-section {
             display: flex;
             align-items: center;
+            flex: 1 1 auto;
+            min-width: 0;
             color: white;
             font-weight: bold;
             font-size: 1.1em;
         }
 
         .logo-section img {
-            width: 40px;
-            height: 40px;
+            width: 70px;
+            height: 70px;
+            flex: 0 0 70px;
             margin-right: 10px;
             border-radius: 50%;
+        }
+
+        .logo-section a {
+            color: #ffffff;
+        }
+
+        .header-ad {
+            position: relative;
+            flex: 0 0 320px;
+            width: 320px;
+            min-width: 320px;
+            height: 100px;
+            overflow: hidden;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.22);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .header-ad .ad-label {
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            z-index: 1;
+            color: rgba(255,255,255,.78);
+            font-size: 9px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .header-ad-slot {
+            display: block;
+            width: 320px;
+            height: 100px;
         }
 
         /* Botão toggle redesenhado */
@@ -142,7 +178,6 @@
             padding: 20px;
             max-width: 1200px;
             margin: auto;
-            padding-top: 30px; /* Espaço apenas para a top-bar */
             transition: all 0.5s ease;
         }
 
@@ -537,6 +572,40 @@
                 overflow-x: hidden;
             }
 
+            .top-bar {
+                flex-direction: column;
+                min-height: 0;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .logo-section {
+                width: 100%;
+                justify-content: center;
+                font-size: .9rem;
+                text-align: center;
+            }
+
+            .logo-section img {
+                width: 52px;
+                height: 52px;
+                flex-basis: 52px;
+            }
+
+            .header-ad {
+                flex: 0 0 100px;
+                width: 300px;
+                min-width: 300px;
+                max-width: 100%;
+                height: 100px;
+            }
+
+            .header-ad-slot {
+                width: 300px;
+                max-width: 100%;
+                height: 100px;
+            }
+
             main {
                 width: 100%;
                 padding-left: 8px;
@@ -619,7 +688,8 @@
             }
         }
     </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
+        crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -627,8 +697,7 @@
     <div class="top-bar">
         <div class="logo-section">
             <?= $this->Html->image('favicon.png', [
-                'alt' => 'favicon',
-                'width' => '100'
+                'alt' => 'MoniMete'
             ]) ?>
 
             <span>
@@ -642,12 +711,11 @@
         <aside class="header-ad" aria-label="Publicidade">
             <span class="ad-label">Publicidade</span>
 
-            <ins class="adsbygoogle"
-                style="display:block"
+            <ins class="adsbygoogle header-ad-slot"
                 data-ad-client="ca-pub-6951165665893251"
                 data-ad-slot="9972766898"
-                data-ad-format="auto"
-                data-full-width-responsive="true">
+                data-ad-format="horizontal"
+                data-full-width-responsive="false">
             </ins>
         </aside>
     </div>
@@ -674,7 +742,8 @@
                 <div id="hydro-chart-container" class="hydro-chart-container visible">
                     <h3 class="hydro-chart-title">Precipitação média na Bacia Taquari-Antas</h3>
                     <p class="hydro-chart-description">
-                        Média ponderada dos municípios já carregados, em milímetros acumulados por janela.
+                        Média ponderada dos municípios já carregados. O ponto “Atual” usa a precipitação
+                        corrente retornada pelo cache ou pela API.
                     </p>
                     <div class="hydro-chart-wrapper">
                         <canvas id="hydro-rain-chart" role="img" aria-label="Gráfico em linha da precipitação média observada e prevista para a Bacia Taquari-Antas"></canvas>
@@ -700,8 +769,24 @@
     </main>
 
     <script>
-        window.adsbygoogle = window.adsbygoogle || [];
-        window.adsbygoogle.push({});
+        document.addEventListener('DOMContentLoaded', function () {
+            const adSlot = document.querySelector('.header-ad-slot');
+            if (!adSlot || adSlot.dataset.adInitialized === '1') return;
+
+            const initializeAd = function () {
+                if (adSlot.getBoundingClientRect().width < 300) return;
+
+                try {
+                    window.adsbygoogle = window.adsbygoogle || [];
+                    window.adsbygoogle.push({});
+                    adSlot.dataset.adInitialized = '1';
+                } catch (error) {
+                    console.warn('Não foi possível inicializar o anúncio:', error);
+                }
+            };
+
+            window.requestAnimationFrame(initializeAd);
+        });
     </script>
 
     <footer>
@@ -1352,10 +1437,10 @@
                 rainChart = new Chart(canvas, {
                     type: 'line',
                     data: {
-                        labels: ['Observado 72 h', 'Observado 24 h', 'Previsão 24 h', 'Previsão 72 h'],
+                        labels: ['Observado 72 h', 'Observado 24 h', 'Atual', 'Previsão 24 h', 'Previsão 72 h'],
                         datasets: [{
                             label: 'Precipitação média',
-                            data: [null, null, null, null],
+                            data: [null, null, null, null, null],
                             borderColor: '#0066cc',
                             backgroundColor: 'rgba(0, 102, 204, 0.14)',
                             pointBackgroundColor: '#004080',
@@ -1517,6 +1602,7 @@
                 let weightTotal = 0;
                 let observed24Weighted = 0;
                 let observed72Weighted = 0;
+                let currentWeighted = 0;
                 let forecast24Weighted = 0;
                 let forecast72Weighted = 0;
                 let max24 = -1;
@@ -1528,6 +1614,7 @@
                     weightTotal += weight;
                     observed24Weighted += weatherData.rain.observed24h * weight;
                     observed72Weighted += weatherData.rain.observed72h * weight;
+                    currentWeighted += (Number(weatherData.precipitation) || 0) * weight;
                     forecast24Weighted += weatherData.rain.forecast24h * weight;
                     forecast72Weighted += weatherData.rain.forecast72h * weight;
                     if (weatherData.rain.observed24h > max24) {
@@ -1539,6 +1626,7 @@
 
                 const avgObserved24 = weightTotal ? observed24Weighted / weightTotal : 0;
                 const avgObserved72 = weightTotal ? observed72Weighted / weightTotal : 0;
+                const avgCurrent = weightTotal ? currentWeighted / weightTotal : 0;
                 const avgForecast24 = weightTotal ? forecast24Weighted / weightTotal : 0;
                 const avgForecast72 = weightTotal ? forecast72Weighted / weightTotal : 0;
                 const status = getRainStatus(avgObserved24, avgForecast72);
@@ -1551,8 +1639,8 @@
 
                 if (rainChart) {
                     rainChart.data.datasets[0].data = weightTotal
-                        ? [avgObserved72, avgObserved24, avgForecast24, avgForecast72]
-                        : [null, null, null, null];
+                        ? [avgObserved72, avgObserved24, avgCurrent, avgForecast24, avgForecast72]
+                        : [null, null, null, null, null];
                     rainChart.update('none');
                 }
             }
