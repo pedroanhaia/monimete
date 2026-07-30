@@ -734,8 +734,10 @@
                 <div id="hydro-summary" class="hydro-summary visible" aria-live="polite">
                     <div class="hydro-card">Municípios analisados<strong id="hydro-count">0</strong></div>
                     <div class="hydro-card">Média ponderada 24 h<strong id="hydro-rain-24">-- mm</strong></div>
+                    <div class="hydro-card">Precipitação atual média<strong id="hydro-rain-current">-- mm</strong></div>
                     <div class="hydro-card">Maior acumulado 24 h<strong id="hydro-max-24">-- mm</strong></div>
                     <div class="hydro-card">Previsão média 72 h<strong id="hydro-forecast-72">-- mm</strong></div>
+                    <div class="hydro-card">Tendência da precipitação<strong id="hydro-trend">Calculando</strong></div>
                     <div class="hydro-card">Situação predominante<strong id="hydro-status">Calculando</strong></div>
                 </div>
 
@@ -871,13 +873,80 @@
             return div.innerHTML;
         }
 
-        function getRainStatus(rain24h, forecast72h) {
-            const combined = Number(rain24h || 0) + Number(forecast72h || 0);
-            if (rain24h >= 100 || combined >= 180) return { label: 'Muito alta', color: '#7b1fa2' };
-            if (rain24h >= 60 || combined >= 120) return { label: 'Alta', color: '#d73027' };
-            if (rain24h >= 30 || combined >= 70) return { label: 'Atenção', color: '#fc8d59' };
-            if (rain24h >= 10 || combined >= 35) return { label: 'Moderada', color: '#fee08b' };
-            return { label: 'Baixa', color: '#1a9850' };
+        function getRainTrend(currentRain, observed24h, forecast24h) {
+            const current = Math.max(0, Number(currentRain) || 0);
+            const observedRate = Math.max(0, Number(observed24h) || 0) / 24;
+            const forecastRate = Math.max(0, Number(forecast24h) || 0) / 24;
+            // Compara a previsão horária média com o ritmo recente, combinando
+            // a média das últimas 24 h e a precipitação da hora atual.
+            const baselineRate = current > 0
+                ? (observedRate + current) / 2
+                : observedRate;
+            const absoluteChange = forecastRate - baselineRate;
+            const referenceRate = Math.max(baselineRate, 0.1);
+            const relativeChange = absoluteChange / referenceRate;
+
+            if (absoluteChange >= 0.1 && relativeChange >= 0.25) {
+                return {
+                    direction: 'rising',
+                    label: '↑ Subida',
+                    color: '#d73027',
+                    current,
+                    observedRate,
+                    baselineRate,
+                    forecastRate
+                };
+            }
+
+            if (absoluteChange <= -0.1 && relativeChange <= -0.25) {
+                return {
+                    direction: 'falling',
+                    label: '↓ Queda',
+                    color: '#1a9850',
+                    current,
+                    observedRate,
+                    baselineRate,
+                    forecastRate
+                };
+            }
+
+            return {
+                direction: 'stable',
+                label: '→ Estável',
+                color: '#d97706',
+                current,
+                observedRate,
+                baselineRate,
+                forecastRate
+            };
+        }
+
+        function getRainStatus(rain24h, forecast72h, currentRain = 0, trendDirection = 'stable') {
+            const observed = Math.max(0, Number(rain24h) || 0);
+            const forecast = Math.max(0, Number(forecast72h) || 0);
+            const current = Math.max(0, Number(currentRain) || 0);
+            const combined = observed + forecast;
+            const levels = [
+                { label: 'Baixa', color: '#1a9850' },
+                { label: 'Moderada', color: '#fee08b' },
+                { label: 'Atenção', color: '#fc8d59' },
+                { label: 'Alta', color: '#d73027' },
+                { label: 'Muito alta', color: '#7b1fa2' }
+            ];
+            let level = 0;
+
+            if (current >= 30 || observed >= 100 || combined >= 180) level = 4;
+            else if (current >= 10 || observed >= 60 || combined >= 120) level = 3;
+            else if (current >= 2.5 || observed >= 30 || combined >= 70) level = 2;
+            else if (current > 0 || observed >= 10 || combined >= 35) level = 1;
+
+            // Tendência de subida eleva preventivamente uma classe. A queda não
+            // reduz o risco acumulado, pois o solo e os rios podem seguir respondendo.
+            if (trendDirection === 'rising' && level < levels.length - 1) {
+                level++;
+            }
+
+            return levels[level];
         }
 
         // Sistema de gerenciamento de APIs e cache
@@ -1242,7 +1311,14 @@
                     <p>Dados hidroclimáticos ainda estão sendo carregados.</p></div>`;
             }
 
-            const status = getRainStatus(rain.observed24h, rain.forecast72h);
+            const currentRain = Math.max(0, Number(weatherData.precipitation) || 0);
+            const trend = getRainTrend(currentRain, rain.observed24h, rain.forecast24h);
+            const status = getRainStatus(
+                rain.observed24h,
+                rain.forecast72h,
+                currentRain,
+                trend.direction
+            );
             const cacheNotice = weatherData._stale
                 ? `<small style="color:#b45309;">Último valor salvo${weatherData._fetchedAt ? ` em ${new Date(weatherData._fetchedAt).toLocaleString('pt-BR')}` : ''}. A API está temporariamente indisponível.</small>`
                 : '<small>Estimativa Open-Meteo no ponto central do município. Não representa nível ou vazão do rio.</small>';
@@ -1251,10 +1327,12 @@
                     <h3>${escapeHtml(cityName)}</h3>
                     <div class="weather-current">
                         <div class="weather-metric"><span>Área inserida na bacia:</span><span class="weather-value">${basinPercentage}%</span></div>
+                        <div class="weather-metric"><span>Precipitação atual:</span><span class="weather-value">${currentRain.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Chuva observada 24 h:</span><span class="weather-value">${rain.observed24h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Chuva observada 72 h:</span><span class="weather-value">${rain.observed72h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Previsão 24 h:</span><span class="weather-value">${rain.forecast24h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Previsão 72 h:</span><span class="weather-value">${rain.forecast72h.toFixed(1)} mm</span></div>
+                        <div class="weather-metric"><span>Tendência:</span><span class="weather-value" style="color:${trend.color}">${trend.label}</span></div>
                         <div class="weather-metric"><span>Situação meteorológica:</span><span class="weather-value" style="color:${status.color}">${status.label}</span></div>
                     </div>
                     ${cacheNotice}
@@ -1289,7 +1367,8 @@
                     '<i style="background:#fee08b"></i>Moderada (10–30 mm)<br>' +
                     '<i style="background:#fc8d59"></i>Atenção (30–60 mm)<br>' +
                     '<i style="background:#d73027"></i>Alta (60–100 mm)<br>' +
-                    '<i style="background:#7b1fa2"></i>Muito alta (≥ 100 mm)';
+                    '<i style="background:#7b1fa2"></i>Muito alta (≥ 100 mm)<br>' +
+                    '<small>A cor também considera chuva atual, previsão e tendência.</small>';
                 return div;
             };
 
@@ -1387,7 +1466,14 @@
                 if (!rain) {
                     return { color: '#003b5c', weight: 1.5, fillOpacity: 0.5, fillColor: '#90a4ae' };
                 }
-                const status = getRainStatus(rain ? rain.observed24h : 0, rain ? rain.forecast72h : 0);
+                const currentRain = Math.max(0, Number(result && result.precipitation) || 0);
+                const trend = getRainTrend(currentRain, rain.observed24h, rain.forecast24h);
+                const status = getRainStatus(
+                    rain.observed24h,
+                    rain.forecast72h,
+                    currentRain,
+                    trend.direction
+                );
                 return { color: '#003b5c', weight: 1.5, fillOpacity: 0.72, fillColor: status.color };
             }
 
@@ -1629,12 +1715,20 @@
                 const avgCurrent = weightTotal ? currentWeighted / weightTotal : 0;
                 const avgForecast24 = weightTotal ? forecast24Weighted / weightTotal : 0;
                 const avgForecast72 = weightTotal ? forecast72Weighted / weightTotal : 0;
-                const status = getRainStatus(avgObserved24, avgForecast72);
+                const trend = getRainTrend(avgCurrent, avgObserved24, avgForecast24);
+                const status = getRainStatus(
+                    avgObserved24,
+                    avgForecast72,
+                    avgCurrent,
+                    trend.direction
+                );
 
                 $('#hydro-count').text(`${hydroResults.size}/${basinFeatureCount}`);
                 $('#hydro-rain-24').text(`${avgObserved24.toFixed(1)} mm`);
+                $('#hydro-rain-current').text(`${avgCurrent.toFixed(1)} mm`);
                 $('#hydro-max-24').text(max24 >= 0 ? `${max24.toFixed(1)} mm${maxCity ? ` — ${maxCity}` : ''}` : '-- mm');
                 $('#hydro-forecast-72').text(`${avgForecast72.toFixed(1)} mm`);
+                $('#hydro-trend').text(trend.label).css('color', trend.color);
                 $('#hydro-status').text(status.label).css('color', status.color);
 
                 if (rainChart) {
