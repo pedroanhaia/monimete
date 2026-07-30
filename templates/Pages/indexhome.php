@@ -1752,6 +1752,23 @@
                     return;
                 }
 
+                const responsiveAxisLabels = {
+                    id: 'responsiveAxisLabels',
+                    beforeUpdate(chart) {
+                        const availableWidth = chart.canvas.parentElement
+                            ? chart.canvas.parentElement.clientWidth
+                            : chart.width;
+                        const isNarrow = availableWidth < 330;
+                        const isVeryNarrow = availableWidth < 240;
+                        const xScale = chart.options.scales.x;
+
+                        xScale.ticks.minRotation = isNarrow ? 55 : 0;
+                        xScale.ticks.maxRotation = isNarrow ? 55 : 0;
+                        xScale.ticks.padding = isNarrow ? 3 : 6;
+                        xScale.title.display = !isVeryNarrow;
+                    }
+                };
+
                 rainChart = new Chart(canvas, {
                     type: 'line',
                     data: {
@@ -1801,6 +1818,10 @@
                             },
                             tooltip: {
                                 callbacks: {
+                                    title: items => {
+                                        const label = items[0] ? items[0].label : '';
+                                        return Array.isArray(label) ? label.join(' ') : label;
+                                    },
                                     label: context => `${context.dataset.label}: ${Number(context.parsed.y).toFixed(1)} mm`
                                 }
                             }
@@ -1841,7 +1862,8 @@
                                 }
                             }
                         }
-                    }
+                    },
+                    plugins: [responsiveAxisLabels]
                 });
             }
 
