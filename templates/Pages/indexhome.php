@@ -955,7 +955,7 @@
                            href="https://kanbada.adatecnologia.com/"
                            target="_blank"
                            rel="noopener noreferrer">
-                            Conheça o Kanbada
+                            Conheça a plataforma Kanbada
                         </a>
                         <a class="kanbada-button secondary"
                            href="https://blogkanbada.adatecnologia.com/en-us"
