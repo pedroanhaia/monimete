@@ -62,13 +62,15 @@ return function (RouteBuilder $routes): void {
          */
         $builder->connect('/pages/*', 'Pages::display');
 
-        $builder
-            ->post('/weather-cache/load', ['controller' => 'WeatherCache', 'action' => 'load'])
-            ->setName('weatherCacheLoad');
-        $builder
-            ->post('/weather-cache/save', ['controller' => 'WeatherCache', 'action' => 'save'])
-            ->setName('weatherCacheSave');
+        $builder->post('/weather-cache/load', [
+            'controller' => 'WeatherCache',
+            'action' => 'load',
+        ]);
 
+        $builder->post('/weather-cache/save', [
+            'controller' => 'WeatherCache',
+            'action' => 'save',
+        ]);
         /*
          * Connect catchall routes for all controllers.
          *
@@ -100,16 +102,16 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
-    
+
     // Rotas de API para dispositivos IoT Agrocity
     $routes->scope('/api', function (RouteBuilder $builder): void {
         // Permitir apenas JSON
         $builder->setExtensions(['json']);
-        
+
         // APIs Agrocity - seguindo especificação do PDF
         $builder->connect('/login', ['controller' => 'Mqtt', 'action' => 'login'], ['_method' => 'POST']);
         $builder->connect('/mqtt_data', ['controller' => 'Mqtt', 'action' => 'mqttData'], ['_method' => ['GET', 'POST']]);
-        
+
         // APIs internas do sistema
         $builder->connect('/mqtt/status', ['controller' => 'Mqtt', 'action' => 'status']);
         $builder->connect('/mqtt/messages', ['controller' => 'Mqtt', 'action' => 'messages']);
