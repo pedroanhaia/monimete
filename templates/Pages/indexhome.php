@@ -230,6 +230,140 @@
             position: relative;
             bottom: 0;
             width: 100%;
+            box-sizing: border-box;
+        }
+
+        .kanbada-promo {
+            width: 100%;
+            padding: 34px 20px;
+            box-sizing: border-box;
+            background:
+                radial-gradient(circle at top right, rgba(0,255,255,.2), transparent 34%),
+                linear-gradient(135deg, #00003d 0%, #35106d 58%, #903bfb 100%);
+            color: #ffffff;
+        }
+
+        .kanbada-promo-inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(260px, .8fr);
+            gap: 28px;
+            align-items: center;
+            width: 100%;
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+
+        .kanbada-brand {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            min-width: 0;
+        }
+
+        .kanbada-logo {
+            width: 112px;
+            height: 112px;
+            flex: 0 0 112px;
+            object-fit: contain;
+            border-radius: 22px;
+            background: rgba(255,255,255,.96);
+            padding: 10px;
+            box-sizing: border-box;
+            box-shadow: 0 12px 30px rgba(0,0,0,.28);
+        }
+
+        .kanbada-copy h2 {
+            margin: 0 0 10px;
+            color: #ffffff;
+            font-size: clamp(1.45rem, 3vw, 2.25rem);
+            line-height: 1.12;
+        }
+
+        .kanbada-copy p {
+            max-width: 720px;
+            margin: 0 0 18px;
+            color: rgba(255,255,255,.9);
+            line-height: 1.55;
+        }
+
+        .kanbada-actions,
+        .ada-social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .kanbada-button,
+        .ada-social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 10px 17px;
+            border-radius: 999px;
+            box-sizing: border-box;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .kanbada-button.primary {
+            color: #00003d;
+            background: #00ffff;
+            box-shadow: 0 8px 20px rgba(0,255,255,.22);
+        }
+
+        .kanbada-button.secondary {
+            color: #ffffff;
+            border: 2px solid rgba(255,255,255,.72);
+            background: rgba(255,255,255,.08);
+        }
+
+        .kanbada-button:hover,
+        .ada-social-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .ada-promo-card {
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 16px;
+            background: rgba(0,0,61,.5);
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .ada-promo-logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: #ffffff;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .ada-promo-card h3 {
+            margin: 10px 0 6px;
+            color: #ffffff;
+        }
+
+        .ada-promo-card p {
+            margin: 0 0 14px;
+            color: rgba(255,255,255,.82);
+            font-size: .92rem;
+        }
+
+        .ada-social-links {
+            justify-content: center;
+        }
+
+        .ada-social-link {
+            min-height: 40px;
+            padding: 8px 14px;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,.52);
+            background: rgba(255,255,255,.09);
         }
         .stakeholder {
             background-color: #e6f0ff;
@@ -606,6 +740,36 @@
                 height: 100px;
             }
 
+            .kanbada-promo {
+                padding: 26px 12px;
+            }
+
+            .kanbada-promo-inner {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .kanbada-brand {
+                flex-direction: column;
+                text-align: center;
+                gap: 14px;
+            }
+
+            .kanbada-logo {
+                width: 92px;
+                height: 92px;
+                flex-basis: 92px;
+            }
+
+            .kanbada-actions {
+                justify-content: center;
+            }
+
+            .kanbada-button {
+                width: 100%;
+                max-width: 330px;
+            }
+
             main {
                 width: 100%;
                 padding-left: 8px;
@@ -769,6 +933,67 @@
         </section>
 
     </main>
+
+    <section class="kanbada-promo" aria-labelledby="kanbada-promo-title">
+        <div class="kanbada-promo-inner">
+            <div class="kanbada-brand">
+                <?= $this->Html->image('iconkanbada.png', [
+                    'alt' => 'Kanbada',
+                    'class' => 'kanbada-logo'
+                ]) ?>
+
+                <div class="kanbada-copy">
+                    <h2 id="kanbada-promo-title">Transforme planejamento em resultados com o Kanbada</h2>
+                    <p>
+                        Organize projetos, tarefas e processos em uma única plataforma.
+                        O Kanbada reúne Kanban, Gantt e BPMN para dar mais clareza,
+                        colaboração e controle à gestão da sua equipe.
+                    </p>
+
+                    <div class="kanbada-actions">
+                        <a class="kanbada-button primary"
+                           href="https://kanbada.adatecnologia.com/"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            Conheça o Kanbada
+                        </a>
+                        <a class="kanbada-button secondary"
+                           href="https://blogkanbada.adatecnologia.com/en-us"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            Acesse o Blog Kanbada
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="ada-promo-card" aria-label="Redes sociais da ADA Tecnologia">
+                <?= $this->Html->image('favicon.png', [
+                    'alt' => 'ADA Tecnologia',
+                    'class' => 'ada-promo-logo'
+                ]) ?>
+                <h3>ADA Tecnologia</h3>
+                <p>Acompanhe nossos projetos, pesquisas e soluções digitais.</p>
+
+                <div class="ada-social-links">
+                    <a class="ada-social-link"
+                       href="https://www.instagram.com/ada_tec"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Instagram da ADA Tecnologia">
+                        Instagram
+                    </a>
+                    <a class="ada-social-link"
+                       href="https://www.linkedin.com/company/ada-tecnologia"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="LinkedIn da ADA Tecnologia">
+                        LinkedIn
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </section>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
