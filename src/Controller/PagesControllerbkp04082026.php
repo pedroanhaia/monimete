@@ -31,18 +31,12 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class PagesController extends AppController
 {
-    public function beforeFilter(\Cake\Event\EventInterface $event): void
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        parent::beforeFilter($event);
-        $this->Authentication->addUnauthenticatedActions(['display', 'analise']);
-    }
 
-    /**
-     * Painel histórico e de verificação das previsões da Bacia Taquari-Antas.
-     */
-    public function analise(): ?Response
-    {
-        return $this->render('analise');
+        $this->Authentication->addUnauthenticatedActions(['display']);
+        parent::beforeFilter($event);
+        
     }
     /**
      * Displays a view

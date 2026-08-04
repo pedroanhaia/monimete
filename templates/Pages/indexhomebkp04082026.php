@@ -27,21 +27,20 @@
             padding: 0;
             background-color: #f7f9fc;
             color: #333;
-            padding-top: 10px; /* Espaço para o header fixo */
         }
 
-        /* Header fixo no topo com logo */
+        /* Cabeçalho no fluxo da página: a main começa imediatamente abaixo. */
         .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
+            position: relative;
+            width: 100%;
+            min-height: 120px;
             background: linear-gradient(135deg, #004080 0%, #0059b3 100%);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            gap: 20px;
+            padding: 10px 20px;
+            box-sizing: border-box;
             z-index: 1001;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -49,16 +48,53 @@
         .logo-section {
             display: flex;
             align-items: center;
+            flex: 1 1 auto;
+            min-width: 0;
             color: white;
             font-weight: bold;
             font-size: 1.1em;
         }
 
         .logo-section img {
-            width: 40px;
-            height: 40px;
+            width: 70px;
+            height: 70px;
+            flex: 0 0 70px;
             margin-right: 10px;
             border-radius: 50%;
+        }
+
+        .logo-section a {
+            color: #ffffff;
+        }
+
+        .header-ad {
+            position: relative;
+            flex: 0 0 320px;
+            width: 320px;
+            min-width: 320px;
+            height: 100px;
+            overflow: hidden;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.22);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .header-ad .ad-label {
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            z-index: 1;
+            color: rgba(255,255,255,.78);
+            font-size: 9px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .header-ad-slot {
+            display: block;
+            width: 320px;
+            height: 100px;
         }
 
         /* Botão toggle redesenhado */
@@ -142,7 +178,6 @@
             padding: 20px;
             max-width: 1200px;
             margin: auto;
-            padding-top: 30px; /* Espaço apenas para a top-bar */
             transition: all 0.5s ease;
         }
 
@@ -195,6 +230,140 @@
             position: relative;
             bottom: 0;
             width: 100%;
+            box-sizing: border-box;
+        }
+
+        .kanbada-promo {
+            width: 100%;
+            padding: 34px 20px;
+            box-sizing: border-box;
+            background:
+                radial-gradient(circle at top right, rgba(0,255,255,.2), transparent 34%),
+                linear-gradient(135deg, #00003d 0%, #35106d 58%, #903bfb 100%);
+            color: #ffffff;
+        }
+
+        .kanbada-promo-inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(260px, .8fr);
+            gap: 28px;
+            align-items: center;
+            width: 100%;
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+
+        .kanbada-brand {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            min-width: 0;
+        }
+
+        .kanbada-logo {
+            width: 112px;
+            height: 112px;
+            flex: 0 0 112px;
+            object-fit: contain;
+            border-radius: 22px;
+            background: rgba(255,255,255,.96);
+            padding: 10px;
+            box-sizing: border-box;
+            box-shadow: 0 12px 30px rgba(0,0,0,.28);
+        }
+
+        .kanbada-copy h2 {
+            margin: 0 0 10px;
+            color: #ffffff;
+            font-size: clamp(1.45rem, 3vw, 2.25rem);
+            line-height: 1.12;
+        }
+
+        .kanbada-copy p {
+            max-width: 720px;
+            margin: 0 0 18px;
+            color: rgba(255,255,255,.9);
+            line-height: 1.55;
+        }
+
+        .kanbada-actions,
+        .ada-social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .kanbada-button,
+        .ada-social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 10px 17px;
+            border-radius: 999px;
+            box-sizing: border-box;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .kanbada-button.primary {
+            color: #00003d;
+            background: #00ffff;
+            box-shadow: 0 8px 20px rgba(0,255,255,.22);
+        }
+
+        .kanbada-button.secondary {
+            color: #ffffff;
+            border: 2px solid rgba(255,255,255,.72);
+            background: rgba(255,255,255,.08);
+        }
+
+        .kanbada-button:hover,
+        .ada-social-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .ada-promo-card {
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 16px;
+            background: rgba(0,0,61,.5);
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .ada-promo-logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: #ffffff;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .ada-promo-card h3 {
+            margin: 10px 0 6px;
+            color: #ffffff;
+        }
+
+        .ada-promo-card p {
+            margin: 0 0 14px;
+            color: rgba(255,255,255,.82);
+            font-size: .92rem;
+        }
+
+        .ada-social-links {
+            justify-content: center;
+        }
+
+        .ada-social-link {
+            min-height: 40px;
+            padding: 8px 14px;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,.52);
+            background: rgba(255,255,255,.09);
         }
         .stakeholder {
             background-color: #e6f0ff;
@@ -537,6 +706,70 @@
                 overflow-x: hidden;
             }
 
+            .top-bar {
+                flex-direction: column;
+                min-height: 0;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .logo-section {
+                width: 100%;
+                justify-content: center;
+                font-size: .9rem;
+                text-align: center;
+            }
+
+            .logo-section img {
+                width: 52px;
+                height: 52px;
+                flex-basis: 52px;
+            }
+
+            .header-ad {
+                flex: 0 0 100px;
+                width: 300px;
+                min-width: 300px;
+                max-width: 100%;
+                height: 100px;
+            }
+
+            .header-ad-slot {
+                width: 300px;
+                max-width: 100%;
+                height: 100px;
+            }
+
+            .kanbada-promo {
+                padding: 26px 12px;
+            }
+
+            .kanbada-promo-inner {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .kanbada-brand {
+                flex-direction: column;
+                text-align: center;
+                gap: 14px;
+            }
+
+            .kanbada-logo {
+                width: 92px;
+                height: 92px;
+                flex-basis: 92px;
+            }
+
+            .kanbada-actions {
+                justify-content: center;
+            }
+
+            .kanbada-button {
+                width: 100%;
+                max-width: 330px;
+            }
+
             main {
                 width: 100%;
                 padding-left: 8px;
@@ -575,16 +808,23 @@
             }
 
             .hydro-chart-container {
-                min-height: 285px;
-                padding: 10px 6px;
+                min-height: 350px;
+                padding: 12px 6px;
             }
 
             .hydro-chart-wrapper {
-                height: 225px;
+                height: 280px;
             }
 
             .hydro-chart-title {
                 font-size: .95rem;
+                line-height: 1.3;
+                padding: 0 8px;
+            }
+
+            .hydro-chart-description {
+                padding: 0 8px;
+                line-height: 1.35;
             }
 
             .leaflet-popup-content {
@@ -620,16 +860,15 @@
         }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6951165665893251"
-     crossorigin="anonymous"></script>
-     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+        crossorigin="anonymous"></script>
+
 </head>
 <body>
     <!-- Barra superior fixa com logo e toggle -->
     <div class="top-bar">
         <div class="logo-section">
             <?= $this->Html->image('favicon.png', [
-                'alt' => 'favicon',
-                'width' => '100'
+                'alt' => 'MoniMete'
             ]) ?>
 
             <span>
@@ -643,24 +882,16 @@
         <aside class="header-ad" aria-label="Publicidade">
             <span class="ad-label">Publicidade</span>
 
-            <ins class="adsbygoogle"
-                style="display:block"
+            <ins class="adsbygoogle header-ad-slot"
                 data-ad-client="ca-pub-6951165665893251"
-                data-ad-slot="9541071374"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
+                data-ad-slot="9972766898"
+                data-ad-format="horizontal"
+                data-full-width-responsive="false">
+            </ins>
         </aside>
     </div>
 
     <main>
-        <amp-ad width="100vw" height="320"
-            type="adsense"
-            data-ad-client="ca-pub-6951165665893251"
-            data-ad-slot="9541071374"
-            data-auto-format="rspv"
-            data-full-width="">
-            <div overflow=""></div>
-        </amp-ad>
         <section id="introducao">
             <h2>Bacia do rio Taquari</h2>
             <p><strong>Confira abaixo nosso mapa interativo em tempo real com os dados meteorológicos</strong></p>
@@ -674,15 +905,18 @@
                 <div id="hydro-summary" class="hydro-summary visible" aria-live="polite">
                     <div class="hydro-card">Municípios analisados<strong id="hydro-count">0</strong></div>
                     <div class="hydro-card">Média ponderada 24 h<strong id="hydro-rain-24">-- mm</strong></div>
+                    <div class="hydro-card">Precipitação atual média<strong id="hydro-rain-current">-- mm</strong></div>
                     <div class="hydro-card">Maior acumulado 24 h<strong id="hydro-max-24">-- mm</strong></div>
                     <div class="hydro-card">Previsão média 72 h<strong id="hydro-forecast-72">-- mm</strong></div>
+                    <div class="hydro-card">Tendência da precipitação<strong id="hydro-trend">Calculando</strong></div>
                     <div class="hydro-card">Situação predominante<strong id="hydro-status">Calculando</strong></div>
                 </div>
 
                 <div id="hydro-chart-container" class="hydro-chart-container visible">
                     <h3 class="hydro-chart-title">Precipitação média na Bacia Taquari-Antas</h3>
                     <p class="hydro-chart-description">
-                        Média ponderada dos municípios já carregados, em milímetros acumulados por janela.
+                        Média ponderada dos municípios já carregados. O ponto “Atual” usa a precipitação
+                        corrente retornada pelo cache ou pela API.
                     </p>
                     <div class="hydro-chart-wrapper">
                         <canvas id="hydro-rain-chart" role="img" aria-label="Gráfico em linha da precipitação média observada e prevista para a Bacia Taquari-Antas"></canvas>
@@ -707,8 +941,86 @@
 
     </main>
 
+    <section class="kanbada-promo" aria-labelledby="kanbada-promo-title">
+        <div class="kanbada-promo-inner">
+            <div class="kanbada-brand">
+                <?= $this->Html->image('iconkanbada.png', [
+                    'alt' => 'Kanbada',
+                    'class' => 'kanbada-logo'
+                ]) ?>
+
+                <div class="kanbada-copy">
+                    <h2 id="kanbada-promo-title">Transforme planejamento em resultados com o Kanbada</h2>
+                    <p>
+                        Organize projetos, tarefas e processos em uma única plataforma.
+                        O Kanbada reúne Kanban, Gantt e BPMN para dar mais clareza,
+                        colaboração e controle à gestão da sua equipe.
+                    </p>
+
+                    <div class="kanbada-actions">
+                        <a class="kanbada-button primary"
+                           href="https://kanbada.adatecnologia.com/"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            Conheça o Kanbada
+                        </a>
+                        <a class="kanbada-button secondary"
+                           href="https://blogkanbada.adatecnologia.com/en-us"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            Acesse o Blog Kanbada
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="ada-promo-card" aria-label="Redes sociais da ADA Tecnologia">
+                <?= $this->Html->image('favicon.png', [
+                    'alt' => 'ADA Tecnologia',
+                    'class' => 'ada-promo-logo'
+                ]) ?>
+                <h3>ADA Tecnologia</h3>
+                <p>Acompanhe nossos projetos, pesquisas e soluções digitais.</p>
+
+                <div class="ada-social-links">
+                    <a class="ada-social-link"
+                       href="https://www.instagram.com/ada_tec"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Instagram da ADA Tecnologia">
+                        Instagram
+                    </a>
+                    <a class="ada-social-link"
+                       href="https://www.linkedin.com/company/ada-tecnologia"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="LinkedIn da ADA Tecnologia">
+                        LinkedIn
+                    </a>
+                </div>
+            </aside>
+        </div>
+    </section>
+
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
+        document.addEventListener('DOMContentLoaded', function () {
+            const adSlot = document.querySelector('.header-ad-slot');
+            if (!adSlot || adSlot.dataset.adInitialized === '1') return;
+
+            const initializeAd = function () {
+                if (adSlot.getBoundingClientRect().width < 300) return;
+
+                try {
+                    window.adsbygoogle = window.adsbygoogle || [];
+                    window.adsbygoogle.push({});
+                    adSlot.dataset.adInitialized = '1';
+                } catch (error) {
+                    console.warn('Não foi possível inicializar o anúncio:', error);
+                }
+            };
+
+            window.requestAnimationFrame(initializeAd);
+        });
     </script>
 
     <footer>
@@ -793,13 +1105,80 @@
             return div.innerHTML;
         }
 
-        function getRainStatus(rain24h, forecast72h) {
-            const combined = Number(rain24h || 0) + Number(forecast72h || 0);
-            if (rain24h >= 100 || combined >= 180) return { label: 'Muito alta', color: '#7b1fa2' };
-            if (rain24h >= 60 || combined >= 120) return { label: 'Alta', color: '#d73027' };
-            if (rain24h >= 30 || combined >= 70) return { label: 'Atenção', color: '#fc8d59' };
-            if (rain24h >= 10 || combined >= 35) return { label: 'Moderada', color: '#fee08b' };
-            return { label: 'Baixa', color: '#1a9850' };
+        function getRainTrend(currentRain, observed24h, forecast24h) {
+            const current = Math.max(0, Number(currentRain) || 0);
+            const observedRate = Math.max(0, Number(observed24h) || 0) / 24;
+            const forecastRate = Math.max(0, Number(forecast24h) || 0) / 24;
+            // Compara a previsão horária média com o ritmo recente, combinando
+            // a média das últimas 24 h e a precipitação da hora atual.
+            const baselineRate = current > 0
+                ? (observedRate + current) / 2
+                : observedRate;
+            const absoluteChange = forecastRate - baselineRate;
+            const referenceRate = Math.max(baselineRate, 0.1);
+            const relativeChange = absoluteChange / referenceRate;
+
+            if (absoluteChange >= 0.1 && relativeChange >= 0.25) {
+                return {
+                    direction: 'rising',
+                    label: '↑ Subida',
+                    color: '#d73027',
+                    current,
+                    observedRate,
+                    baselineRate,
+                    forecastRate
+                };
+            }
+
+            if (absoluteChange <= -0.1 && relativeChange <= -0.25) {
+                return {
+                    direction: 'falling',
+                    label: '↓ Queda',
+                    color: '#1a9850',
+                    current,
+                    observedRate,
+                    baselineRate,
+                    forecastRate
+                };
+            }
+
+            return {
+                direction: 'stable',
+                label: '→ Estável',
+                color: '#d97706',
+                current,
+                observedRate,
+                baselineRate,
+                forecastRate
+            };
+        }
+
+        function getRainStatus(rain24h, forecast72h, currentRain = 0, trendDirection = 'stable') {
+            const observed = Math.max(0, Number(rain24h) || 0);
+            const forecast = Math.max(0, Number(forecast72h) || 0);
+            const current = Math.max(0, Number(currentRain) || 0);
+            const combined = observed + forecast;
+            const levels = [
+                { label: 'Baixa', color: '#1a9850' },
+                { label: 'Moderada', color: '#fee08b' },
+                { label: 'Atenção', color: '#fc8d59' },
+                { label: 'Alta', color: '#d73027' },
+                { label: 'Muito alta', color: '#7b1fa2' }
+            ];
+            let level = 0;
+
+            if (current >= 30 || observed >= 100 || combined >= 180) level = 4;
+            else if (current >= 10 || observed >= 60 || combined >= 120) level = 3;
+            else if (current >= 2.5 || observed >= 30 || combined >= 70) level = 2;
+            else if (current > 0 || observed >= 10 || combined >= 35) level = 1;
+
+            // Tendência de subida eleva preventivamente uma classe. A queda não
+            // reduz o risco acumulado, pois o solo e os rios podem seguir respondendo.
+            if (trendDirection === 'rising' && level < levels.length - 1) {
+                level++;
+            }
+
+            return levels[level];
         }
 
         // Sistema de gerenciamento de APIs e cache
@@ -808,10 +1187,25 @@
                 this.apiCallCount = parseInt(localStorage.getItem('openmeteo_calls') || '0');
                 this.lastResetDate = localStorage.getItem('openmeteo_reset') || new Date().toDateString();
                 this.weatherCache = new Map();
-                this.CACHE_DURATION = 30 * 60 * 1000; // 30 minutos
+                this.databaseCache = new Map();
+                this.pendingSaves = [];
+                this.providerUnavailable = false;
+                this.cacheHits = 0;
+                this.staleHits = 0;
+                this.externalCalls = 0;
+                this.CACHE_DURATION = 60 * 60 * 1000; // 1 hora, igual ao cache do banco
                 this.API_LIMIT = 9500; // Limite seguro (500 calls de margem)
-                this.BATCH_SIZE = 50; // Processa 50 municípios por vez
-                this.DELAY_BETWEEN_BATCHES = 2000; // 2 segundos entre lotes
+                this.BATCH_SIZE = 20; // Evita rajadas excessivas quando a API está limitada
+                this.DELAY_BETWEEN_BATCHES = 300;
+                this.CACHE_LOAD_URL = <?= json_encode($this->Url->build([
+                    'controller' => 'WeatherCache',
+                    'action' => 'load',
+                ]), JSON_UNESCAPED_SLASHES) ?>;
+                this.CACHE_SAVE_URL = <?= json_encode($this->Url->build([
+                    'controller' => 'WeatherCache',
+                    'action' => 'save',
+                ]), JSON_UNESCAPED_SLASHES) ?>;
+                this.CSRF_TOKEN = <?= json_encode((string)$this->request->getAttribute('csrfToken')) ?>;
 
                 this.resetDailyCountIfNeeded();
                 this.updateApiStatus();
@@ -859,7 +1253,7 @@
             }
 
             getCachedWeather(lat, lng, includeHydrology = false) {
-                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}_${includeHydrology ? 'hydro' : 'current'}`;
+                const key = this.getCacheKey(lat, lng, includeHydrology);
                 const cached = this.weatherCache.get(key);
                 if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
                     return cached.data;
@@ -868,22 +1262,148 @@
             }
 
             setCachedWeather(lat, lng, data, includeHydrology = false) {
-                const key = `${lat.toFixed(3)}_${lng.toFixed(3)}_${includeHydrology ? 'hydro' : 'current'}`;
+                const key = this.getCacheKey(lat, lng, includeHydrology);
                 this.weatherCache.set(key, {
                     data: data,
                     timestamp: Date.now()
                 });
             }
 
-            async fetchWeatherData(lat, lng, includeHydrology = false) {
+            getCacheKey(lat, lng, includeHydrology = false) {
+                return `${Number(lat).toFixed(4)}_${Number(lng).toFixed(4)}_${includeHydrology ? 'hydrology' : 'current'}`;
+            }
+
+            async preloadDatabaseCache(points) {
+                const uniquePoints = [];
+                const seen = new Set();
+                points.forEach(point => {
+                    const cacheKey = this.getCacheKey(point.lat, point.lng, point.includeHydrology);
+                    if (seen.has(cacheKey)) return;
+                    seen.add(cacheKey);
+                    uniquePoints.push({
+                        cityName: point.cityName,
+                        latitude: Number(point.lat),
+                        longitude: Number(point.lng),
+                        scope: point.includeHydrology ? 'hydrology' : 'current'
+                    });
+                });
+                if (!uniquePoints.length) return;
+
+                try {
+                    const response = await fetch(this.CACHE_LOAD_URL, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-Token': this.CSRF_TOKEN
+                        },
+                        body: JSON.stringify({ points: uniquePoints })
+                    });
+                    if (!response.ok) throw new Error(`Cache HTTP ${response.status}`);
+                    const payload = await response.json();
+                    Object.entries(payload.records || {}).forEach(([key, record]) => {
+                        if (record) this.databaseCache.set(key, record);
+                    });
+                } catch (error) {
+                    // O mapa continua consultando a API externa caso o cache interno falhe.
+                    console.warn('Cache compartilhado indisponível:', error.message);
+                }
+            }
+
+            queueDatabaseSave(cityName, lat, lng, data, includeHydrology = false) {
+                this.pendingSaves.push({
+                    cityName,
+                    latitude: Number(lat),
+                    longitude: Number(lng),
+                    scope: includeHydrology ? 'hydrology' : 'current',
+                    data
+                });
+            }
+
+            async flushPendingSaves() {
+                if (!this.pendingSaves.length) return;
+                const records = this.pendingSaves.splice(0, this.BATCH_SIZE);
+                try {
+                    const response = await fetch(this.CACHE_SAVE_URL, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-Token': this.CSRF_TOKEN
+                        },
+                        body: JSON.stringify({ records })
+                    });
+                    if (!response.ok) throw new Error(`Cache HTTP ${response.status}`);
+                } catch (error) {
+                    this.pendingSaves.unshift(...records);
+                    console.warn('Não foi possível persistir o lote meteorológico:', error.message);
+                }
+            }
+
+            async fetchWeatherData(lat, lng, includeHydrology = false, cityName = '') {
                 // Verificar cache primeiro
                 const cached = this.getCachedWeather(lat, lng, includeHydrology);
                 if (cached) {
+                    this.cacheHits++;
                     return cached;
+                }
+
+                const cacheKey = this.getCacheKey(lat, lng, includeHydrology);
+                const databaseRecord = this.databaseCache.get(cacheKey);
+                if (databaseRecord && databaseRecord.fresh) {
+                    const databaseData = {
+                        ...databaseRecord.data,
+                        _cache: true,
+                        _stale: false,
+                        _fetchedAt: databaseRecord.fetchedAt || null
+                    };
+                    this.setCachedWeather(lat, lng, databaseData, includeHydrology);
+                    this.cacheHits++;
+                    return databaseData;
+                }
+
+                // Outro navegador recebeu a tarefa de renovar este ponto.
+                if (databaseRecord && databaseRecord.data && !databaseRecord.fresh && !databaseRecord.refresh) {
+                    this.staleHits++;
+                    return {
+                        ...databaseRecord.data,
+                        _cache: true,
+                        _stale: true,
+                        _fetchedAt: databaseRecord.fetchedAt || null
+                    };
+                }
+
+                if (databaseRecord && !databaseRecord.data && !databaseRecord.refresh) {
+                    throw new Error('A atualização compartilhada deste município já está em andamento.');
+                }
+
+                // Quando a cota acaba, não insiste em centenas de chamadas condenadas a falhar.
+                if (this.providerUnavailable) {
+                    if (databaseRecord && databaseRecord.data) {
+                        this.staleHits++;
+                        return {
+                            ...databaseRecord.data,
+                            _cache: true,
+                            _stale: true,
+                            _fetchedAt: databaseRecord.fetchedAt || null
+                        };
+                    }
+                    throw new Error('API temporariamente indisponível e não há valor salvo.');
                 }
 
                 // Verificar limite de API
                 if (!this.canMakeApiCall()) {
+                    if (databaseRecord && databaseRecord.data) {
+                        this.staleHits++;
+                        return {
+                            ...databaseRecord.data,
+                            _cache: true,
+                            _stale: true,
+                            _fetchedAt: databaseRecord.fetchedAt || null
+                        };
+                    }
                     throw new Error('Limite diário de API excedido');
                 }
 
@@ -894,12 +1414,24 @@
 
                 try {
                     const response = await fetch(url);
+                    const data = await response.json().catch(() => ({}));
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+                        const reason = data.reason || data.error || `HTTP ${response.status}`;
+                        if (response.status === 429 || /daily api request limit|limit exceeded|quota/i.test(String(reason))) {
+                            this.providerUnavailable = true;
+                        }
+                        throw new Error(String(reason));
                     }
-
-                    const data = await response.json();
+                    if (data.error) {
+                        const reason = data.reason || data.error;
+                        if (/daily api request limit|limit exceeded|quota/i.test(String(reason))) {
+                            this.providerUnavailable = true;
+                        }
+                        throw new Error(String(reason));
+                    }
+                    if (!data.current) throw new Error('Resposta meteorológica incompleta.');
                     this.incrementApiCall();
+                    this.externalCalls++;
 
                     const weatherData = {
                         temperature: data.current.temperature_2m,
@@ -910,10 +1442,20 @@
                     };
 
                     this.setCachedWeather(lat, lng, weatherData, includeHydrology);
+                    this.queueDatabaseSave(cityName, lat, lng, weatherData, includeHydrology);
                     return weatherData;
 
                 } catch (error) {
                     console.error('Erro ao buscar dados meteorológicos:', error);
+                    if (databaseRecord && databaseRecord.data) {
+                        this.staleHits++;
+                        return {
+                            ...databaseRecord.data,
+                            _cache: true,
+                            _stale: true,
+                            _fetchedAt: databaseRecord.fetchedAt || null
+                        };
+                    }
                     throw error;
                 }
             }
@@ -951,6 +1493,9 @@
         function createWeatherMarker(lat, lng, weatherData, cityName) {
             const temp = weatherData.temperature;
             const color = getTemperatureColor(temp);
+            const cacheNotice = weatherData._stale
+                ? `<small style="color:#b45309;">Último valor salvo${weatherData._fetchedAt ? ` em ${new Date(weatherData._fetchedAt).toLocaleString('pt-BR')}` : ''}. API temporariamente indisponível.</small>`
+                : '<small style="color: #666;">Dados: Open-Meteo API</small>';
 
             const icon = L.divIcon({
                 className: '',
@@ -982,7 +1527,7 @@
                             <span class="weather-value">${weatherData.windDirection}°</span>
                         </div>
                     </div>
-                    <small style="color: #666;">Dados: Open-Meteo API</small>
+                    ${cacheNotice}
                 </div>
             `;
 
@@ -998,19 +1543,31 @@
                     <p>Dados hidroclimáticos ainda estão sendo carregados.</p></div>`;
             }
 
-            const status = getRainStatus(rain.observed24h, rain.forecast72h);
+            const currentRain = Math.max(0, Number(weatherData.precipitation) || 0);
+            const trend = getRainTrend(currentRain, rain.observed24h, rain.forecast24h);
+            const status = getRainStatus(
+                rain.observed24h,
+                rain.forecast72h,
+                currentRain,
+                trend.direction
+            );
+            const cacheNotice = weatherData._stale
+                ? `<small style="color:#b45309;">Último valor salvo${weatherData._fetchedAt ? ` em ${new Date(weatherData._fetchedAt).toLocaleString('pt-BR')}` : ''}. A API está temporariamente indisponível.</small>`
+                : '<small>Estimativa Open-Meteo no ponto central do município. Não representa nível ou vazão do rio.</small>';
             return `
                 <div class="weather-popup">
                     <h3>${escapeHtml(cityName)}</h3>
                     <div class="weather-current">
                         <div class="weather-metric"><span>Área inserida na bacia:</span><span class="weather-value">${basinPercentage}%</span></div>
+                        <div class="weather-metric"><span>Precipitação atual:</span><span class="weather-value">${currentRain.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Chuva observada 24 h:</span><span class="weather-value">${rain.observed24h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Chuva observada 72 h:</span><span class="weather-value">${rain.observed72h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Previsão 24 h:</span><span class="weather-value">${rain.forecast24h.toFixed(1)} mm</span></div>
                         <div class="weather-metric"><span>Previsão 72 h:</span><span class="weather-value">${rain.forecast72h.toFixed(1)} mm</span></div>
+                        <div class="weather-metric"><span>Tendência:</span><span class="weather-value" style="color:${trend.color}">${trend.label}</span></div>
                         <div class="weather-metric"><span>Situação meteorológica:</span><span class="weather-value" style="color:${status.color}">${status.label}</span></div>
                     </div>
-                    <small>Estimativa Open-Meteo no ponto central do município. Não representa nível ou vazão do rio.</small>
+                    ${cacheNotice}
                 </div>`;
         }
 
@@ -1042,7 +1599,8 @@
                     '<i style="background:#fee08b"></i>Moderada (10–30 mm)<br>' +
                     '<i style="background:#fc8d59"></i>Atenção (30–60 mm)<br>' +
                     '<i style="background:#d73027"></i>Alta (60–100 mm)<br>' +
-                    '<i style="background:#7b1fa2"></i>Muito alta (≥ 100 mm)';
+                    '<i style="background:#7b1fa2"></i>Muito alta (≥ 100 mm)<br>' +
+                    '<small>A cor também considera chuva atual, previsão e tendência.</small>';
                 return div;
             };
 
@@ -1140,7 +1698,14 @@
                 if (!rain) {
                     return { color: '#003b5c', weight: 1.5, fillOpacity: 0.5, fillColor: '#90a4ae' };
                 }
-                const status = getRainStatus(rain ? rain.observed24h : 0, rain ? rain.forecast72h : 0);
+                const currentRain = Math.max(0, Number(result && result.precipitation) || 0);
+                const trend = getRainTrend(currentRain, rain.observed24h, rain.forecast24h);
+                const status = getRainStatus(
+                    rain.observed24h,
+                    rain.forecast72h,
+                    currentRain,
+                    trend.direction
+                );
                 return { color: '#003b5c', weight: 1.5, fillOpacity: 0.72, fillColor: status.color };
             }
 
@@ -1187,13 +1752,38 @@
                     return;
                 }
 
+                const responsiveAxisLabels = {
+                    id: 'responsiveAxisLabels',
+                    beforeUpdate(chart) {
+                        const availableWidth = chart.canvas.parentElement
+                            ? chart.canvas.parentElement.clientWidth
+                            : chart.width;
+                        const isNarrow = availableWidth < 330;
+                        const isVeryNarrow = availableWidth < 240;
+                        const xScale = chart.options.scales.x;
+
+                        xScale.ticks.minRotation = isNarrow ? 55 : 0;
+                        xScale.ticks.maxRotation = isNarrow ? 55 : 0;
+                        xScale.ticks.padding = isNarrow ? 3 : 6;
+                        xScale.title.display = !isVeryNarrow;
+                    }
+                };
+
                 rainChart = new Chart(canvas, {
                     type: 'line',
                     data: {
-                        labels: ['Observado 72 h', 'Observado 24 h', 'Previsão 24 h', 'Previsão 72 h'],
+                        // Arrays são renderizados pelo Chart.js em múltiplas linhas,
+                        // evitando sobreposição em telas estreitas.
+                        labels: [
+                            ['Observado', '72 h'],
+                            ['Observado', '24 h'],
+                            ['Atual'],
+                            ['Previsão', '24 h'],
+                            ['Previsão', '72 h']
+                        ],
                         datasets: [{
                             label: 'Precipitação média',
-                            data: [null, null, null, null],
+                            data: [null, null, null, null, null],
                             borderColor: '#0066cc',
                             backgroundColor: 'rgba(0, 102, 204, 0.14)',
                             pointBackgroundColor: '#004080',
@@ -1211,6 +1801,13 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         animation: false,
+                        layout: {
+                            padding: {
+                                left: 2,
+                                right: 4,
+                                bottom: 4
+                            }
+                        },
                         interaction: {
                             mode: 'index',
                             intersect: false
@@ -1221,6 +1818,10 @@
                             },
                             tooltip: {
                                 callbacks: {
+                                    title: items => {
+                                        const label = items[0] ? items[0].label : '';
+                                        return Array.isArray(label) ? label.join(' ') : label;
+                                    },
                                     label: context => `${context.dataset.label}: ${Number(context.parsed.y).toFixed(1)} mm`
                                 }
                             }
@@ -1229,13 +1830,21 @@
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Janela de acumulação'
+                                    text: 'Janela de acumulação',
+                                    padding: {
+                                        top: 8
+                                    }
                                 },
                                 ticks: {
                                     maxRotation: 0,
+                                    minRotation: 0,
                                     autoSkip: false,
+                                    padding: 6,
                                     font: context => ({
-                                        size: context.chart.width < 500 ? 10 : 12
+                                        size: context.chart.width < 420
+                                            ? 9
+                                            : (context.chart.width < 500 ? 10 : 12),
+                                        lineHeight: 1.15
                                     })
                                 },
                                 grid: {
@@ -1253,7 +1862,8 @@
                                 }
                             }
                         }
-                    }
+                    },
+                    plugins: [responsiveAxisLabels]
                 });
             }
 
@@ -1273,9 +1883,23 @@
                     return bBasin - aBasin;
                 });
 
+                // Uma única leitura em lote busca o cache compartilhado de todos os pontos.
+                const weatherPoints = new Map();
+                orderedFeatures.forEach(feature => {
+                    const cityName = feature.properties.name;
+                    const key = normalizeMunicipalityName(cityName);
+                    const center = L.geoJSON(feature).getBounds().getCenter();
+                    weatherPoints.set(key, {
+                        cityName,
+                        lat: center.lat,
+                        lng: center.lng,
+                        includeHydrology: basinMunicipalities.has(key)
+                    });
+                });
+                await weatherManager.preloadDatabaseCache([...weatherPoints.values()]);
+
                 for (let i = 0; i < orderedFeatures.length; i += weatherManager.BATCH_SIZE) {
                     const batch = orderedFeatures.slice(i, i + weatherManager.BATCH_SIZE);
-                    if (!weatherManager.canMakeApiCall()) break;
 
                     await Promise.allSettled(batch.map(async feature => {
                         const cityName = feature.properties.name;
@@ -1285,11 +1909,12 @@
 
                         try {
                             // O centro dos limites funciona para Polygon e MultiPolygon.
-                            const center = L.geoJSON(feature).getBounds().getCenter();
+                            const center = weatherPoints.get(key);
                             const weatherData = await weatherManager.fetchWeatherData(
                                 center.lat,
                                 center.lng,
-                                includeHydrology
+                                includeHydrology,
+                                cityName
                             );
 
                             const marker = createWeatherMarker(center.lat, center.lng, weatherData, cityName);
@@ -1318,19 +1943,29 @@
                         }
                     }));
 
+                    await weatherManager.flushPendingSaves();
                     if (i + weatherManager.BATCH_SIZE < orderedFeatures.length) {
                         await new Promise(resolve => setTimeout(resolve, weatherManager.DELAY_BETWEEN_BATCHES));
                     }
                 }
 
+                while (weatherManager.pendingSaves.length) {
+                    await weatherManager.flushPendingSaves();
+                }
                 loadingIndicator.remove();
-                showMessage(`✅ ${successCount} municípios carregados`, '#1b5e20');
+                const details = [
+                    `${weatherManager.cacheHits} do cache`,
+                    `${weatherManager.externalCalls} da API`,
+                    weatherManager.staleHits ? `${weatherManager.staleHits} salvos anteriormente` : null
+                ].filter(Boolean).join(', ');
+                showMessage(`✅ ${successCount} municípios carregados — ${details}`, '#1b5e20');
             }
 
             function updateHydroSummary() {
                 let weightTotal = 0;
                 let observed24Weighted = 0;
                 let observed72Weighted = 0;
+                let currentWeighted = 0;
                 let forecast24Weighted = 0;
                 let forecast72Weighted = 0;
                 let max24 = -1;
@@ -1342,6 +1977,7 @@
                     weightTotal += weight;
                     observed24Weighted += weatherData.rain.observed24h * weight;
                     observed72Weighted += weatherData.rain.observed72h * weight;
+                    currentWeighted += (Number(weatherData.precipitation) || 0) * weight;
                     forecast24Weighted += weatherData.rain.forecast24h * weight;
                     forecast72Weighted += weatherData.rain.forecast72h * weight;
                     if (weatherData.rain.observed24h > max24) {
@@ -1353,20 +1989,29 @@
 
                 const avgObserved24 = weightTotal ? observed24Weighted / weightTotal : 0;
                 const avgObserved72 = weightTotal ? observed72Weighted / weightTotal : 0;
+                const avgCurrent = weightTotal ? currentWeighted / weightTotal : 0;
                 const avgForecast24 = weightTotal ? forecast24Weighted / weightTotal : 0;
                 const avgForecast72 = weightTotal ? forecast72Weighted / weightTotal : 0;
-                const status = getRainStatus(avgObserved24, avgForecast72);
+                const trend = getRainTrend(avgCurrent, avgObserved24, avgForecast24);
+                const status = getRainStatus(
+                    avgObserved24,
+                    avgForecast72,
+                    avgCurrent,
+                    trend.direction
+                );
 
                 $('#hydro-count').text(`${hydroResults.size}/${basinFeatureCount}`);
                 $('#hydro-rain-24').text(`${avgObserved24.toFixed(1)} mm`);
+                $('#hydro-rain-current').text(`${avgCurrent.toFixed(1)} mm`);
                 $('#hydro-max-24').text(max24 >= 0 ? `${max24.toFixed(1)} mm${maxCity ? ` — ${maxCity}` : ''}` : '-- mm');
                 $('#hydro-forecast-72').text(`${avgForecast72.toFixed(1)} mm`);
+                $('#hydro-trend').text(trend.label).css('color', trend.color);
                 $('#hydro-status').text(status.label).css('color', status.color);
 
                 if (rainChart) {
                     rainChart.data.datasets[0].data = weightTotal
-                        ? [avgObserved72, avgObserved24, avgForecast24, avgForecast72]
-                        : [null, null, null, null];
+                        ? [avgObserved72, avgObserved24, avgCurrent, avgForecast24, avgForecast72]
+                        : [null, null, null, null, null];
                     rainChart.update('none');
                 }
             }

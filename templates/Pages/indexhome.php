@@ -571,7 +571,8 @@
             z-index: 2;
         }
 
-        .hydro-toolbar button {
+        .hydro-toolbar button,
+        .hydro-toolbar .analysis-link {
             border: 1px solid #0066cc;
             border-radius: 6px;
             background: #fff;
@@ -579,6 +580,7 @@
             padding: 9px 14px;
             cursor: pointer;
             font-weight: bold;
+            text-decoration: none;
         }
 
         .hydro-toolbar button.active {
@@ -789,7 +791,11 @@
                 box-sizing: border-box;
             }
 
-            .hydro-toolbar button { flex: 1 1 100%; }
+            .hydro-toolbar button,
+            .hydro-toolbar .analysis-link {
+                flex: 1 1 100%;
+                text-align: center;
+            }
 
             .hydro-summary {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -932,6 +938,7 @@
                 <div class="hydro-toolbar">
                     <button type="button" id="view-hydro" class="active">🌊 Precipitação da Bacia Taquari-Antas</button>
                     <button type="button" id="view-weather">🌦️ Clima em todo o RS</button>
+                    <a class="analysis-link" href="<?= $this->Url->build('/analise') ?>">📊 Análise histórica e confiança</a>
                     <p class="hydro-note">
                         A análise hidroclimática utiliza chuva observada e prevista. Ela é indicativa e não substitui alertas da Defesa Civil, SEMA, ANA ou municípios.
                     </p>

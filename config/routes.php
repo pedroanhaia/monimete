@@ -56,6 +56,10 @@ return function (RouteBuilder $routes): void {
          * to use (in this case, templates/Pages/home.php)...
          */
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'indexhome']);
+        $builder->get('/analise', [
+            'controller' => 'Pages',
+            'action' => 'analise',
+        ]);
         //$routes->connect('/dashboard', ['controller' => 'cities', 'action' => 'dashboard']);
         /*
          * ...and connect the rest of 'Pages' controller's URLs.
@@ -70,6 +74,16 @@ return function (RouteBuilder $routes): void {
         $builder->post('/weather-cache/save', [
             'controller' => 'WeatherCache',
             'action' => 'save',
+        ]);
+
+        $builder->get('/weather-cache/analysis-times', [
+            'controller' => 'WeatherCache',
+            'action' => 'analysisTimes',
+        ]);
+
+        $builder->get('/weather-cache/analysis-data', [
+            'controller' => 'WeatherCache',
+            'action' => 'analysisData',
         ]);
         /*
          * Connect catchall routes for all controllers.
