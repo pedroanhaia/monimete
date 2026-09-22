@@ -119,50 +119,6 @@ $cakeDescription = 'monitoramente metereológico da bacia do rio Taquari';
 
 
 <div class = "flex-parent-element"overflow-x= "auto">
-    <div style="display: flex;z-index: 2;">
-        <div class="flex_child_element">
-            <?php
-                $currenttemplate = $this->getRequest()->getParam('controller');
-                $currentaction = $this->getRequest()->getParam('action');
-                if(!($currenttemplate == 'Pages' && $currentaction == 'display')){
-
-            ?>
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-button" >
-                    <button id="sidebarCollapse">☰</button>
-                </div>
-                <nav>
-                    <?php
-
-                        $menuItems = [
-                            'Início' => ['controller' => 'Pages', 'action' => 'display', 'indexhome'],
-                            'Cidades' => ['controller' => 'Cities', 'action' => 'index'],
-                            'Metereologico' => ['controller' => 'DataMetereological', 'action' => 'index'],
-                            'Satélite' => ['controller' => 'DataSatellite', 'action' => 'index'],
-                            'MQTT IoT' => ['controller' => 'Mqtt', 'action' => 'index'],
-                            'Dispositivos' => ['controller' => 'Devices', 'action' => 'index'],
-                            'Locais' => ['controller' => 'Locations', 'action' => 'index'],
-                            'Logs' => ['controller' => 'Logs', 'action' => 'index'],
-                            'Plataformas' => ['controller' => 'Platforms', 'action' => 'index'],
-                            'Serviços' => ['controller' => 'Services', 'action' => 'index'],
-                            'Usuários' => ['controller' => 'Users', 'action' => 'index'],
-                            'Configurações' => ['controller' => 'Settings', 'action' => 'index'],
-                        ];
-                        foreach ($menuItems as $label => $url) {
-
-                            echo $this->Html->link($label, $url, ['class' => 'side-nav-item']);
-                        }
-
-
-
-                    ?>
-                </nav>
-            </div>
-            <?php } ?>
-        </div>
-
-    </div>
-
     <main class="main" id="main" overflow-x: visible;>
         <div class="container">
 

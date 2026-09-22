@@ -42,6 +42,7 @@ class PagesController extends AppController
      */
     public function analise(): ?Response
     {
+        //$this->viewBuilder()->setLayout("login");
         return $this->render('analise');
     }
     /**
