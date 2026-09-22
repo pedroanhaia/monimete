@@ -98,33 +98,17 @@
             font-size: .85rem; line-height: 1.45;
         }
 
-        .time-points {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-            margin: 8px 0 18px;
+        .timeline-box { margin-top: 14px; padding: 15px 14px 10px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+        .timeline-labels { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .78rem; }
+        .timeline-labels strong { color: var(--blue); text-align: center; }
+        .timeline-range {
+            width: 100%; height: 34px; margin: 8px 0 2px; padding: 0;
+            accent-color: var(--blue-light); cursor: pointer;
         }
-        .time-point {
-            position: relative;
-            min-height: 148px;
-            padding: 18px 14px 14px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: #f8fafc;
-        }
-        .time-point::before {
-            content: '';
-            position: absolute;
-            inset: 0 0 auto;
-            height: 7px;
-            background: var(--point-color, var(--blue));
-        }
-        .time-point h3 { margin: 0 0 5px; color: var(--blue); font-size: 1rem; }
-        .time-point time { display: block; min-height: 2.4em; color: var(--muted); font-size: .82rem; }
-        .time-point-values { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-        .time-point-values span { color: var(--muted); font-size: .72rem; }
-        .time-point-values strong { display: block; margin-top: 3px; color: var(--text); font-size: 1rem; }
+        .timeline-hint { margin: 4px 0 0; color: var(--muted); font-size: .76rem; text-align: center; }
+        .historical-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .historical-bars .panel { min-width: 0; }
+        .historical-chart { position: relative; height: 350px; }
 
         .table-tools { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
         .table-tools input { min-height: 38px; width: min(320px, 100%); padding: 8px 10px; border: 1px solid #b8c7da; border-radius: 8px; }
@@ -147,7 +131,7 @@
             .field:first-child { grid-column: 1 / -1; }
             .load-button { width: 100%; }
             .chart-wrap { height: 330px; }
-            .time-points { grid-template-columns: 1fr; }
+            .historical-bars { grid-template-columns: 1fr; gap: 0; }
             .table-tools { align-items: stretch; flex-direction: column; }
             .table-tools input { width: 100%; max-width: none; }
         }
@@ -184,40 +168,19 @@
                 </div>
                 <button type="button" id="load-analysis" class="load-button">Atualizar análise</button>
             </div>
+            <div class="timeline-box">
+                <div class="timeline-labels">
+                    <span id="timeline-first">Mais antigo</span>
+                    <strong id="timeline-current">--</strong>
+                    <span id="timeline-last">Mais recente</span>
+                </div>
+                <input id="history-timeline" class="timeline-range" type="range" min="0" max="0" value="0" step="1" list="timeline-points" aria-label="Linha histórica dos registros salvos">
+                <datalist id="timeline-points"></datalist>
+                <p class="timeline-hint">Deslize pela linha histórica para escolher outro registro salvo.</p>
+            </div>
         </section>
 
         <div id="analysis-status" class="status-message" role="status" aria-live="polite"></div>
-
-        <section class="panel" aria-labelledby="time-points-title">
-            <h2 id="time-points-title">Pontos temporais da análise</h2>
-            <p class="panel-description">A emissão selecionada é alinhada às leituras armazenadas mais próximas de 24 e 72 horas depois, permitindo conferir quando os valores previstos se tornaram observáveis.</p>
-            <div class="time-points">
-                <article class="time-point" style="--point-color:#00a878">
-                    <h3>Emissão da previsão</h3>
-                    <time id="point-issued-time">--</time>
-                    <div class="time-point-values">
-                        <div><span>Atual na emissão</span><strong id="point-issued-current">-- mm</strong></div>
-                        <div><span>Previsto 72 h</span><strong id="point-issued-forecast">-- mm</strong></div>
-                    </div>
-                </article>
-                <article class="time-point" style="--point-color:#f59e0b">
-                    <h3>Leitura próxima de +24 h</h3>
-                    <time id="point-24-time">--</time>
-                    <div class="time-point-values">
-                        <div><span>Previsto 24 h</span><strong id="point-24-forecast">-- mm</strong></div>
-                        <div><span>Observado 24 h</span><strong id="point-24-observed">-- mm</strong></div>
-                    </div>
-                </article>
-                <article class="time-point" style="--point-color:#0066cc">
-                    <h3>Leitura próxima de +72 h</h3>
-                    <time id="point-72-time">--</time>
-                    <div class="time-point-values">
-                        <div><span>Previsto 72 h</span><strong id="point-72-forecast">-- mm</strong></div>
-                        <div><span>Observado 72 h</span><strong id="point-72-observed">-- mm</strong></div>
-                    </div>
-                </article>
-            </div>
-        </section>
 
         <section class="panel" aria-labelledby="snapshot-title">
             <h2 id="snapshot-title">Precipitação da bacia no instante selecionado</h2>
@@ -229,6 +192,19 @@
             </div>
             <div class="chart-wrap"><canvas id="snapshot-chart"></canvas></div>
         </section>
+
+        <div class="historical-bars">
+            <section class="panel" aria-labelledby="previous24-title">
+                <h2 id="previous24-title">Registro anterior mais próximo de 24 horas</h2>
+                <p id="previous24-description" class="panel-description">Aguardando seleção do histórico.</p>
+                <div class="historical-chart"><canvas id="previous24-chart"></canvas></div>
+            </section>
+            <section class="panel" aria-labelledby="previous72-title">
+                <h2 id="previous72-title">Registro anterior mais próximo de 72 horas</h2>
+                <p id="previous72-description" class="panel-description">Aguardando seleção do histórico.</p>
+                <div class="historical-chart"><canvas id="previous72-chart"></canvas></div>
+            </section>
+        </div>
 
         <section class="panel" aria-labelledby="comparison-title">
             <h2 id="comparison-title">Previsto × observado posterior</h2>
@@ -298,9 +274,14 @@
                 data: <?= json_encode($this->Url->build(['controller' => 'WeatherCache', 'action' => 'analysisData']), JSON_UNESCAPED_SLASHES) ?>,
                 weights: <?= json_encode($this->Url->build('/taquari-antas-municipios.json'), JSON_UNESCAPED_SLASHES) ?>
             };
-            const state = { weights: new Map(), snapshot: [], snapshotChart: null, comparisonChart: null };
+            const state = {
+                weights: new Map(), times: [], snapshot: [], snapshotChart: null,
+                previous24Chart: null, previous72Chart: null, comparisonChart: null,
+                timelineTimer: null
+            };
             const elements = {
                 time: document.getElementById('snapshot-time'),
+                timeline: document.getElementById('history-timeline'),
                 days: document.getElementById('history-days'),
                 load: document.getElementById('load-analysis'),
                 status: document.getElementById('analysis-status'),
@@ -362,13 +343,53 @@
             }
 
             function populateTimes(times) {
+                state.times = times.map(item => ({
+                    ...item,
+                    timestamp: new Date(String(item.value).replace(' ', 'T')).getTime()
+                })).filter(item => Number.isFinite(item.timestamp)).sort((a, b) => a.timestamp - b.timestamp);
                 elements.time.innerHTML = '';
-                times.forEach(item => {
+                state.times.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.value;
                     option.textContent = `${localDate(item.value)} — ${item.municipalityCount} municípios salvos`;
                     elements.time.appendChild(option);
                 });
+                const lastIndex = Math.max(0, state.times.length - 1);
+                elements.timeline.max = String(lastIndex);
+                elements.timeline.value = String(lastIndex);
+                const pointList = document.getElementById('timeline-points');
+                pointList.innerHTML = '';
+                const markerStep = Math.max(1, Math.ceil(state.times.length / 40));
+                state.times.forEach((item, index) => {
+                    if (index % markerStep !== 0 && index !== lastIndex) return;
+                    const option = document.createElement('option');
+                    option.value = String(index);
+                    option.label = localDate(item.value);
+                    pointList.appendChild(option);
+                });
+                if (state.times[lastIndex]) elements.time.value = state.times[lastIndex].value;
+                updateTimelineLabels();
+            }
+
+            function updateTimelineLabels() {
+                const index = number(elements.timeline.value);
+                const current = state.times[index];
+                document.getElementById('timeline-first').textContent = state.times.length ? localDate(state.times[0].value) : '--';
+                document.getElementById('timeline-current').textContent = current ? localDate(current.value) : '--';
+                document.getElementById('timeline-last').textContent = state.times.length ? localDate(state.times[state.times.length - 1].value) : '--';
+            }
+
+            function closestSavedTime(targetMs, selectedMs) {
+                const previous = state.times.filter(item => item.timestamp < selectedMs);
+                if (!previous.length) return null;
+                return previous.reduce((best, item) =>
+                    Math.abs(item.timestamp - targetMs) < Math.abs(best.timestamp - targetMs) ? item : best
+                , previous[0]);
+            }
+
+            function analysisUrl(at) {
+                const params = new URLSearchParams({ at, days: elements.days.value, horizon: '72' });
+                return `${URLS.data}?${params.toString()}`;
             }
 
             async function loadAnalysis() {
@@ -377,19 +398,21 @@
                 elements.load.disabled = true;
                 setStatus('Reconstruindo o histórico e pareando previsto com observado...', 'loading');
                 try {
-                    const baseParams = { at, days: elements.days.value };
-                    const params24 = new URLSearchParams({ ...baseParams, horizon: '24' });
-                    const params72 = new URLSearchParams({ ...baseParams, horizon: '72' });
-                    const [payload24, payload72] = await Promise.all([
-                        fetchJson(`${URLS.data}?${params24.toString()}`),
-                        fetchJson(`${URLS.data}?${params72.toString()}`)
+                    const selectedMs = new Date(String(at).replace(' ', 'T')).getTime();
+                    const previous24 = closestSavedTime(selectedMs - 24 * 60 * 60 * 1000, selectedMs);
+                    const previous72 = closestSavedTime(selectedMs - 72 * 60 * 60 * 1000, selectedMs);
+                    const [payload72, payloadPrevious24, payloadPrevious72] = await Promise.all([
+                        fetchJson(analysisUrl(at)),
+                        previous24 ? fetchJson(analysisUrl(previous24.value)) : Promise.resolve(null),
+                        previous72 ? fetchJson(analysisUrl(previous72.value)) : Promise.resolve(null)
                     ]);
-                    state.snapshot = enrichSnapshot(payload72.snapshot || payload24.snapshot || []);
-                    renderTimePoints(payload24, payload72);
+                    state.snapshot = enrichSnapshot(payload72.snapshot || []);
                     renderSnapshot(payload72);
-                    renderComparison(payload72.comparisons || [], 72);
+                    renderHistoricalSnapshot(payloadPrevious24, 'previous24', previous24, 24, selectedMs);
+                    renderHistoricalSnapshot(payloadPrevious72, 'previous72', previous72, 72, selectedMs);
+                    const comparisonLoaded = renderComparison(payload72.comparisons || [], 72);
                     renderTable(state.snapshot, elements.filter.value);
-                    setStatus('');
+                    if (comparisonLoaded) setStatus('');
                 } catch (error) {
                     setStatus(`Falha ao carregar a análise: ${error.message}`, 'error');
                 } finally {
@@ -449,46 +472,41 @@
                 });
             }
 
-            function comparisonPoint(rows, selectedAt) {
-                const selectedMs = new Date(String(selectedAt).replace(' ', 'T')).getTime();
-                const valid = rows.map(row => ({
-                    ...row,
-                    issuedMs: new Date(String(row.issuedAt).replace(' ', 'T')).getTime(),
-                    weight: state.weights.get(normalizeName(row.cityName)) || 0
-                })).filter(row => row.weight > 0 && Number.isFinite(row.issuedMs));
-                if (!valid.length) return null;
-                const closestMs = valid.reduce((best, row) =>
-                    Math.abs(row.issuedMs - selectedMs) < Math.abs(best - selectedMs) ? row.issuedMs : best,
-                    valid[0].issuedMs
-                );
-                const rowsAtPoint = valid.filter(row => Math.abs(row.issuedMs - closestMs) < 60 * 60 * 1000);
-                const weightTotal = rowsAtPoint.reduce((sum, row) => sum + row.weight, 0);
-                if (!weightTotal) return null;
-                const weighted = field => rowsAtPoint.reduce((sum, row) => sum + number(row[field]) * row.weight, 0) / weightTotal;
-                const observedTimes = rowsAtPoint.map(row => row.observedAt || row.targetAt || row.matchedAt).filter(Boolean);
-                return {
-                    issuedAt: new Date(closestMs),
-                    observedAt: observedTimes[0] || null,
-                    forecast: weighted('forecast'),
-                    observed: weighted('observed')
-                };
+            function renderHistoricalSnapshot(payload, prefix, timeItem, hours, selectedMs) {
+                const canvas = document.getElementById(`${prefix}-chart`);
+                const description = document.getElementById(`${prefix}-description`);
+                if (state[`${prefix}Chart`]) state[`${prefix}Chart`].destroy();
+                if (!payload || !timeItem) {
+                    description.textContent = `Não existe registro salvo próximo de ${hours} horas antes.`;
+                    state[`${prefix}Chart`] = null;
+                    return false;
+                }
+                const rows = enrichSnapshot(payload.snapshot || []);
+                const differenceHours = Math.abs(selectedMs - timeItem.timestamp) / (60 * 60 * 1000);
+                const targetDeviation = Math.abs(differenceHours - hours);
+                description.textContent = `${localDate(timeItem.value)} — ${differenceHours.toFixed(1)} h antes do selecionado; desvio de ${targetDeviation.toFixed(1)} h do alvo de ${hours} h.`;
+                state[`${prefix}Chart`] = createRainBarChart(canvas, rows);
             }
 
-            function renderTimePoints(payload24, payload72) {
-                const selectedAt = payload72.selectedAt || payload24.selectedAt || elements.time.value;
-                const point24 = comparisonPoint(payload24.comparisons || [], selectedAt);
-                const point72 = comparisonPoint(payload72.comparisons || [], selectedAt);
-                const selectedDate = new Date(String(selectedAt).replace(' ', 'T'));
-                const targetDate = hours => new Date(selectedDate.getTime() + hours * 60 * 60 * 1000);
-                document.getElementById('point-issued-time').textContent = localDate(selectedAt);
-                document.getElementById('point-issued-current').textContent = mm(weightedAverage(state.snapshot, 'current'));
-                document.getElementById('point-issued-forecast').textContent = mm(weightedAverage(state.snapshot, 'forecast72h'));
-                document.getElementById('point-24-time').textContent = localDate(point24?.observedAt || targetDate(24).toISOString());
-                document.getElementById('point-24-forecast').textContent = point24 ? mm(point24.forecast) : '-- mm';
-                document.getElementById('point-24-observed').textContent = point24 ? mm(point24.observed) : '-- mm';
-                document.getElementById('point-72-time').textContent = localDate(point72?.observedAt || targetDate(72).toISOString());
-                document.getElementById('point-72-forecast').textContent = point72 ? mm(point72.forecast) : '-- mm';
-                document.getElementById('point-72-observed').textContent = point72 ? mm(point72.observed) : '-- mm';
+            function createRainBarChart(canvas, rows) {
+                const values = [
+                    weightedAverage(rows, 'observed72h'), weightedAverage(rows, 'observed24h'),
+                    weightedAverage(rows, 'current'), weightedAverage(rows, 'forecast24h'),
+                    weightedAverage(rows, 'forecast72h')
+                ];
+                return new Chart(canvas, {
+                    type: 'bar',
+                    data: {
+                        labels: [['Observado', '72 h'], ['Observado', '24 h'], ['Atual'], ['Previsão', '24 h'], ['Previsão', '72 h']],
+                        datasets: [{
+                            label: 'Precipitação média ponderada', data: values,
+                            backgroundColor: ['#4c78a8', '#72a4d4', '#00a878', '#f59e0b', '#ef6c57'],
+                            borderColor: ['#315d87', '#4c78a8', '#007a57', '#b86e00', '#b53f2f'],
+                            borderWidth: 1, borderRadius: 7
+                        }]
+                    },
+                    options: chartOptions('Precipitação média ponderada (mm)')
+                });
             }
 
             function chartOptions(yTitle) {
@@ -514,6 +532,7 @@
                 const groups = new Map();
                 enriched.forEach(row => {
                     const issued = new Date(String(row.issuedAt).replace(' ', 'T'));
+                    if (Number.isNaN(issued.getTime())) return;
                     issued.setMinutes(0, 0, 0);
                     const key = issued.toISOString();
                     if (!groups.has(key)) groups.set(key, []);
@@ -522,15 +541,19 @@
 
                 const points = [...groups.entries()].map(([key, rows]) => {
                     const weightTotal = rows.reduce((sum, row) => sum + row.weight, 0);
-                    const forecast = rows.reduce((sum, row) => sum + row.forecast * row.weight, 0) / weightTotal;
-                    const observed = rows.reduce((sum, row) => sum + row.observed * row.weight, 0) / weightTotal;
-                    const meanError = rows.reduce((sum, row) => sum + row.error * row.weight, 0) / weightTotal;
-                    const variance = rows.reduce((sum, row) => sum + row.weight * Math.pow(row.error - meanError, 2), 0) / weightTotal;
+                    const forecast = rows.reduce((sum, row) => sum + number(row.forecast) * row.weight, 0) / weightTotal;
+                    const observed = rows.reduce((sum, row) => sum + number(row.observed) * row.weight, 0) / weightTotal;
+                    const meanError = forecast - observed;
+                    const variance = rows.reduce((sum, row) => {
+                        const municipalError = number(row.forecast) - number(row.observed);
+                        return sum + row.weight * Math.pow(municipalError - meanError, 2);
+                    }, 0) / weightTotal;
                     const sumWeightSquared = rows.reduce((sum, row) => sum + Math.pow(row.weight, 2), 0);
                     const effectiveN = sumWeightSquared ? Math.pow(weightTotal, 2) / sumWeightSquared : rows.length;
                     const margin = effectiveN > 1 ? 1.96 * Math.sqrt(variance / effectiveN) : 0;
-                    return { key, forecast, observed, error: forecast - observed, margin, count: rows.length };
-                }).sort((a, b) => a.key.localeCompare(b.key));
+                    return { key, forecast, observed, error: meanError, margin, count: rows.length };
+                }).filter(point => Number.isFinite(point.forecast) && Number.isFinite(point.observed))
+                  .sort((a, b) => a.key.localeCompare(b.key));
 
                 // As métricas gerais usam as médias da bacia por horário, evitando
                 // tratar municípios vizinhos como amostras meteorológicas independentes.
@@ -538,6 +561,11 @@
                 const minimumWidth = Math.max(720, points.length * 28);
                 document.getElementById('comparison-chart-inner').style.width = `${minimumWidth}px`;
                 if (state.comparisonChart) state.comparisonChart.destroy();
+                if (!points.length) {
+                    state.comparisonChart = null;
+                    setStatus('O instantâneo foi carregado, mas ainda não há pares completos de previsão e observado para 72 horas nesta janela.', 'loading');
+                    return;
+                }
                 state.comparisonChart = new Chart(document.getElementById('comparison-chart'), {
                     type: 'line',
                     data: {
@@ -545,8 +573,8 @@
                         datasets: [
                             { label: 'Limite inferior 95%', data: points.map(p => Math.max(0, p.forecast - p.margin)), borderWidth: 0, pointRadius: 0, backgroundColor: 'transparent' },
                             { label: 'Margem estatística 95%', data: points.map(p => p.forecast + p.margin), borderWidth: 0, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(245, 158, 11, .18)' },
-                            { label: `Previsto ${horizon} h`, data: points.map(p => p.forecast), borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointRadius: 2, borderWidth: 2.5, tension: .2 },
-                            { label: `Observado posterior ${horizon} h`, data: points.map(p => p.observed), borderColor: '#0066cc', backgroundColor: '#0066cc', pointRadius: 2, borderWidth: 2.5, tension: .2 }
+                            { label: `Previsto ${horizon} h`, data: points.map(p => p.forecast), borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointRadius: 3, borderWidth: 2.5, tension: .2, spanGaps: true },
+                            { label: `Observado posterior ${horizon} h`, data: points.map(p => p.observed), borderColor: '#0066cc', backgroundColor: '#0066cc', pointRadius: 3, borderWidth: 2.5, tension: .2, spanGaps: true }
                         ]
                     },
                     options: {
@@ -557,6 +585,7 @@
                         }
                     }
                 });
+                return true;
             }
 
             function renderConfidenceCards(rows) {
@@ -606,6 +635,18 @@
 
             elements.load.addEventListener('click', loadAnalysis);
             elements.time.addEventListener('change', loadAnalysis);
+            elements.time.addEventListener('change', () => {
+                const index = state.times.findIndex(item => item.value === elements.time.value);
+                if (index >= 0) elements.timeline.value = String(index);
+                updateTimelineLabels();
+            });
+            elements.timeline.addEventListener('input', () => {
+                const item = state.times[number(elements.timeline.value)];
+                if (!item) return;
+                elements.time.value = item.value;
+                updateTimelineLabels();
+            });
+            elements.timeline.addEventListener('change', loadAnalysis);
             elements.filter.addEventListener('input', () => renderTable(state.snapshot, elements.filter.value));
             initialize();
         })();
