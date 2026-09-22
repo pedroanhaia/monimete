@@ -210,10 +210,10 @@
         </div>
 
         <section class="panel" aria-labelledby="comparison-title">
-            <h2 id="comparison-title">Previsto × observado posterior</h2>
-            <p class="panel-description">A previsão de 72 horas emitida em T é comparada ao acumulado observado no registro mais próximo de T+72 h.</p>
+            <h2 id="comparison-title">Previsões anteriores × observado na data selecionada</h2>
+            <p class="panel-description">Compara a previsão de 24 h do registro próximo de T−24 h e a previsão de 72 h do registro próximo de T−72 h com os respectivos acumulados observados no instante selecionado.</p>
             <div class="confidence-cards">
-                <div class="metric-card"><span>Janelas comparadas</span><strong id="confidence-count">--</strong></div>
+                <div class="metric-card"><span>Municípios pareados (72 h)</span><strong id="confidence-count">--</strong></div>
                 <div class="metric-card"><span>Erro absoluto médio (MAE)</span><strong id="confidence-mae">-- mm</strong></div>
                 <div class="metric-card"><span>RMSE</span><strong id="confidence-rmse">-- mm</strong></div>
                 <div class="metric-card"><span>Viés médio</span><strong id="confidence-bias">-- mm</strong></div>
@@ -228,7 +228,7 @@
             </div>
             <div id="comparison-empty" class="chart-empty" role="status"></div>
             <p class="confidence-note">
-                A faixa sombreada é uma margem estatística preliminar de 95%, calculada a partir da dispersão dos erros municipais. O “observado” é o dado posterior armazenado da Open-Meteo; para validação hidrológica oficial, recomenda-se confrontar também com pluviômetros da ANA, INMET, CEMADEN ou rede estadual.
+                Os indicadores de confiança utilizam o pareamento de 72 horas entre os mesmos municípios. O “observado” é o acumulado armazenado da Open-Meteo na data selecionada; para validação hidrológica oficial, recomenda-se confrontar também com pluviômetros da ANA, INMET, CEMADEN ou rede estadual.
             </p>
         </section>
 
@@ -415,7 +415,14 @@
                     renderSnapshot(payload72);
                     renderHistoricalSnapshot(payloadPrevious24, 'previous24', previous24, 24, selectedMs);
                     renderHistoricalSnapshot(payloadPrevious72, 'previous72', previous72, 72, selectedMs);
-                    renderComparison(payload72.comparisons || [], 72);
+                    renderSelectedComparison(
+                        state.snapshot,
+                        enrichSnapshot(payloadPrevious24?.snapshot || []),
+                        enrichSnapshot(payloadPrevious72?.snapshot || []),
+                        at,
+                        previous24,
+                        previous72
+                    );
                     renderTable(state.snapshot, elements.filter.value);
                     setStatus('');
                 } catch (error) {
@@ -529,63 +536,61 @@
                 };
             }
 
-            function renderComparison(comparisons, horizon) {
+            function pairedMunicipalRows(currentRows, previousRows, forecastField, observedField) {
+                const previousByCity = new Map(previousRows.map(row => [normalizeName(row.cityName), row]));
+                return currentRows.map(current => {
+                    const previous = previousByCity.get(normalizeName(current.cityName));
+                    if (!previous) return null;
+                    const forecast = number(previous[forecastField]);
+                    const observed = number(current[observedField]);
+                    return {
+                        cityName: current.cityName,
+                        forecast,
+                        observed,
+                        error: forecast - observed,
+                        weight: current.weight
+                    };
+                }).filter(Boolean);
+            }
+
+            function weightedPairAverage(rows, field) {
+                const weightTotal = rows.reduce((sum, row) => sum + row.weight, 0);
+                return weightTotal
+                    ? rows.reduce((sum, row) => sum + number(row[field]) * row.weight, 0) / weightTotal
+                    : 0;
+            }
+
+            function renderSelectedComparison(currentRows, previous24Rows, previous72Rows, selectedAt, previous24, previous72) {
                 const emptyMessage = document.getElementById('comparison-empty');
                 const chartInner = document.getElementById('comparison-chart-inner');
                 const comparisonSummary = document.getElementById('comparison-summary');
                 emptyMessage.classList.remove('visible');
                 emptyMessage.textContent = '';
                 chartInner.style.display = 'block';
-                const enriched = comparisons.map(row => ({
-                    ...row,
-                    weight: state.weights.get(normalizeName(row.cityName)) || 0
-                })).filter(row => row.weight > 0);
-                const groups = new Map();
-                enriched.forEach(row => {
-                    const issued = new Date(String(row.issuedAt).replace(' ', 'T'));
-                    if (Number.isNaN(issued.getTime())) return;
-                    issued.setMinutes(0, 0, 0);
-                    const key = issued.toISOString();
-                    if (!groups.has(key)) groups.set(key, []);
-                    groups.get(key).push(row);
-                });
-
-                const points = [...groups.entries()].map(([key, rows]) => {
-                    const weightTotal = rows.reduce((sum, row) => sum + row.weight, 0);
-                    const forecast = rows.reduce((sum, row) => sum + number(row.forecast) * row.weight, 0) / weightTotal;
-                    const observed = rows.reduce((sum, row) => sum + number(row.observed) * row.weight, 0) / weightTotal;
-                    const meanError = forecast - observed;
-                    const variance = rows.reduce((sum, row) => {
-                        const municipalError = number(row.forecast) - number(row.observed);
-                        return sum + row.weight * Math.pow(municipalError - meanError, 2);
-                    }, 0) / weightTotal;
-                    const sumWeightSquared = rows.reduce((sum, row) => sum + Math.pow(row.weight, 2), 0);
-                    const effectiveN = sumWeightSquared ? Math.pow(weightTotal, 2) / sumWeightSquared : rows.length;
-                    const margin = effectiveN > 1 ? 1.96 * Math.sqrt(variance / effectiveN) : 0;
-                    return { key, forecast, observed, error: meanError, margin, count: rows.length };
-                }).filter(point => Number.isFinite(point.forecast) && Number.isFinite(point.observed))
-                  .sort((a, b) => a.key.localeCompare(b.key));
-
-                // As métricas gerais usam as médias da bacia por horário, evitando
-                // tratar municípios vizinhos como amostras meteorológicas independentes.
-                renderConfidenceCards(points);
-                const minimumWidth = Math.max(720, points.length * 28);
+                const pairs24 = pairedMunicipalRows(currentRows, previous24Rows, 'forecast24h', 'observed24h');
+                const pairs72 = pairedMunicipalRows(currentRows, previous72Rows, 'forecast72h', 'observed72h');
+                renderConfidenceCards(pairs72);
+                const minimumWidth = 720;
                 chartInner.style.width = '100%';
                 chartInner.style.minWidth = `${minimumWidth}px`;
                 if (state.comparisonChart) state.comparisonChart.destroy();
-                if (!points.length) {
+                if (!pairs24.length && !pairs72.length) {
                     state.comparisonChart = null;
                     chartInner.style.display = 'none';
-                    comparisonSummary.textContent = 'Nenhum ponto comparável retornado para a janela selecionada.';
-                    emptyMessage.textContent = 'Ainda não existem pares completos entre uma previsão e uma leitura próxima de 72 horas depois. Amplie a janela histórica ou aguarde novos registros do cache.';
+                    comparisonSummary.textContent = 'Nenhum município comum encontrado entre os instantâneos selecionados.';
+                    emptyMessage.textContent = 'Não foi possível cruzar a data selecionada com os registros anteriores de 24 e 72 horas.';
                     emptyMessage.classList.add('visible');
                     return false;
                 }
-                const maximumValue = Math.max(...points.flatMap(point => [point.forecast, point.observed]));
+                const forecast24 = weightedPairAverage(pairs24, 'forecast');
+                const observed24 = weightedPairAverage(pairs24, 'observed');
+                const forecast72 = weightedPairAverage(pairs72, 'forecast');
+                const observed72 = weightedPairAverage(pairs72, 'observed');
+                const maximumValue = Math.max(forecast24, observed24, forecast72, observed72);
                 const allValuesZero = maximumValue === 0;
                 comparisonSummary.textContent = allValuesZero
-                    ? `${points.length} pontos carregados. Todos os valores previstos e observados são 0 mm; as séries coincidem sobre a linha de base.`
-                    : `${points.length} pontos carregados — maior valor: ${maximumValue.toFixed(1)} mm.`;
+                    ? `24 h: ${pairs24.length} municípios; 72 h: ${pairs72.length} municípios. Todos os valores são 0 mm.`
+                    : `24 h: ${pairs24.length} municípios pareados; 72 h: ${pairs72.length} municípios pareados.`;
                 // Garante que o Chart.js leia a largura após um estado anterior
                 // em que o contêiner tenha ficado oculto por falta de dados.
                 void chartInner.offsetWidth;
@@ -595,18 +600,28 @@
                     state.comparisonChart = new Chart(document.getElementById('comparison-chart'), {
                     type: 'line',
                     data: {
-                        labels: points.map(point => new Date(point.key).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit' })),
+                        labels: [
+                            previous72 ? `Previsão em ${localDate(previous72.value)}` : 'Previsão −72 h indisponível',
+                            previous24 ? `Previsão em ${localDate(previous24.value)}` : 'Previsão −24 h indisponível',
+                            `Observado em ${localDate(selectedAt)}`
+                        ],
                         datasets: [
-                            { label: 'Limite inferior 95%', data: points.map(p => Math.max(0, p.forecast - p.margin)), borderWidth: 0, pointRadius: 0, backgroundColor: 'transparent' },
-                            { label: 'Margem estatística 95%', data: points.map(p => p.forecast + p.margin), borderWidth: 0, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(245, 158, 11, .18)' },
-                            { label: `Previsto ${horizon} h`, data: points.map(p => p.forecast), borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointStyle: 'circle', pointRadius: 4, borderWidth: 3, tension: .2, spanGaps: true },
-                            { label: `Observado posterior ${horizon} h`, data: points.map(p => p.observed), borderColor: '#0066cc', backgroundColor: '#0066cc', pointStyle: 'rectRot', pointRadius: 4, borderWidth: 3, borderDash: [7, 4], tension: .2, spanGaps: true }
+                            {
+                                label: 'Janela de 72 h', data: [pairs72.length ? forecast72 : null, null, pairs72.length ? observed72 : null],
+                                borderColor: '#746ed6', backgroundColor: '#746ed6', pointStyle: 'circle', pointRadius: 5,
+                                borderWidth: 3, tension: .15, spanGaps: true
+                            },
+                            {
+                                label: 'Janela de 24 h', data: [null, pairs24.length ? forecast24 : null, pairs24.length ? observed24 : null],
+                                borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointStyle: 'rectRot', pointRadius: 5,
+                                borderWidth: 3, borderDash: [7, 4], tension: .15, spanGaps: true
+                            }
                         ]
                     },
                     options: {
                         ...lineOptions,
                         plugins: {
-                            legend: { labels: { filter: item => !item.text.startsWith('Limite inferior') } },
+                            legend: { display: true },
                             tooltip: { callbacks: { label: context => `${context.dataset.label}: ${number(context.parsed.y).toFixed(1)} mm` } }
                         }
                     }
