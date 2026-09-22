@@ -90,7 +90,8 @@
         .chart-wrap { position: relative; height: 360px; width: 100%; }
         .chart-wrap.comparison { height: 410px; }
         .chart-scroll { width: 100%; overflow-x: auto; }
-        .chart-scroll-inner { position: relative; min-width: 720px; height: 410px; }
+        .chart-scroll-inner { position: relative; width: 100%; min-width: 720px; height: 410px; }
+        .comparison-summary { margin: 0 0 9px; color: var(--muted); font-size: .8rem; }
         .chart-empty { display: none; padding: 26px 16px; color: var(--muted); text-align: center; border: 1px dashed var(--border); border-radius: 9px; background: #f8fafc; }
         .chart-empty.visible { display: block; }
 
@@ -219,6 +220,7 @@
                 <div class="metric-card"><span>Margem 95% do erro médio</span><strong id="confidence-margin">-- mm</strong></div>
                 <div class="metric-card"><span>Acerto da faixa de chuva</span><strong id="confidence-category">--%</strong></div>
             </div>
+            <p id="comparison-summary" class="comparison-summary">Aguardando dados da série.</p>
             <div class="chart-scroll">
                 <div id="comparison-chart-inner" class="chart-scroll-inner">
                     <canvas id="comparison-chart"></canvas>
@@ -530,6 +532,7 @@
             function renderComparison(comparisons, horizon) {
                 const emptyMessage = document.getElementById('comparison-empty');
                 const chartInner = document.getElementById('comparison-chart-inner');
+                const comparisonSummary = document.getElementById('comparison-summary');
                 emptyMessage.classList.remove('visible');
                 emptyMessage.textContent = '';
                 chartInner.style.display = 'block';
@@ -567,16 +570,28 @@
                 // tratar municípios vizinhos como amostras meteorológicas independentes.
                 renderConfidenceCards(points);
                 const minimumWidth = Math.max(720, points.length * 28);
-                chartInner.style.width = `${minimumWidth}px`;
+                chartInner.style.width = '100%';
+                chartInner.style.minWidth = `${minimumWidth}px`;
                 if (state.comparisonChart) state.comparisonChart.destroy();
                 if (!points.length) {
                     state.comparisonChart = null;
                     chartInner.style.display = 'none';
+                    comparisonSummary.textContent = 'Nenhum ponto comparável retornado para a janela selecionada.';
                     emptyMessage.textContent = 'Ainda não existem pares completos entre uma previsão e uma leitura próxima de 72 horas depois. Amplie a janela histórica ou aguarde novos registros do cache.';
                     emptyMessage.classList.add('visible');
                     return false;
                 }
+                const maximumValue = Math.max(...points.flatMap(point => [point.forecast, point.observed]));
+                const allValuesZero = maximumValue === 0;
+                comparisonSummary.textContent = allValuesZero
+                    ? `${points.length} pontos carregados. Todos os valores previstos e observados são 0 mm; as séries coincidem sobre a linha de base.`
+                    : `${points.length} pontos carregados — maior valor: ${maximumValue.toFixed(1)} mm.`;
+                // Garante que o Chart.js leia a largura após um estado anterior
+                // em que o contêiner tenha ficado oculto por falta de dados.
+                void chartInner.offsetWidth;
                 try {
+                    const lineOptions = chartOptions('Precipitação acumulada (mm)');
+                    lineOptions.scales.y.suggestedMax = allValuesZero ? 1 : undefined;
                     state.comparisonChart = new Chart(document.getElementById('comparison-chart'), {
                     type: 'line',
                     data: {
@@ -584,18 +599,19 @@
                         datasets: [
                             { label: 'Limite inferior 95%', data: points.map(p => Math.max(0, p.forecast - p.margin)), borderWidth: 0, pointRadius: 0, backgroundColor: 'transparent' },
                             { label: 'Margem estatística 95%', data: points.map(p => p.forecast + p.margin), borderWidth: 0, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(245, 158, 11, .18)' },
-                            { label: `Previsto ${horizon} h`, data: points.map(p => p.forecast), borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointRadius: 3, borderWidth: 2.5, tension: .2, spanGaps: true },
-                            { label: `Observado posterior ${horizon} h`, data: points.map(p => p.observed), borderColor: '#0066cc', backgroundColor: '#0066cc', pointRadius: 3, borderWidth: 2.5, tension: .2, spanGaps: true }
+                            { label: `Previsto ${horizon} h`, data: points.map(p => p.forecast), borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointStyle: 'circle', pointRadius: 4, borderWidth: 3, tension: .2, spanGaps: true },
+                            { label: `Observado posterior ${horizon} h`, data: points.map(p => p.observed), borderColor: '#0066cc', backgroundColor: '#0066cc', pointStyle: 'rectRot', pointRadius: 4, borderWidth: 3, borderDash: [7, 4], tension: .2, spanGaps: true }
                         ]
                     },
                     options: {
-                        ...chartOptions('Precipitação acumulada (mm)'),
+                        ...lineOptions,
                         plugins: {
                             legend: { labels: { filter: item => !item.text.startsWith('Limite inferior') } },
                             tooltip: { callbacks: { label: context => `${context.dataset.label}: ${number(context.parsed.y).toFixed(1)} mm` } }
                         }
                     }
                     });
+                    requestAnimationFrame(() => state.comparisonChart?.resize());
                     return true;
                 } catch (error) {
                     state.comparisonChart = null;
