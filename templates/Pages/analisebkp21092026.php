@@ -61,7 +61,7 @@
 
         .panel h2 { margin: 0 0 7px; color: var(--blue); font-size: 1.2rem; }
         .panel-description { margin: 0 0 16px; color: var(--muted); line-height: 1.45; }
-        .filters { display: grid; grid-template-columns: minmax(260px, 2fr) minmax(150px, 1fr) auto; gap: 12px; align-items: end; }
+        .filters { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; align-items: end; }
         .field label { display: block; margin-bottom: 5px; color: #475569; font-size: .82rem; font-weight: 700; }
         .field select, .field input {
             width: 100%; min-height: 42px; padding: 8px 10px;
@@ -98,34 +98,6 @@
             font-size: .85rem; line-height: 1.45;
         }
 
-        .time-points {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-            margin: 8px 0 18px;
-        }
-        .time-point {
-            position: relative;
-            min-height: 148px;
-            padding: 18px 14px 14px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            background: #f8fafc;
-        }
-        .time-point::before {
-            content: '';
-            position: absolute;
-            inset: 0 0 auto;
-            height: 7px;
-            background: var(--point-color, var(--blue));
-        }
-        .time-point h3 { margin: 0 0 5px; color: var(--blue); font-size: 1rem; }
-        .time-point time { display: block; min-height: 2.4em; color: var(--muted); font-size: .82rem; }
-        .time-point-values { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-        .time-point-values span { color: var(--muted); font-size: .72rem; }
-        .time-point-values strong { display: block; margin-top: 3px; color: var(--text); font-size: 1rem; }
-
         .table-tools { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
         .table-tools input { min-height: 38px; width: min(320px, 100%); padding: 8px 10px; border: 1px solid #b8c7da; border-radius: 8px; }
         .table-wrap { overflow: auto; max-height: 650px; border: 1px solid var(--border); border-radius: 9px; }
@@ -147,7 +119,6 @@
             .field:first-child { grid-column: 1 / -1; }
             .load-button { width: 100%; }
             .chart-wrap { height: 330px; }
-            .time-points { grid-template-columns: 1fr; }
             .table-tools { align-items: stretch; flex-direction: column; }
             .table-tools input { width: 100%; max-width: none; }
         }
@@ -175,6 +146,13 @@
                     <select id="snapshot-time"><option>Carregando histórico...</option></select>
                 </div>
                 <div class="field">
+                    <label for="analysis-horizon">Comparação</label>
+                    <select id="analysis-horizon">
+                        <option value="24">Previsão 24 h</option>
+                        <option value="72">Previsão 72 h</option>
+                    </select>
+                </div>
+                <div class="field">
                     <label for="history-days">Janela histórica</label>
                     <select id="history-days">
                         <option value="7">7 dias</option>
@@ -187,37 +165,6 @@
         </section>
 
         <div id="analysis-status" class="status-message" role="status" aria-live="polite"></div>
-
-        <section class="panel" aria-labelledby="time-points-title">
-            <h2 id="time-points-title">Pontos temporais da análise</h2>
-            <p class="panel-description">A emissão selecionada é alinhada às leituras armazenadas mais próximas de 24 e 72 horas depois, permitindo conferir quando os valores previstos se tornaram observáveis.</p>
-            <div class="time-points">
-                <article class="time-point" style="--point-color:#00a878">
-                    <h3>Emissão da previsão</h3>
-                    <time id="point-issued-time">--</time>
-                    <div class="time-point-values">
-                        <div><span>Atual na emissão</span><strong id="point-issued-current">-- mm</strong></div>
-                        <div><span>Previsto 72 h</span><strong id="point-issued-forecast">-- mm</strong></div>
-                    </div>
-                </article>
-                <article class="time-point" style="--point-color:#f59e0b">
-                    <h3>Leitura próxima de +24 h</h3>
-                    <time id="point-24-time">--</time>
-                    <div class="time-point-values">
-                        <div><span>Previsto 24 h</span><strong id="point-24-forecast">-- mm</strong></div>
-                        <div><span>Observado 24 h</span><strong id="point-24-observed">-- mm</strong></div>
-                    </div>
-                </article>
-                <article class="time-point" style="--point-color:#0066cc">
-                    <h3>Leitura próxima de +72 h</h3>
-                    <time id="point-72-time">--</time>
-                    <div class="time-point-values">
-                        <div><span>Previsto 72 h</span><strong id="point-72-forecast">-- mm</strong></div>
-                        <div><span>Observado 72 h</span><strong id="point-72-observed">-- mm</strong></div>
-                    </div>
-                </article>
-            </div>
-        </section>
 
         <section class="panel" aria-labelledby="snapshot-title">
             <h2 id="snapshot-title">Precipitação da bacia no instante selecionado</h2>
@@ -232,7 +179,7 @@
 
         <section class="panel" aria-labelledby="comparison-title">
             <h2 id="comparison-title">Previsto × observado posterior</h2>
-            <p class="panel-description">A previsão de 72 horas emitida em T é comparada ao acumulado observado no registro mais próximo de T+72 h.</p>
+            <p class="panel-description">A previsão emitida em T é comparada ao acumulado observado no registro próximo de T+24 h ou T+72 h, conforme o horizonte escolhido.</p>
             <div class="confidence-cards">
                 <div class="metric-card"><span>Janelas comparadas</span><strong id="confidence-count">--</strong></div>
                 <div class="metric-card"><span>Erro absoluto médio (MAE)</span><strong id="confidence-mae">-- mm</strong></div>
@@ -301,6 +248,7 @@
             const state = { weights: new Map(), snapshot: [], snapshotChart: null, comparisonChart: null };
             const elements = {
                 time: document.getElementById('snapshot-time'),
+                horizon: document.getElementById('analysis-horizon'),
                 days: document.getElementById('history-days'),
                 load: document.getElementById('load-analysis'),
                 status: document.getElementById('analysis-status'),
@@ -377,17 +325,15 @@
                 elements.load.disabled = true;
                 setStatus('Reconstruindo o histórico e pareando previsto com observado...', 'loading');
                 try {
-                    const baseParams = { at, days: elements.days.value };
-                    const params24 = new URLSearchParams({ ...baseParams, horizon: '24' });
-                    const params72 = new URLSearchParams({ ...baseParams, horizon: '72' });
-                    const [payload24, payload72] = await Promise.all([
-                        fetchJson(`${URLS.data}?${params24.toString()}`),
-                        fetchJson(`${URLS.data}?${params72.toString()}`)
-                    ]);
-                    state.snapshot = enrichSnapshot(payload72.snapshot || payload24.snapshot || []);
-                    renderTimePoints(payload24, payload72);
-                    renderSnapshot(payload72);
-                    renderComparison(payload72.comparisons || [], 72);
+                    const params = new URLSearchParams({
+                        at,
+                        horizon: elements.horizon.value,
+                        days: elements.days.value
+                    });
+                    const payload = await fetchJson(`${URLS.data}?${params.toString()}`);
+                    state.snapshot = enrichSnapshot(payload.snapshot || []);
+                    renderSnapshot(payload);
+                    renderComparison(payload.comparisons || [], payload.horizon);
                     renderTable(state.snapshot, elements.filter.value);
                     setStatus('');
                 } catch (error) {
@@ -447,48 +393,6 @@
                     },
                     options: chartOptions('Precipitação média ponderada (mm)')
                 });
-            }
-
-            function comparisonPoint(rows, selectedAt) {
-                const selectedMs = new Date(String(selectedAt).replace(' ', 'T')).getTime();
-                const valid = rows.map(row => ({
-                    ...row,
-                    issuedMs: new Date(String(row.issuedAt).replace(' ', 'T')).getTime(),
-                    weight: state.weights.get(normalizeName(row.cityName)) || 0
-                })).filter(row => row.weight > 0 && Number.isFinite(row.issuedMs));
-                if (!valid.length) return null;
-                const closestMs = valid.reduce((best, row) =>
-                    Math.abs(row.issuedMs - selectedMs) < Math.abs(best - selectedMs) ? row.issuedMs : best,
-                    valid[0].issuedMs
-                );
-                const rowsAtPoint = valid.filter(row => Math.abs(row.issuedMs - closestMs) < 60 * 60 * 1000);
-                const weightTotal = rowsAtPoint.reduce((sum, row) => sum + row.weight, 0);
-                if (!weightTotal) return null;
-                const weighted = field => rowsAtPoint.reduce((sum, row) => sum + number(row[field]) * row.weight, 0) / weightTotal;
-                const observedTimes = rowsAtPoint.map(row => row.observedAt || row.targetAt || row.matchedAt).filter(Boolean);
-                return {
-                    issuedAt: new Date(closestMs),
-                    observedAt: observedTimes[0] || null,
-                    forecast: weighted('forecast'),
-                    observed: weighted('observed')
-                };
-            }
-
-            function renderTimePoints(payload24, payload72) {
-                const selectedAt = payload72.selectedAt || payload24.selectedAt || elements.time.value;
-                const point24 = comparisonPoint(payload24.comparisons || [], selectedAt);
-                const point72 = comparisonPoint(payload72.comparisons || [], selectedAt);
-                const selectedDate = new Date(String(selectedAt).replace(' ', 'T'));
-                const targetDate = hours => new Date(selectedDate.getTime() + hours * 60 * 60 * 1000);
-                document.getElementById('point-issued-time').textContent = localDate(selectedAt);
-                document.getElementById('point-issued-current').textContent = mm(weightedAverage(state.snapshot, 'current'));
-                document.getElementById('point-issued-forecast').textContent = mm(weightedAverage(state.snapshot, 'forecast72h'));
-                document.getElementById('point-24-time').textContent = localDate(point24?.observedAt || targetDate(24).toISOString());
-                document.getElementById('point-24-forecast').textContent = point24 ? mm(point24.forecast) : '-- mm';
-                document.getElementById('point-24-observed').textContent = point24 ? mm(point24.observed) : '-- mm';
-                document.getElementById('point-72-time').textContent = localDate(point72?.observedAt || targetDate(72).toISOString());
-                document.getElementById('point-72-forecast').textContent = point72 ? mm(point72.forecast) : '-- mm';
-                document.getElementById('point-72-observed').textContent = point72 ? mm(point72.observed) : '-- mm';
             }
 
             function chartOptions(yTitle) {
@@ -606,6 +510,7 @@
 
             elements.load.addEventListener('click', loadAnalysis);
             elements.time.addEventListener('change', loadAnalysis);
+            elements.horizon.addEventListener('change', loadAnalysis);
             elements.filter.addEventListener('input', () => renderTable(state.snapshot, elements.filter.value));
             initialize();
         })();
