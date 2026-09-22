@@ -79,10 +79,7 @@ class WeatherCacheController extends AppController
         }
 
         $horizon = (int)$this->request->getQuery('horizon', 24) === 72 ? 72 : 24;
-        // Para validar 72 h é necessário preservar, no mínimo, três dias
-        // completos mais uma margem para localizar o registro observado.
-        $minimumDays = $horizon === 72 ? 4 : 2;
-        $days = max($minimumDays, min(14, (int)$this->request->getQuery('days', 7)));
+        $days = max(2, min(14, (int)$this->request->getQuery('days', 7)));
         $selectedEnd = $selectedAt->setTime(
             (int)$selectedAt->format('H'),
             59,
@@ -160,10 +157,7 @@ class WeatherCacheController extends AppController
                 if (isset($seenBuckets[$bucket])) {
                     continue;
                 }
-                // O cache é atualizado conforme os acessos ao mapa. Por isso,
-                // nem sempre existe uma leitura exatamente em T+horizonte.
-                // Aceita-se a mais próxima em até 12 h, registrando o desvio.
-                $observedRow = $this->nearestHistoricalRow($locationRows, $targetTimestamp, 43200);
+                $observedRow = $this->nearestHistoricalRow($locationRows, $targetTimestamp, 7200);
                 if (!$observedRow) {
                     continue;
                 }
@@ -174,7 +168,6 @@ class WeatherCacheController extends AppController
                     'cityName' => $forecastRow['cityName'],
                     'issuedAt' => $forecastRow['created'],
                     'targetAt' => $observedRow['created'],
-                    'targetDeviationHours' => round(abs($observedRow['timestamp'] - $targetTimestamp) / 3600, 3),
                     'forecast' => round($forecast, 3),
                     'observed' => round($observed, 3),
                     'error' => round($forecast - $observed, 3),
@@ -193,7 +186,7 @@ class WeatherCacheController extends AppController
             'horizon' => $horizon,
             'historyDays' => $days,
             'snapshotToleranceHours' => 3,
-            'comparisonToleranceHours' => 12,
+            'comparisonToleranceHours' => 2,
             'snapshot' => $snapshot,
             'comparisons' => $comparisons,
         ]);

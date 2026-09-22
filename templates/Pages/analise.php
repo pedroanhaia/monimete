@@ -91,6 +91,8 @@
         .chart-wrap.comparison { height: 410px; }
         .chart-scroll { width: 100%; overflow-x: auto; }
         .chart-scroll-inner { position: relative; min-width: 720px; height: 410px; }
+        .chart-empty { display: none; padding: 26px 16px; color: var(--muted); text-align: center; border: 1px dashed var(--border); border-radius: 9px; background: #f8fafc; }
+        .chart-empty.visible { display: block; }
 
         .confidence-note {
             margin: 14px 0 0; padding: 12px; color: #5b4a10;
@@ -222,6 +224,7 @@
                     <canvas id="comparison-chart"></canvas>
                 </div>
             </div>
+            <div id="comparison-empty" class="chart-empty" role="status"></div>
             <p class="confidence-note">
                 A faixa sombreada é uma margem estatística preliminar de 95%, calculada a partir da dispersão dos erros municipais. O “observado” é o dado posterior armazenado da Open-Meteo; para validação hidrológica oficial, recomenda-se confrontar também com pluviômetros da ANA, INMET, CEMADEN ou rede estadual.
             </p>
@@ -410,9 +413,9 @@
                     renderSnapshot(payload72);
                     renderHistoricalSnapshot(payloadPrevious24, 'previous24', previous24, 24, selectedMs);
                     renderHistoricalSnapshot(payloadPrevious72, 'previous72', previous72, 72, selectedMs);
-                    const comparisonLoaded = renderComparison(payload72.comparisons || [], 72);
+                    renderComparison(payload72.comparisons || [], 72);
                     renderTable(state.snapshot, elements.filter.value);
-                    if (comparisonLoaded) setStatus('');
+                    setStatus('');
                 } catch (error) {
                     setStatus(`Falha ao carregar a análise: ${error.message}`, 'error');
                 } finally {
@@ -525,6 +528,11 @@
             }
 
             function renderComparison(comparisons, horizon) {
+                const emptyMessage = document.getElementById('comparison-empty');
+                const chartInner = document.getElementById('comparison-chart-inner');
+                emptyMessage.classList.remove('visible');
+                emptyMessage.textContent = '';
+                chartInner.style.display = 'block';
                 const enriched = comparisons.map(row => ({
                     ...row,
                     weight: state.weights.get(normalizeName(row.cityName)) || 0
@@ -559,14 +567,17 @@
                 // tratar municípios vizinhos como amostras meteorológicas independentes.
                 renderConfidenceCards(points);
                 const minimumWidth = Math.max(720, points.length * 28);
-                document.getElementById('comparison-chart-inner').style.width = `${minimumWidth}px`;
+                chartInner.style.width = `${minimumWidth}px`;
                 if (state.comparisonChart) state.comparisonChart.destroy();
                 if (!points.length) {
                     state.comparisonChart = null;
-                    setStatus('O instantâneo foi carregado, mas ainda não há pares completos de previsão e observado para 72 horas nesta janela.', 'loading');
-                    return;
+                    chartInner.style.display = 'none';
+                    emptyMessage.textContent = 'Ainda não existem pares completos entre uma previsão e uma leitura próxima de 72 horas depois. Amplie a janela histórica ou aguarde novos registros do cache.';
+                    emptyMessage.classList.add('visible');
+                    return false;
                 }
-                state.comparisonChart = new Chart(document.getElementById('comparison-chart'), {
+                try {
+                    state.comparisonChart = new Chart(document.getElementById('comparison-chart'), {
                     type: 'line',
                     data: {
                         labels: points.map(point => new Date(point.key).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit' })),
@@ -584,8 +595,15 @@
                             tooltip: { callbacks: { label: context => `${context.dataset.label}: ${number(context.parsed.y).toFixed(1)} mm` } }
                         }
                     }
-                });
-                return true;
+                    });
+                    return true;
+                } catch (error) {
+                    state.comparisonChart = null;
+                    chartInner.style.display = 'none';
+                    emptyMessage.textContent = `Não foi possível desenhar o gráfico: ${error.message}`;
+                    emptyMessage.classList.add('visible');
+                    return false;
+                }
             }
 
             function renderConfidenceCards(rows) {

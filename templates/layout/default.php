@@ -136,13 +136,6 @@ $cakeDescription = 'monitoramente metereológico da bacia do rio Taquari';
   $currentaction = $this->getRequest()->getParam('action');
   if(!($currenttemplate == 'Pages' && $currentaction == 'display')){
  ?>
-    <script>
-    document.getElementById('sidebarCollapse').addEventListener('click', function() {
-    document.getElementById('top-nav').classList.toggle('stretch');
-    document.getElementById('main').classList.toggle('stretch');
-    document.getElementById('sidebar').classList.toggle('hidden');
-    });
-    </script>
 <?php
 };
 ?>
